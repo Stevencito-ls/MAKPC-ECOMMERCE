@@ -1,0 +1,241 @@
+.footer-container {
+    padding: 3rem 0 1rem;
+    margin-top: 2rem;
+}
+
+.content-wrapper {
+    display: grid;
+    grid-template-columns: 2.2fr 1px 1fr 1px 1fr;
+    gap: 40px;
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    padding: 0 20px;
+    align-items: start;
+}
+
+.column-left {
+    padding-right: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Cambiado de flex-start a center */
+    text-align: center; /* Añadido para centrar el texto */
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+    box-shadow: none;
+    border-radius: 8px;
+    /* El logo se centra automáticamente con align-items: center del contenedor */
+}
+
+.company-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--primary-blue, #1e40af);
+    text-align: center; /* Cambiado de left a center */
+    width: 100%;
+}
+
+.description {
+    text-align: left; 
+    line-height: 1.7;
+    margin-bottom: 25px;
+    color: var(--dark-gray, #6b7280);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.divider-container {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.divider {
+    border: none;
+    border-top: 2px dashed var(--divider-color, #d1d5db);
+    width: 100%;
+    margin: 0;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 0;
+    width: 100%;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: var(--primary-text, #1f2937);
+    padding: 8px 0;
+    text-align: left; /* Mantenemos left para los items de contacto */
+}
+
+.contact-item:last-child {
+    border-bottom: none;
+}
+
+.contact-item::before {
+    content: '•';
+    color: var(--secondary-blue, #3b82f6);
+    font-size: 1.5rem;
+    margin-right: 12px;
+    line-height: 0;
+}
+
+.vertical-divider {
+    width: 1px;
+    background: var(--secondary-blue, #3b82f6);
+    height: 100%;
+    min-height: 400px;
+    max-height: 650px;
+    align-self: center;
+    margin: 0;
+}
+
+.column-middle {
+    padding: 0 20px;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 0;
+    margin: 0;
+}
+
+.menu li {
+    width: 100%;
+}
+
+.menu li a {
+    color: var(--primary-text, #1f2937);
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 8px 0;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    display: block;
+    width: 100%;
+}
+
+.menu li a:hover {
+    color: var(--cyan-color, #06b6d4);
+    border-bottom: 2px solid var(--yellow-accent, #f59e0b);
+    transform: translateX(5px);
+}
+
+.column-right {
+    padding-left: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.footer-social-payment {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 80px;
+}
+
+/* Redes sociales */
+.social-section h4,
+.payment-section h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--yellow-accent, #f59e0b);
+    margin-bottom: 15px;
+}
+
+.social-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.social-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--social-bg, rgba(255, 255, 255, 0.1));
+    color: var(--white, #ffffff);
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: none;
+    cursor: pointer;
+}
+
+.social-icon:hover {
+    background: var(--yellow-accent, #f59e0b);
+    color: var(--primary-blue, #1e40af);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+}
+
+/* Colores específicos para redes sociales */
+.social-icon.tiktok:hover { 
+    background: #000; 
+    color: white;
+}
+.social-icon.facebook:hover { 
+    background: #1877f2; 
+    color: white;
+}
+.social-icon.whatsapp:hover { 
+    background: #25d366; 
+    color: white;
+}
+
+/* Métodos de pago */
+.payment-section .payment-text {
+    font-size: 0.9rem;
+    color: var(--payment-text, rgba(255, 255, 255, 0.8));
+    margin-bottom: 15px;
+}
+
+.payment-methods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.payment-icon {
+    height: 35px;
+    background: var(--white, #ffffff);
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    object-fit: contain;
+}
+
+.payment-icon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.copyright {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--divider-color, #d1d5db);
+    color: var(--medium-gray, #9ca3af);
+    font-size: 0.95rem;
+    font-weight: 500;
+}

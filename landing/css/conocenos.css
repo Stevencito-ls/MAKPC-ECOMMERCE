@@ -1,0 +1,53 @@
+#Conocenos-mas {
+    background: var(--white);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+#Conocenos-mas h2 {
+    color: #1a365d;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+#Conocenos-mas .contenedor-seccion {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+}
+
+.reseña-historica, .Mision-Vision, .Objetivo {
+    grid-column: 1 / -1;
+}
+
+.reseña-historica h3, .Mision-Vision h3, .Objetivo h3 {
+    color: #1a365d;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+}
+
+.reseña-historica p, .Mision-Vision p, .Objetivo p {
+    color: #2d3748;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+.Mision-Vision ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.Mision-Vision li {
+
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}

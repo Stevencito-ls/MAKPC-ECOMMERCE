@@ -1,0 +1,44 @@
+#Tienda {
+    background: var(--white);
+}
+
+#Tienda h2 {
+    color: var(--primary-blue);
+    margin-bottom: 3rem;
+}
+
+#Tienda .contenedor-seccion {
+    align-items: flex-start;
+}
+
+#Tienda .columna-izquierda {
+    flex: 1.2;
+}
+
+#Tienda .columna-derecha {
+    flex: 0.8;
+}
+
+.horario-container {
+
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-top: 2rem;
+
+}
+
+.horario-container h3 {
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.horario-container .p-icono {
+    color: var(--dark-gray);
+    font-weight: 500;
+}
+
+#Tienda a {
+    color: var(--secondary-blue);
+    font-weight: 600;
+    text-decoration: underline;
+}

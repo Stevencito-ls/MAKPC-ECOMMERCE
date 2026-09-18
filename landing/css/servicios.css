@@ -1,0 +1,70 @@
+.chevron-section {
+    text-align: center;
+    background: #d9e1ff;
+    padding: 4rem 2rem;
+}
+
+.chevron-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+}
+
+.texto_p_Servicios {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    color: var(--dark-gray);
+    font-weight: 400;
+    max-width: 800px;
+    line-height: 1.5;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.chevron-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.chevron-card {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+    transition: var(--transition);
+}
+
+.chevron-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-strong);
+}
+
+.chevron-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+.chevron-card h3 {
+    margin: 1.5rem 1rem 1rem;
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+    text-align: center;
+}
+
+.chevron-card p {
+    padding: 0 1rem 2rem;
+    font-size: 1rem;
+    color: var(--medium-gray);
+    text-align: center;
+    margin-bottom: 0;
+}

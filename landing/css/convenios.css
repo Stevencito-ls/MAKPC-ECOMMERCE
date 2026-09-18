@@ -1,0 +1,110 @@
+#Convenios {
+    background: var(--white);
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 15px;
+    padding: 50px 40px;
+    text-align: center;
+}
+
+#Convenios h2 {
+    font-size: 2.8rem;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+}
+
+.contenedor-descripcion {
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contenedor-descripcion p {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.contenedor-convenios {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.convenio-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+    padding: 20px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: var(--light-gray);
+}
+
+.convenio-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.contenedor-imagen {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.contenedor-imagen img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(20%);
+    transition: all 0.3s ease;
+    box-shadow: none;
+}
+
+.convenio-item:hover .contenedor-imagen img {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+}
+
+.contenedor-boton {
+    width: 100%;
+}
+
+.boton-convenio {
+    display: inline-block;
+    width: 100%;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #3498db, #1177d0);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.boton-convenio:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    background: linear-gradient(135deg, #2980b9, #0d5aa3);
+    color: #fff;
+}
