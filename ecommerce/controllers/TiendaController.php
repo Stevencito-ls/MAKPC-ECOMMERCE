@@ -1199,4 +1199,42 @@ class TiendaController extends Controller
         echo json_encode(['success' => false, 'message' => 'Tipo de documento no soportado.']);
         exit;
     }
+
+    /**
+     * API: Verificar disponibilidad y stock en vivo de un producto
+     */
+    public function verificarStock()
+    {
+        $id = (int)$this->input('id', $this->input('id_producto', 0));
+        $productoModel = new Producto();
+        $prod = $productoModel->find($id);
+
+        if (!$prod) {
+            $this->json(['success' => false, 'message' => 'Producto no encontrado', 'stock' => 0], 404);
+        }
+
+        $this->json([
+            'success' => true,
+            'id_producto' => (int)$prod['id_producto'],
+            'nombre' => $prod['nombre'],
+            'stock' => (int)$prod['stock'],
+            'disponible' => (int)$prod['stock'] > 0
+        ]);
+    }
+
+    /**
+     * Alias para consulta de ordenes de taller y tickets
+     */
+    public function consultarOrden()
+    {
+        $this->soporte();
+    }
+
+    /**
+     * Alias para registro de tickets de soporte tecnico
+     */
+    public function crearTicket()
+    {
+        $this->soporte();
+    }
 }
