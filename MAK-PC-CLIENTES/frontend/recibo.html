@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprobante de Servicio - MAK-PC Enterprises S.A.C.</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  
+  <!-- Iconos Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- Estilos de Impresión A5 Exacta -->
+  <link rel="stylesheet" href="css/recibo-print.css?v=2.2">
+</head>
+<body>
+
+  <!-- Barra de acciones en pantalla (Oculta al imprimir) -->
+  <div class="screen-actions-bar">
+    <a href="index.html" class="btn-back-action">
+      <i class="ph-bold ph-arrow-left"></i> Volver al Sistema
+    </a>
+    <span class="info-text">
+      <i class="ph-bold ph-file-text"></i> Vista Previa de Recibo Físico (Formato A5)
+    </span>
+    <button class="btn-print-action" onclick="window.print()">
+      <i class="ph-bold ph-printer"></i> Imprimir Recibo A5
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       HOJA DEL RECIBO FÍSICO A5 CORPORATIVO (148mm x 210mm)
+       ========================================================================= -->
+  <div class="receipt-sheet-wrapper">
+    <div class="receipt-sheet" id="receipt-content">
+
+      <!-- 1. CABECERA INSTITUCIONAL -->
+      <header class="receipt-header">
+        <div class="header-left-brand">
+          <div class="receipt-logo-box">
+            <img src="img/logo.png" alt="MAK-PC Logo" class="receipt-logo-img">
+          </div>
+          <div class="receipt-company-info">
+            <h1>MAK-PC <span>ENTERPRISES S.A.C.</span></h1>
+            <div class="slogan">Soluciones Informáticas & Soporte Tecnológico</div>
+            <div class="contact-row">
+              <span><i class="ph-bold ph-identification-badge"></i> RUC: <strong>20409456520</strong></span>
+              <span><i class="ph-bold ph-whatsapp-logo"></i> <strong>960 702 605</strong></span>
+              <span><i class="ph-bold ph-map-pin"></i> Tumbes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right-voucher">
+          <div class="voucher-title">RECIBO</div>
+          <div class="voucher-number" id="recibo-numero-lbl">Nº 000401</div>
+        </div>
+      </header>
+
+      <!-- 2. IDENTIFICACIÓN DEL CLIENTE Y FECHAS -->
+      <section class="receipt-meta-grid">
+        <div class="meta-row">
+          <span class="meta-label">RECIBÍ DE:</span>
+          <div class="meta-value-line" id="recibo-cliente-nombre">JUAN PÉREZ MORALES</div>
+        </div>
+
+        <div class="meta-cols-split">
+          <div class="meta-row">
+            <span class="meta-label">DNI / RUC:</span>
+            <div class="meta-value-line" id="recibo-cliente-doc">70852963</div>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">CELULAR:</span>
+            <div class="meta-value-line" id="recibo-cliente-tel">972 888 999</div>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">FECHA:</span>
+            <div class="meta-value-line" id="recibo-fecha-emision">02 / 09 / 26</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CUERPO CENTRAL "POR CONCEPTO DE:" -->
+      <section class="concept-container">
+        <div class="concept-title-bar">
+          <span>POR CONCEPTO DE:</span>
+          <span class="device-badge" id="recibo-equipo-tag">LAPTOP LENOVO IDEAPAD 3</span>
+        </div>
+        <div class="concept-box">
+          <div class="concept-text" id="recibo-concepto-txt">
+            Mantenimiento preventivo general, reparación de línea secundaria de alimentación en mainboard, reemplazo de pasta térmica Artic MX-4 y optimización integral de sistema operativo.
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. DESGLOSE ECONÓMICO (IMPORTE Y TOTAL EN LETRAS) -->
+      <section class="financial-rows">
+        <div class="meta-row">
+          <span class="meta-label">LA CANTIDAD DE:</span>
+          <div class="meta-value-line" style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--mak-navy);" id="recibo-monto-total-txt">
+            S/. 180.00
+          </div>
+        </div>
+
+        <div class="amount-words-box">
+          <span class="words-label">(EN LETRAS):</span>
+          <span id="recibo-monto-letras-txt" style="text-transform: uppercase;">
+            SON CIENTO OCHENTA CON 00/100 SOLES
+          </span>
+        </div>
+      </section>
+
+      <!-- 5. CLÁUSULA LEGAL Y GARANTÍA (LEY 29571) -->
+      <section class="warranty-banner">
+        <div class="warranty-badge-icon">
+          GARANTÍA<br><strong>90 DÍAS</strong>
+        </div>
+        <div class="warranty-text">
+          <strong>CONFORME A LA LEY DEL CÓDIGO DE PROTECCIÓN Y DEFENSA DEL CONSUMIDOR (LEY Nº 29571):</strong>
+          Se informa al cliente que la garantía por el servicio y/o repuestos brindados debe efectuarse dentro de los <strong>90 días calendario</strong> desde la emisión del presente recibo (Vence: <strong id="recibo-vencimiento-txt">01/12/2026</strong>). Transcurrido dicho plazo, no procederá reclamo alguno.
+        </div>
+      </section>
+
+      <!-- 6. CUADRÍCULA DE PAGOS Y FIRMAS -->
+      <section class="summary-and-signatures">
+        
+        <!-- Mini Tabla de Liquidación de Saldos -->
+        <table class="payment-grid-table">
+          <tr class="row-total">
+            <td class="lbl">TOTAL:</td>
+            <td class="val" id="recibo-tbl-total">S/. 180.00</td>
+          </tr>
+          <tr>
+            <td class="lbl">A CUENTA:</td>
+            <td class="val" id="recibo-tbl-acuenta">S/. 100.00</td>
+          </tr>
+          <tr class="row-saldo">
+            <td class="lbl">SALDO:</td>
+            <td class="val" id="recibo-tbl-saldo">S/. 80.00</td>
+          </tr>
+        </table>
+
+        <!-- Zonas de Firma Cliente y Técnico -->
+        <div class="signatures-container">
+          <div class="signature-box">
+            <div class="signature-line"></div>
+            <div class="signature-role">FIRMA DEL CLIENTE</div>
+            <div class="signature-sub" id="recibo-firma-cliente-lbl">DNI: 70852963</div>
+          </div>
+
+          <div class="signature-box">
+            <div class="signature-line"></div>
+            <div class="signature-role">FIRMA Y SELLO TÉCNICO</div>
+            <div class="signature-sub">MAK-PC ENTERPRISES S.A.C.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. CINTILLO INFERIOR OSCURO (SERVICIOS Y CONTACTO) -->
+      <footer class="receipt-footer-strip">
+        <div class="services-list">
+          VENTA DE EQUIPOS &bull; SERVICIO TÉCNICO &bull; MANTENIMIENTO &bull; REDES Y CÁMARAS &bull; ACCESORIOS
+        </div>
+        <div class="footer-social-row">
+          <span><i class="ph-bold ph-facebook-logo"></i> /MAKPCEnterprises</span>
+          <span><i class="ph-bold ph-envelope"></i> soporte@makpc.com.pe</span>
+          <span><i class="ph-bold ph-whatsapp-logo"></i> 960 702 605</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+
+  <!-- Capa de Carga de Datos Dinámicos -->
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const reciboId = urlParams.get('id');
+      const ordenId = urlParams.get('orden_id');
+      const autoPrint = urlParams.get('autoprint') === '1' || urlParams.get('print') === 'true';
+
+      if (!reciboId && !ordenId) {
+        // Modo demostración con datos oficiales
+        return;
+      }
+
+      try {
+        let res;
+        if (reciboId) {
+          res = await API.getReciboById(reciboId);
+        } else if (ordenId) {
+          res = await API.getReciboByOrdenId(ordenId);
+        }
+
+        if (res && res.data) {
+          const rec = res.data;
+          
+          // Llenar campos dinámicos
+          document.getElementById('recibo-numero-lbl').textContent = `Nº ${rec.numero_recibo}`;
+          document.getElementById('recibo-cliente-nombre').textContent = rec.cliente_nombre || '-';
+          document.getElementById('recibo-cliente-doc').textContent = rec.numero_documento || '-';
+          document.getElementById('recibo-cliente-tel').textContent = rec.cliente_telefono || '-';
+          document.getElementById('recibo-fecha-emision').textContent = rec.fecha_emision_formateada || '-';
+          
+          document.getElementById('recibo-equipo-tag').textContent = `${rec.tipo_equipo} ${rec.marca} ${rec.modelo}`.toUpperCase();
+          document.getElementById('recibo-concepto-txt').textContent = rec.concepto;
+          
+          const total = parseFloat(rec.monto_total) || 0;
+          const aCuenta = parseFloat(rec.monto_a_cuenta) || 0;
+          const saldo = parseFloat(rec.monto_saldo) || 0;
+
+          document.getElementById('recibo-monto-total-txt').textContent = `S/. ${total.toFixed(2)}`;
+          document.getElementById('recibo-monto-letras-txt').textContent = rec.monto_letras || Utils.numeroALetrasClient(total);
+          document.getElementById('recibo-vencimiento-txt').textContent = rec.fecha_garantia_formateada || '90 días';
+
+          document.getElementById('recibo-tbl-total').textContent = `S/. ${total.toFixed(2)}`;
+          document.getElementById('recibo-tbl-acuenta').textContent = `S/. ${aCuenta.toFixed(2)}`;
+          document.getElementById('recibo-tbl-saldo').textContent = `S/. ${saldo.toFixed(2)}`;
+
+          document.getElementById('recibo-firma-cliente-lbl').textContent = `${rec.tipo_documento}: ${rec.numero_documento}`;
+
+          if (autoPrint) {
+            setTimeout(() => {
+              window.print();
+            }, 500);
+          }
+        }
+      } catch (err) {
+        console.warn("No se pudo cargar recibo desde la API, visualizando plantilla demo:", err);
+      }
+    });
+  </script>
+</body>
+</html>

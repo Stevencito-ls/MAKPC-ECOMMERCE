@@ -1,0 +1,5 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Si la solicitud va a la raíz del proyecto, redirigir al frontend
+    RewriteRule ^$ frontend/index.html [L]
+</IfModule>

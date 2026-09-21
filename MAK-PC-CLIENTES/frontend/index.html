@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAK-PC Enterprises S.A.C. | Sistema de Taller y Mostrador</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  
+  <!-- Iconos Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- Estilos Corporativos MAK-PC -->
+  <link rel="stylesheet" href="css/styles.css?v=2.2">
+</head>
+<body>
+
+  <!-- =========================================================================
+       1. NAVBAR SUPERIOR INSTITUCIONAL (PREMIUM & ADAPTATIVO)
+       ========================================================================= -->
+  <header class="top-navbar">
+    <div class="top-navbar-inner">
+      <div class="brand-wrapper">
+        <div class="brand-logo-badge">
+          <img src="img/logo.png" alt="MAK-PC Enterprises S.A.C." class="brand-logo-img">
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">
+            <span class="brand-name-main">MAK-PC</span>
+            <span class="brand-name-sub">ENTERPRISES</span>
+            <span class="brand-name-type">S.A.C.</span>
+          </div>
+          <div class="brand-meta-list">
+            <span class="meta-item"><i class="ph-bold ph-identification-card"></i> RUC: 20409456520</span>
+            <span class="meta-sep">&bull;</span>
+            <span class="meta-item"><i class="ph-bold ph-phone"></i> 960 702 605</span>
+            <span class="meta-sep meta-sep-location">&bull;</span>
+            <span class="meta-item meta-item-location"><i class="ph-bold ph-map-pin"></i> Tumbes, Perú</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <div class="api-status-pill" id="api-status-container" title="Estado de la conexión al Backend REST">
+          <span class="status-dot" id="api-status-dot"></span>
+          <span id="api-status-text">Conectado</span>
+        </div>
+
+        <div class="user-badge" title="Operador en mostrador">
+          <div class="user-avatar">AR</div>
+          <div class="user-meta">
+            <div class="user-name">Ana Recepción</div>
+            <div class="user-role">Mostrador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       2. WORKSPACE OPERATIVO UNIFICADO (PANTALLA ÚNICA)
+       ========================================================================= -->
+  <main class="main-container">
+
+    <!-- A. RESUMEN COMPACTO DE KPIS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-content">
+          <div class="kpi-label">Equipos en Taller</div>
+          <div class="kpi-value" id="kpi-en-taller">0</div>
+          <div class="kpi-subtext">En diagnóstico o reparación</div>
+        </div>
+        <div class="kpi-icon-box blue">
+          <i class="ph-bold ph-laptop"></i>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-content">
+          <div class="kpi-label">Listos para Entrega</div>
+          <div class="kpi-value" id="kpi-listos" style="color: var(--success);">0</div>
+          <div class="kpi-subtext">Reparados esperando cliente</div>
+        </div>
+        <div class="kpi-icon-box green">
+          <i class="ph-bold ph-check-circle"></i>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-content">
+          <div class="kpi-label">Entregados (Histórico)</div>
+          <div class="kpi-value" id="kpi-entregados">0</div>
+          <div class="kpi-subtext">Garantía activa de 90 días</div>
+        </div>
+        <div class="kpi-icon-box purple">
+          <i class="ph-bold ph-shield-check"></i>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-content">
+          <div class="kpi-label">Saldos por Cobrar</div>
+          <div class="kpi-value" id="kpi-por-cobrar" style="color: var(--gold-600);">S/. 0.00</div>
+          <div class="kpi-subtext">Pendiente al momento de entrega</div>
+        </div>
+        <div class="kpi-icon-box amber">
+          <i class="ph-bold ph-hand-coins"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- B. BARRA DE ACCIÓN Y BÚSQUEDA UNIVERSAL RÁPIDA -->
+    <div class="search-banner">
+      <div class="search-input-wrapper">
+        <i class="ph-bold ph-magnifying-glass"></i>
+        <input type="text" id="input-search-taller" class="search-input" placeholder="Buscar por DNI, cliente, código (ORD-2026-0001), marca o modelo..." autofocus>
+      </div>
+
+      <div class="filter-group">
+        <select id="filter-estado-taller" class="filter-select">
+          <option value="">-- Todos los Estados --</option>
+          <option value="RECEPCIONADO">Recepcionado</option>
+          <option value="EN_DIAGNOSTICO">En Diagnóstico</option>
+          <option value="ESPERA_REPUESTOS">Espera de Repuestos</option>
+          <option value="ESPERA_APROBACION">Espera de Aprobación</option>
+          <option value="EN_REPARACION">En Reparación</option>
+          <option value="REPARADO">Reparado (Listo p/ Entrega)</option>
+          <option value="ENTREGADO">Entregado</option>
+        </select>
+
+        <button type="button" class="btn btn-gold" id="btn-nuevo-ingreso" onclick="App.abrirNuevoIngreso()">
+          <i class="ph-bold ph-plus-circle" style="font-size: 1.2rem;"></i>
+          <span>+ Ingreso de Equipo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- C. TABLA OPERATIVA PRINCIPAL DE CONTROL DE TALLER -->
+    <div class="form-card">
+      <div class="form-header">
+        <h2>
+          <i class="ph-bold ph-desktop-tower"></i> 
+          <span>Tablero de Atención y Control Técnico</span>
+        </h2>
+        <span id="contador-ordenes-total" style="font-size: 0.85rem; color: var(--cyan-400); font-weight: 700;">
+          Cargando registros...
+        </span>
+      </div>
+
+      <div class="table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente / Teléfono</th>
+              <th>Equipo / Modelo</th>
+              <th>Falla / Motivo</th>
+              <th>Estado Técnico</th>
+              <th>Comprobante / Saldo</th>
+              <th>Fecha Ingreso</th>
+              <th style="text-align: center; min-width: 170px;">Acción Contextual</th>
+            </tr>
+          </thead>
+          <tbody id="taller-orders-tbody">
+            <!-- Renderizado dinámico vía app.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+
+  <!-- =========================================================================
+       3. MODAL 1: RECEPCIÓN EXPRESS DE EQUIPO (+ INGRESO)
+       ========================================================================= -->
+  <div class="modal-backdrop" id="modal-nuevo-ingreso">
+    <div class="modal-container modal-lg">
+      <div class="modal-header">
+        <h3><i class="ph-bold ph-plus-circle"></i> Nueva Recepción de Equipo en Mostrador</h3>
+        <button type="button" class="btn-close-modal" title="Cerrar ventana">&times;</button>
+      </div>
+
+      <form id="form-recepcion-equipo">
+        <div class="modal-body">
+          
+          <!-- SECCIÓN 1: IDENTIFICACIÓN DEL CLIENTE -->
+          <div class="form-section-title">
+            <i class="ph-bold ph-user"></i> 1. Identificación del Cliente
+          </div>
+
+          <div class="form-grid">
+            <!-- Fila 1: Documento y Nombres -->
+            <div class="col-2 form-group">
+              <label for="cliente-tipo-doc">Tipo Doc.</label>
+              <select id="cliente-tipo-doc" class="form-control">
+                <option value="DNI" selected>DNI</option>
+                <option value="RUC">RUC</option>
+                <option value="CE">C.E.</option>
+              </select>
+            </div>
+
+            <div class="col-4 form-group">
+              <label for="cliente-doc">Número de Documento <span class="required">*</span></label>
+              <div class="input-with-action">
+                <input type="text" id="cliente-doc" class="form-control" placeholder="Ej: 70852963" required maxlength="15" autocomplete="off">
+                <button type="button" id="btn-buscar-dni" class="btn btn-cyan" title="Buscar cliente por DNI/RUC">
+                  <i class="ph-bold ph-magnifying-glass"></i>
+                </button>
+              </div>
+              <span class="input-feedback">Enter o Tab para autocompletar</span>
+            </div>
+
+            <div class="col-6 form-group">
+              <label for="cliente-nombre">Nombres Completos / Razón Social <span class="required">*</span></label>
+              <input type="text" id="cliente-nombre" class="form-control" placeholder="Ej: Juan Pérez Morales" required autocomplete="off">
+            </div>
+
+            <!-- Fila 2: Contacto -->
+            <div class="col-4 form-group">
+              <label for="cliente-telefono">Teléfono / WhatsApp <span class="required">*</span></label>
+              <input type="tel" id="cliente-telefono" class="form-control" placeholder="Ej: 972888999" required autocomplete="off">
+            </div>
+
+            <div class="col-5 form-group">
+              <label for="cliente-direccion">Dirección (Opcional)</label>
+              <input type="text" id="cliente-direccion" class="form-control" placeholder="Av. Tumbes 450">
+            </div>
+
+            <div class="col-3 form-group">
+              <label for="cliente-email">Email (Opcional)</label>
+              <input type="email" id="cliente-email" class="form-control" placeholder="cliente@gmail.com">
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: DATOS DEL EQUIPO E INGRESO -->
+          <div class="form-section-title" style="margin-top: 1.25rem;">
+            <i class="ph-bold ph-devices"></i> 2. Datos del Equipo e Ingreso
+          </div>
+
+          <div class="form-grid">
+            <!-- Fila 1: Ficha Técnica -->
+            <div class="col-3 form-group">
+              <label for="equipo-tipo">Tipo de Dispositivo <span class="required">*</span></label>
+              <select id="equipo-tipo" class="form-control" required>
+                <option value="LAPTOP" selected>Laptop / Portátil</option>
+                <option value="PC_ESCRITORIO">PC de Escritorio / Torre</option>
+                <option value="ALL_IN_ONE">All in One</option>
+                <option value="IMPRESORA">Impresora</option>
+                <option value="MONITOR">Monitor</option>
+                <option value="SERVIDOR">Servidor</option>
+                <option value="OTRO">Otro Dispositivo</option>
+              </select>
+            </div>
+
+            <div class="col-3 form-group">
+              <label for="equipo-marca">Marca <span class="required">*</span></label>
+              <input type="text" id="equipo-marca" class="form-control" placeholder="Ej: Lenovo, HP, Asus" required>
+            </div>
+
+            <div class="col-3 form-group">
+              <label for="equipo-modelo">Modelo <span class="required">*</span></label>
+              <input type="text" id="equipo-modelo" class="form-control" placeholder="Ej: IdeaPad 3, Pavilion" required>
+            </div>
+
+            <div class="col-3 form-group">
+              <label for="equipo-serie">N° de Serie (S/N)</label>
+              <input type="text" id="equipo-serie" class="form-control" placeholder="PF2XYZ89">
+            </div>
+
+            <!-- Fila 2: Condiciones de Recepción -->
+            <div class="col-6 form-group">
+              <label for="equipo-accesorios">Accesorios en Custodia</label>
+              <input type="text" id="equipo-accesorios" class="form-control" placeholder="Cargador original, cable poder, mouse, funda">
+            </div>
+
+            <div class="col-3 form-group">
+              <label for="equipo-password">Clave de Usuario / BIOS</label>
+              <input type="text" id="equipo-password" class="form-control" placeholder="1234 / Sin clave">
+            </div>
+
+            <div class="col-3 form-group">
+              <label for="orden-prioridad">Prioridad</label>
+              <select id="orden-prioridad" class="form-control">
+                <option value="BAJA">Baja</option>
+                <option value="MEDIA" selected>Normal / Media</option>
+                <option value="ALTA">Alta</option>
+                <option value="URGENTE">Urgente</option>
+              </select>
+            </div>
+
+            <!-- Fila 3: Diagnóstico y Motivo -->
+            <div class="col-6 form-group">
+              <label for="orden-motivo">Falla Reportada por el Cliente <span class="required">*</span></label>
+              <textarea id="orden-motivo" class="form-control" rows="2" placeholder="Equipo no enciende, lentitud, cambio de pantalla, mantenimiento preventivo..." required style="min-height: 70px;"></textarea>
+            </div>
+
+            <div class="col-6 form-group">
+              <label for="equipo-observaciones">Estado Físico / Detalles Estéticos</label>
+              <textarea id="equipo-observaciones" class="form-control" rows="2" placeholder="Rayones en tapa, bisagra floja, golpes preexistentes..." style="min-height: 70px;"></textarea>
+            </div>
+
+            <!-- Fila 4: Condición Económica Inicial -->
+            <div class="col-6 form-group">
+              <label for="orden-costo-estimado">Costo Estimado (Opcional en S/.)</label>
+              <input type="number" step="0.50" min="0" id="orden-costo-estimado" class="form-control" placeholder="0.00">
+            </div>
+
+            <div class="col-6 form-group">
+              <label for="orden-monto-adelanto">Adelanto Inicial (A Cuenta S/.)</label>
+              <input type="number" step="0.50" min="0" id="orden-monto-adelanto" class="form-control" placeholder="0.00">
+            </div>
+          </div>
+          
+          <input type="hidden" id="orden-tecnico-asignado" value="2">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.75rem;">
+            <i class="ph-bold ph-floppy-disk"></i> Registrar y Generar Orden
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       4. MODAL 2: ATENCIÓN TÉCNICA Y DIAGNÓSTICO DE LABORATORIO
+       ========================================================================= -->
+  <div class="modal-backdrop" id="modal-actualizar-tecnico">
+    <div class="modal-container modal-md">
+      <div class="modal-header">
+        <h3><i class="ph-bold ph-wrench"></i> Atención Técnica: <span id="modal-tec-codigo" style="color: var(--gold-500); font-family: var(--font-mono);">ORD-2026-XXXX</span></h3>
+        <button type="button" class="btn-close-modal">&times;</button>
+      </div>
+
+      <form id="form-actualizar-tecnico">
+        <div class="modal-body">
+          <input type="hidden" id="modal-tec-orden-id">
+
+          <div style="background: var(--slate-100); padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; font-size: 0.88rem;">
+            <div><strong>Cliente:</strong> <span id="modal-tec-cliente">-</span></div>
+            <div><strong>Equipo:</strong> <span id="modal-tec-equipo">-</span></div>
+            <div><strong>Falla Reportada:</strong> <span id="modal-tec-motivo" style="color: var(--danger);">-</span></div>
+          </div>
+
+          <!-- Botón de Acción Rápida: Marcar como REPARADO -->
+          <div style="background: var(--success-bg); border: 1.5px dashed var(--success); padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <strong style="color: #065f46; font-size: 0.9rem;">¿Reparación completada?</strong>
+              <div style="font-size: 0.78rem; color: #047857;">Cambia el estado a REPARADO para habilitar el cobro en mostrador.</div>
+            </div>
+            <button type="button" id="btn-quick-marcar-reparado" class="btn btn-success btn-sm">
+              <i class="ph-bold ph-check-circle"></i> Marcar REPARADO
+            </button>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="modal-tec-estado">Estado Actual del Equipo <span class="required">*</span></label>
+            <select id="modal-tec-estado" class="form-control" required>
+              <option value="RECEPCIONADO">RECEPCIONADO (Ingreso reciente)</option>
+              <option value="EN_DIAGNOSTICO">EN DIAGNÓSTICO (En banco de pruebas)</option>
+              <option value="ESPERA_APROBACION">ESPERA DE APROBACIÓN DE PRESUPUESTO</option>
+              <option value="ESPERA_REPUESTOS">ESPERA DE REPUESTOS / COMPONENTES</option>
+              <option value="EN_REPARACION">EN REPARACIÓN (Proceso activo)</option>
+              <option value="REPARADO">REPARADO (Listo para entrega al cliente)</option>
+              <option value="NO_REPARABLE">NO REPARABLE / DEVUELTO</option>
+              <option value="ENTREGADO">ENTREGADO AL CLIENTE</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="modal-tec-diagnostico">Informe de Diagnóstico Técnico</label>
+            <textarea id="modal-tec-diagnostico" class="form-control" placeholder="Fallas encontradas: corto en línea de carga, pasta térmica cristalizada, sectores dañados en SSD..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="modal-tec-solucion">Solución Técnica Aplicada / Trabajo Realizado</label>
+            <textarea id="modal-tec-solucion" class="form-control" placeholder="Trabajo realizado: reparación de mainboard componente, cambio de pasta térmica Artic MX-4, mantenimiento integral..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="ph-bold ph-floppy-disk"></i> Guardar Diagnóstico
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       5. MODAL 3: COBRO Y EMISIÓN DE RECIBO A5 (PASO ÚNICO DE ENTREGA)
+       ========================================================================= -->
+  <div class="modal-backdrop" id="modal-cobro-recibo">
+    <div class="modal-container modal-receipt">
+      <div class="modal-header" style="background: linear-gradient(135deg, #065f46, var(--navy-800));">
+        <h3><i class="ph-bold ph-receipt"></i> Cobro y Emisión de Recibo A5 <span id="cobro-correlativo-preview" style="color: var(--gold-500); font-family: var(--font-mono);">Nº 000402</span></h3>
+        <button type="button" class="btn-close-modal">&times;</button>
+      </div>
+
+      <form id="form-cobro-recibo">
+        <div class="modal-body">
+          <input type="hidden" id="cobro-orden-id">
+          <input type="hidden" id="cobro-recibo-id">
+
+          <div style="background: var(--slate-100); padding: 0.85rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.88rem;">
+            <div><strong>Cliente:</strong> <span id="cobro-cliente-info">-</span></div>
+            <div><strong>Equipo:</strong> <span id="cobro-equipo-info">-</span></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="cobro-concepto">POR CONCEPTO DE: <span class="required">*</span></label>
+            <textarea id="cobro-concepto" class="form-control" required style="min-height: 60px;" placeholder="Descripción del servicio para el comprobante físico A5"></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="col-4 form-group">
+              <label for="cobro-monto-total">Monto Total (S/.) <span class="required">*</span></label>
+              <input type="number" step="0.50" min="1" id="cobro-monto-total" class="form-control" required style="font-weight: 700; font-size: 1.15rem; color: var(--navy-900);">
+            </div>
+
+            <div class="col-4 form-group">
+              <label for="cobro-monto-a-cuenta">A Cuenta Previo (S/.)</label>
+              <input type="number" step="0.50" min="0" id="cobro-monto-a-cuenta" class="form-control" value="0.00">
+            </div>
+
+            <div class="col-4 form-group">
+              <label for="cobro-monto-saldo">Saldo a Pagar (S/.)</label>
+              <input type="text" id="cobro-monto-saldo" class="form-control" readonly style="background: #fee2e2; font-weight: 800; font-size: 1.15rem; color: var(--danger);">
+            </div>
+
+            <div class="col-12 form-group">
+              <label for="cobro-monto-letras">Total en Letras (Autogenerado FASE 3)</label>
+              <input type="text" id="cobro-monto-letras" class="form-control" readonly style="background: var(--slate-100); font-size: 0.85rem; font-weight: 700; color: var(--navy-800);">
+            </div>
+
+            <div class="col-6 form-group">
+              <label for="cobro-metodo-pago">Método de Cancelación</label>
+              <select id="cobro-metodo-pago" class="form-control">
+                <option value="EFECTIVO" selected>Efectivo</option>
+                <option value="YAPE">Yape</option>
+                <option value="PLIN">Plin</option>
+                <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+                <option value="TARJETA">Tarjeta Débito/Crédito</option>
+              </select>
+            </div>
+
+            <div class="col-6 form-group">
+              <label for="cobro-dias-garantia">Garantía Legal</label>
+              <input type="text" id="cobro-dias-garantia" class="form-control" value="90 Días Calendario (Ley Nº 29571)" readonly style="background: var(--slate-100);">
+            </div>
+
+            <div class="col-12" style="margin-top: 0.5rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" id="cobro-marcar-entregado" checked style="width: 18px; height: 18px;">
+                <span>Marcar orden automáticamente como <strong>ENTREGADO</strong> y activar los 90 días de garantía</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Cancelar</button>
+          <button type="submit" class="btn btn-success" style="padding: 0.75rem 1.75rem;">
+            <i class="ph-bold ph-printer"></i> Confirmar Cobro e Imprimir Recibo A5
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Contenedor para Notificaciones Toast -->
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
