@@ -1,7 +1,7 @@
 <?php
 class Cliente extends Model {
     protected $table = 'clientes';
-    protected $primaryKey = 'id_cliente';
+    protected $primaryKey = 'id';
 
     /**
      * @param int|string $id
@@ -10,8 +10,8 @@ class Cliente extends Model {
     public function conEquipos($id) {
         return $this->query(
             "SELECT c.*, COUNT(e.id_equipo) as total_equipos
-             FROM clientes c LEFT JOIN equipos e ON c.id_cliente = e.id_cliente
-             WHERE c.id_cliente = ? GROUP BY c.id_cliente", [$id]
+             FROM clientes c LEFT JOIN equipos e ON c.id = e.id_cliente
+             WHERE c.id = ? GROUP BY c.id", [$id]
         );
     }
 
@@ -29,9 +29,9 @@ class Cliente extends Model {
                     COUNT(DISTINCT e.id_equipo) as total_equipos,
                     COUNT(DISTINCT o.id_orden) as total_ordenes
              FROM clientes c 
-             LEFT JOIN equipos e ON c.id_cliente = e.id_cliente
+             LEFT JOIN equipos e ON c.id = e.id_cliente
              LEFT JOIN ordenes_servicio o ON e.id_equipo = o.id_equipo
-             GROUP BY c.id_cliente
+             GROUP BY c.id
              ORDER BY c.creado_en DESC"
         );
     }

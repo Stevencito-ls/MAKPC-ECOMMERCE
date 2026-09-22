@@ -10,7 +10,7 @@ class Equipo extends Model {
     public function conCliente($id = null) {
         $sql = "SELECT e.*, c.nombres_apellidos as cliente_nombre, c.telefono as cliente_telefono, c.telefono as cliente_tel
                 FROM equipos e 
-                INNER JOIN clientes c ON e.id_cliente = c.id_cliente";
+                INNER JOIN clientes c ON e.id_cliente = c.id";
         if ($id) {
             $sql .= " WHERE e.id_equipo = ?";
             $stmt = $this->db->prepare($sql);

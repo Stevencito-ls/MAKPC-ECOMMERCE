@@ -142,7 +142,38 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
           </div>
         </div>
 
-        <!-- 4. Marcas Populares -->
+        <!-- 4. Período de Garantía -->
+        <div class="kw-sidebar-group">
+          <div class="kw-sidebar-heading">Garantía del Producto</div>
+          <div class="kw-check-list">
+            <label class="kw-check-label">
+              <span>
+                <input type="radio" name="garantia" value="" <?= empty($filtros['garantia']) ? 'checked' : '' ?> onchange="this.form.submit()">
+                Cualquier periodo
+              </span>
+            </label>
+            <label class="kw-check-label">
+              <span>
+                <input type="radio" name="garantia" value="365" <?= (isset($filtros['garantia']) && $filtros['garantia'] === '365') ? 'checked' : '' ?> onchange="this.form.submit()">
+                Garantía Extendida (1 Año a +)
+              </span>
+            </label>
+            <label class="kw-check-label">
+              <span>
+                <input type="radio" name="garantia" value="180" <?= (isset($filtros['garantia']) && $filtros['garantia'] === '180') ? 'checked' : '' ?> onchange="this.form.submit()">
+                Garantía Media (6 meses)
+              </span>
+            </label>
+            <label class="kw-check-label">
+              <span>
+                <input type="radio" name="garantia" value="90" <?= (isset($filtros['garantia']) && $filtros['garantia'] === '90') ? 'checked' : '' ?> onchange="this.form.submit()">
+                Garantía Estándar (90 días)
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 5. Marcas Populares -->
         <div class="kw-sidebar-group">
           <div class="kw-sidebar-heading">Marcas Populares</div>
           <div class="kw-check-list">

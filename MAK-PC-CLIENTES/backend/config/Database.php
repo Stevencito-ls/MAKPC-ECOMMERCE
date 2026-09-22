@@ -14,7 +14,7 @@ class Database {
     private static ?PDO $instance = null;
 
     private static string $host = '127.0.0.1';
-    private static string $dbName = 'makpc_taller_db';
+    private static string $dbName = 'makpc_enterprises_db';
     private static string $user = 'root';
     private static string $pass = '';
     private static string $charset = 'utf8mb4';
@@ -42,6 +42,18 @@ class Database {
      * Obtiene la instancia activa de PDO con configuración optimizada
      */
     public static function getConnection(): PDO {
+        $envPath = __DIR__ . '/../../.env';
+        if (file_exists($envPath)) {
+            $env = parse_ini_file($envPath);
+            if ($env) {
+                self::$host = $env['DB_HOST'] ?? self::$host;
+                self::$port = isset($env['DB_PORT']) ? (int)$env['DB_PORT'] : self::$port;
+                self::$dbName = $env['DB_NAME'] ?? self::$dbName;
+                self::$user = $env['DB_USER'] ?? self::$user;
+                self::$pass = isset($env['DB_PASS']) ? $env['DB_PASS'] : self::$pass;
+            }
+        }
+
         if (self::$instance === null) {
             $dsn = sprintf(
                 "mysql:host=%s;port=%d;dbname=%s;charset=%s",
@@ -69,3 +81,4 @@ class Database {
         return self::$instance;
     }
 }
+

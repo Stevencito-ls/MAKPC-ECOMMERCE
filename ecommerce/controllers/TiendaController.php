@@ -18,7 +18,8 @@ class TiendaController extends Controller
             'precio_max' => $this->input('max', $this->input('precio_max')),
             'busqueda' => trim((string)$this->input('q', $this->input('busqueda', ''))),
             'orden' => $this->input('orden', 'relevancia'),
-            'disponibilidad' => $this->input('stock', $this->input('disponibilidad'))
+            'disponibilidad' => $this->input('stock', $this->input('disponibilidad')),
+            'garantia' => $this->input('garantia')
         ];
 
         $productos = $productoModel->listarConCategoria($filtros);

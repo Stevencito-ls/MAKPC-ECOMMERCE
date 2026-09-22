@@ -39,6 +39,16 @@ class Producto extends Model {
                 $sql .= " AND p.precio_anterior IS NOT NULL AND p.precio_anterior > p.precio";
             }
         }
+        
+        if (!empty($filtros['garantia'])) {
+            if ($filtros['garantia'] === '365') {
+                $sql .= " AND p.dias_garantia >= 365";
+            } elseif ($filtros['garantia'] === '180') {
+                $sql .= " AND p.dias_garantia >= 180 AND p.dias_garantia < 365";
+            } elseif ($filtros['garantia'] === '90') {
+                $sql .= " AND p.dias_garantia <= 90";
+            }
+        }
 
         $orden = $filtros['orden'] ?? 'relevancia';
         switch ($orden) {

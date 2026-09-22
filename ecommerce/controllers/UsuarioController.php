@@ -56,6 +56,7 @@ class UsuarioController extends Controller {
             $this->usuarioModel->create([
                 'usuario' => $usuario,
                 'nombre_completo' => $nombre,
+                'email' => strtolower($usuario) . '@makpc.com.pe',
                 'password_hash' => $hash,
                 'rol' => in_array($rol, ['admin', 'tecnico', 'vendedor']) ? $rol : 'tecnico',
                 'activo' => 1

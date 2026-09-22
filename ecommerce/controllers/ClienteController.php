@@ -43,11 +43,11 @@ class ClienteController extends Controller {
 
             $clienteModel = new Cliente();
             $id = $clienteModel->create([
-                'nombres_apellidos' => $nombres,
+                'nombres_razon_social' => $nombres,
                 'telefono' => $telefono,
                 'telefono_secundario' => trim($this->input('telefono_secundario')) ?: null,
-                'dni' => $dni,
-                'correo' => $correo,
+                'numero_documento' => $dni,
+                'email' => $correo,
                 'direccion' => $direccion,
                 'notas_cliente' => $notas
             ]);
@@ -120,11 +120,11 @@ class ClienteController extends Controller {
             }
 
             $clienteModel->update($id, [
-                'nombres_apellidos' => $nombres,
+                'nombres_razon_social' => $nombres,
                 'telefono' => $telefono,
                 'telefono_secundario' => trim($this->input('telefono_secundario')) ?: null,
-                'dni' => trim($this->input('dni')) ?: null,
-                'correo' => trim($this->input('correo')) ?: null,
+                'numero_documento' => trim($this->input('dni')) ?: null,
+                'email' => trim($this->input('correo')) ?: null,
                 'direccion' => trim($this->input('direccion')) ?: null,
                 'notas_cliente' => trim($this->input('notas_cliente')) ?: null
             ]);

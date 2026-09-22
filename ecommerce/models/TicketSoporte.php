@@ -6,7 +6,7 @@ class TicketSoporte extends Model {
     public function listarConCliente($filtroEstado = null) {
         $sql = "SELECT t.*, c.nombres_apellidos as cliente_nombre_reg
                 FROM tickets_soporte t
-                LEFT JOIN clientes c ON t.id_cliente = c.id_cliente";
+                LEFT JOIN clientes c ON t.id_cliente = c.id";
         $params = [];
         if ($filtroEstado) {
             $sql .= " WHERE t.estado = :estado";

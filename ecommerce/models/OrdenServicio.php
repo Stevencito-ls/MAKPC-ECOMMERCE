@@ -1,14 +1,14 @@
 <?php
 class OrdenServicio extends Model {
     protected $table = 'ordenes_servicio';
-    protected $primaryKey = 'id_orden';
+    protected $primaryKey = 'id';
 
     public function listarCompleto($filtroEstado = null, $busqueda = null) {
         $sql = "SELECT o.*, e.marca, e.modelo, e.tipo_equipo, 
                        c.nombres_apellidos as cliente_nombre, c.telefono as cliente_telefono
                 FROM ordenes_servicio o
                 INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-                INNER JOIN clientes c ON e.id_cliente = c.id_cliente";
+                INNER JOIN clientes c ON e.id_cliente = c.id";
         $params = [];
         $conditions = [];
 
@@ -37,8 +37,8 @@ class OrdenServicio extends Model {
                        c.nombres_apellidos as cliente_nombre
                 FROM ordenes_servicio o
                 INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-                INNER JOIN clientes c ON e.id_cliente = c.id_cliente
-                WHERE o.id_orden = ?";
+                INNER JOIN clientes c ON e.id_cliente = c.id
+                WHERE o.id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
@@ -64,7 +64,7 @@ class OrdenServicio extends Model {
             "SELECT o.*, c.nombres_apellidos as cliente_nombre, CONCAT(e.marca, ' ', e.modelo) as equipo
              FROM ordenes_servicio o
              INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-             INNER JOIN clientes c ON e.id_cliente = c.id_cliente
+             INNER JOIN clientes c ON e.id_cliente = c.id
              ORDER BY o.fecha_recepcion DESC LIMIT $limit"
         );
     }
