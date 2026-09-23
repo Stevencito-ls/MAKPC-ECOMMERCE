@@ -358,9 +358,8 @@ body {
   padding: 0 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  overflow-x: auto;
-  scrollbar-width: none;
+  justify-content: flex-start;
+  gap: 2rem;
 }
 
 .cb-subnav-inner::-webkit-scrollbar {
@@ -3463,3 +3462,269 @@ body {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
+
+/* ========================================================
+   RESPONSIVE DESIGN TOTAL - MAKPC E-COMMERCE
+   ======================================================== */
+
+@media (max-width: 1200px) {
+  .kw-layout-grid, .pb-layout, .cb-studio-layout {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  /* Cabecera Principal */
+  .cb-header-inner {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .cb-brand {
+    flex: 1;
+    min-width: 150px;
+  }
+  .cb-search-wrapper {
+    order: 3;
+    width: 100%;
+    margin-right: 0;
+  }
+  .cb-actions {
+    flex: none;
+    gap: 0.5rem;
+  }
+
+  /* Ocultar textos de botones en cabecera */
+  .cb-btn-builder span,
+  .cb-action-btn > span {
+    display: none !important;
+  }
+  .cb-action-btn small {
+    display: none !important;
+  }
+  .cb-btn-builder, .cb-action-btn {
+    padding: 0.5rem;
+  }
+
+  /* Menú Móvil */
+  .public-mobile-toggle {
+    display: flex !important;
+  }
+  .cb-subnav {
+    display: none !important;
+  }
+
+  /* Catálogo & Grillas de Diseño */
+  .kw-layout-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .kw-sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-right: none;
+    padding-right: 0;
+  }
+  .kw-products-main {
+    width: 100%;
+  }
+  .kw-results-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  /* Armador de PC */
+  .pb-layout, .cb-studio-layout {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .pb-sidebar {
+    position: relative !important;
+    top: auto !important;
+    margin-top: 1rem;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .cb-builder-header-top {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .cb-presets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  }
+
+  /* Footer */
+  .cb-footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Grilla de productos */
+  .kw-products-grid, .cb-deals-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+  .kw-card-body {
+    padding: 0.75rem;
+  }
+  .kw-card-title {
+    font-size: 0.9rem;
+  }
+
+  /* Tablas Responsivas (Carrito / Checkout) */
+  .cb-table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  
+  /* Utilidades del checkout */
+  .checkout-grid {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .cb-footer-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ultra Pequeño */
+  .kw-products-grid, .cb-deals-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .kw-card-img-wrap {
+    height: 200px;
+  }
+  .cb-presets-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 992px) {
+  #fullCartContent, #checkoutGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #fieldsBoleta, #fieldsFactura, #deliveryAddressFields {
+    grid-template-columns: 1fr !important;
+  }
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+@media (max-width: 992px) {
+  div[style*="grid-template-columns:1fr 1.1fr"],
+  div[style*="grid-template-columns: 1fr 1.1fr"],
+  div[style*="grid-template-columns:1fr 1.2fr"],
+  div[style*="grid-template-columns: 1fr 1.2fr"],
+  div[style*="grid-template-columns:1.7fr 1fr"],
+  div[style*="grid-template-columns: 1.7fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Floating Radial Menu */
+.cb-floating-menu {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+}
+
+.cb-float-main {
+  width: 60px;
+  height: 60px;
+  background: var(--cb-gold, #fcc827);
+  color: #090D21;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(252, 200, 39, 0.45);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.cb-float-main:hover, .cb-floating-menu:hover .cb-float-main {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(252, 200, 39, 0.6);
+}
+
+.cb-float-options {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cb-float-item {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #25D366;
+  text-decoration: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(0, 0) scale(0.5);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.cb-float-item:hover {
+  transform: scale(1.15) !important;
+  filter: brightness(1.1);
+}
+
+/* Expanded state on hover */
+.cb-floating-menu:hover .cb-float-options {
+  pointer-events: auto;
+}
+
+.cb-floating-menu:hover .cb-float-item {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 90 degrees inverse fan out (Left, Diagonal-Up-Left, Up) */
+.cb-floating-menu:hover .float-up {
+  transform: translate(0, -65px) scale(1);
+}
+
+.cb-floating-menu:hover .float-diagonal {
+  transform: translate(-50px, -50px) scale(1);
+  background: var(--cb-navy, #090D21);
+  color: #fff;
+}
+
+.cb-floating-menu:hover .float-left {
+  transform: translate(-65px, 0) scale(1);
+}
+/* Hide old whatsapp float if it still exists */
+.cb-whatsapp-float { display: none !important; }

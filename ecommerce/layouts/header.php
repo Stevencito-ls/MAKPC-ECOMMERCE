@@ -40,7 +40,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         <span>Asesoría WhatsApp: +51 975 513 327</span>
       </a>
-      <a href="<?= url('tienda/soporte') ?>" class="cb-topbar-link">
+      <a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/" class="cb-topbar-link">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <span>Rastrear Orden</span>
       </a>
@@ -96,7 +96,7 @@
       </a>
 
       <!-- Rastrear Orden / Soporte -->
-      <a href="<?= url('tienda/soporte') ?>" class="cb-action-btn" title="Consultar avance de reparación">
+      <a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/" class="cb-action-btn" title="Consultar avance de reparación">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
         <span style="display:inline-block;line-height:1.2;">
           <small style="display:block;font-size:0.68rem;opacity:0.75;text-transform:uppercase;">Servicio</small>
@@ -167,57 +167,23 @@
       <div class="cb-megamenu-dropdown" id="megaMenuDropdown">
         <div class="cb-megamenu-grid">
           
+          <?php 
+          if (!class_exists('Categoria')) {
+              require_once __DIR__ . '/../models/Categoria.php';
+          }
+          $categorias_nav = (new Categoria())->activas();
+          foreach ($categorias_nav as $cat): 
+          ?>
           <div class="cb-megamenu-col">
             <h4 class="cb-megamenu-heading">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-              Computadoras & Laptops
+              <?= e($cat['nombre']) ?>
             </h4>
             <ul class="cb-megamenu-links">
-              <li><a href="<?= url('tienda?cat=laptops') ?>">Laptops Gamer RTX</a></li>
-              <li><a href="<?= url('tienda?cat=laptops') ?>">Ultrabooks & Oficina</a></li>
-              <li><a href="<?= url('tienda?cat=pcs-escritorio') ?>">PCs de Escritorio Completas</a></li>
-              <li><a href="<?= url('tienda/crear-pc') ?>" style="color:var(--cb-navy);font-weight:700;">Ensambles a Medida &rarr;</a></li>
+              <li><a href="<?= url('tienda?cat=' . $cat['slug']) ?>">Ver todos los productos en <?= e($cat['nombre']) ?></a></li>
             </ul>
           </div>
-
-          <div class="cb-megamenu-col">
-            <h4 class="cb-megamenu-heading">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
-              Hardware & Componentes
-            </h4>
-            <ul class="cb-megamenu-links">
-              <li><a href="<?= url('tienda?cat=componentes') ?>">Procesadores Intel & AMD</a></li>
-              <li><a href="<?= url('tienda?cat=componentes') ?>">Tarjetas de Video NVIDIA / AMD</a></li>
-              <li><a href="<?= url('tienda?cat=componentes') ?>">Placas Madre ASUS / MSI / Gigabyte</a></li>
-              <li><a href="<?= url('tienda?cat=componentes') ?>">Memorias RAM DDR4 & DDR5</a></li>
-              <li><a href="<?= url('tienda?cat=componentes') ?>">Fuentes de Poder 80+ Gold</a></li>
-            </ul>
-          </div>
-
-          <div class="cb-megamenu-col">
-            <h4 class="cb-megamenu-heading">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-              Monitores & Pantallas
-            </h4>
-            <ul class="cb-megamenu-links">
-              <li><a href="<?= url('tienda?cat=monitores') ?>">Monitores Gaming 144Hz / 165Hz</a></li>
-              <li><a href="<?= url('tienda?cat=monitores') ?>">Monitores QHD 2K & 4K IPS</a></li>
-              <li><a href="<?= url('tienda?cat=monitores') ?>">Monitores Curvos UltraWide</a></li>
-            </ul>
-          </div>
-
-          <div class="cb-megamenu-col">
-            <h4 class="cb-megamenu-heading">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-              Periféricos & Audio
-            </h4>
-            <ul class="cb-megamenu-links">
-              <li><a href="<?= url('tienda?cat=teclados') ?>">Teclados Mecánicos Gamer</a></li>
-              <li><a href="<?= url('tienda?cat=mouse') ?>">Mouse Ópticos & Inalámbricos</a></li>
-              <li><a href="<?= url('tienda?cat=audio') ?>">Audífonos con Sonido 7.1</a></li>
-              <li><a href="<?= url('tienda?cat=accesorios') ?>">Hubs USB-C, Cables & Adaptadores</a></li>
-            </ul>
-          </div>
+          <?php endforeach; ?>
 
           <!-- Columna Promocional MegaMenu -->
           <div class="cb-megamenu-promo">
@@ -236,13 +202,6 @@
     <!-- Enlaces Comerciales Estratégicos (Sin duplicar categorías) -->
     <ul class="cb-cat-links">
       <li>
-        <a href="<?= url('tienda/crear-pc') ?>" class="builder-link <?= (strpos($_GET['url'] ?? '', 'crear-pc') !== false) ? 'active' : '' ?>">
-          <span class="pulse-dot"></span>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-4 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
-          <span>Crea tu PC a Medida</span>
-        </a>
-      </li>
-      <li>
         <a href="<?= url('#ofertas-flash') ?>">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
           <span>Ofertas Flash 24H</span>
@@ -258,18 +217,6 @@
         <a href="<?= url('#marcas-oficiales') ?>">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
           <span>Marcas Oficiales</span>
-        </a>
-      </li>
-      <li>
-        <a href="<?= url('tienda/soporte') ?>" class="<?= (strpos($_GET['url'] ?? '', 'soporte') !== false) ? 'active' : '' ?>">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-          <span>Taller & Reparaciones</span>
-        </a>
-      </li>
-      <li>
-        <a href="<?= url('tienda/soporte') ?>">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <span>Rastrear Orden</span>
         </a>
       </li>
       <li>
@@ -309,11 +256,21 @@
       </a>
     </li>
     <li><a href="<?= url() ?>">Inicio</a></li>
-    <li><a href="<?= url('tienda?cat=laptops') ?>">Laptops & Portátiles</a></li>
-    <li><a href="<?= url('tienda?cat=componentes') ?>">Componentes de Hardware</a></li>
-    <li><a href="<?= url('tienda?cat=monitores') ?>">Monitores & Pantallas</a></li>
-    <li><a href="<?= url('tienda?cat=accesorios') ?>">Periféricos & Accesorios</a></li>
-    <li><a href="<?= url('tienda/soporte') ?>">Servicio Técnico y Taller</a></li>
+    
+    <?php 
+    if (!isset($categorias_nav) && class_exists('Categoria')) {
+        $categorias_nav = (new Categoria())->activas();
+    }
+    if (isset($categorias_nav)):
+        foreach ($categorias_nav as $cat): 
+    ?>
+    <li><a href="<?= url('tienda?cat=' . $cat['slug']) ?>"><?= e($cat['nombre']) ?></a></li>
+    <?php 
+        endforeach; 
+    endif;
+    ?>
+    
+    <li><a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/">Servicio Técnico y Taller</a></li>
     <li><a href="<?= url('landing') ?>" target="_blank" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
   </ul>
 
@@ -332,7 +289,7 @@
       <a href="<?= url('login') ?>" class="btn-drawer-primary">
         Iniciar Sesión / Personal
       </a>
-      <a href="<?= url('tienda/soporte') ?>" class="btn-drawer-outline">
+      <a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/" class="btn-drawer-outline">
         Rastrear Orden de Taller
       </a>
     <?php endif; ?>

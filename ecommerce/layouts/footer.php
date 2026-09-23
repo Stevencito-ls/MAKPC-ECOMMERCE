@@ -78,14 +78,27 @@
   </div>
 </footer>
 
-<!-- Botón Flotante de WhatsApp con SVG -->
-<a href="https://wa.me/51975513327?text=Hola%20MAKPC,%20deseo%20asesoria%20para%20armar%20mi%20PC%20o%20comprar%20componentes" 
-   class="cb-whatsapp-float" 
-   target="_blank" 
-   title="¿Necesitas ayuda? Chatea con un asesor técnico por WhatsApp"
-   aria-label="Chatear por WhatsApp">
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-</a>
+<!-- Menú Flotante Radial -->
+<div class="cb-floating-menu">
+  <button class="cb-float-main" aria-label="Abrir opciones de soporte">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+  </button>
+  
+  <div class="cb-float-options">
+    <!-- Opción 1: Arriba -->
+    <a href="https://wa.me/51975513327?text=Hola%20MAKPC,%20deseo%20asesoria%20tecnica" class="cb-float-item float-up" title="Soporte WhatsApp" target="_blank">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+    </a>
+    <!-- Opción 2: Diagonal -->
+    <a href="<?= url('tienda/soporte') ?>" class="cb-float-item float-diagonal" title="Servicio Técnico">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+    </a>
+    <!-- Opción 3: Izquierda -->
+    <a href="mailto:soporte@makpc.pe" class="cb-float-item float-left" title="Enviar Email">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </a>
+  </div>
+</div>
 
 <!-- Toast Notification Carrito con SVG -->
 <div class="cart-toast-notification" id="cartToast">

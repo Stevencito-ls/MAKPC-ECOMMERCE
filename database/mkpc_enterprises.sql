@@ -12,11 +12,11 @@
 -- Cero riesgo de ruptura, 100% interoperable.
 -- ==============================================================================
 
-CREATE DATABASE IF NOT EXISTS makpc_enterprises_db
+CREATE DATABASE IF NOT EXISTS mkpc_enterprises
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-USE makpc_enterprises_db;
+USE mkpc_enterprises;
 
 SET FOREIGN_KEY_CHECKS = 0;
 

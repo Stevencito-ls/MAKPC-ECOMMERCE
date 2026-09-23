@@ -7,9 +7,8 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
 /* Contenedor principal del menú lateral */
 .lateral-menu-container {
     position: fixed;
-    top: 50%;
-    left: 3rem;
-    transform: translateY(-50%);
+    bottom: 3rem;
+    right: 3rem;
     z-index: 1050;
 }
 
@@ -38,6 +37,7 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
 .lateral-main-btn.lateral-active {
     background: linear-gradient(135deg, var(--light-gray), var(--dark-blue));
     transform: scale(1.05);
+    box-shadow: var(--yellow-shadow);
 }
 
 /* Icono del botón principal */
@@ -57,13 +57,14 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
     position: absolute;
     top: 0;
     left: 0;
+    width: 70px;
+    height: 70px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s var(--transition);
     pointer-events: none;
+    z-index: 1050;
 }
 
 .lateral-social-buttons.lateral-show {
@@ -74,6 +75,9 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
 
 /* Botones individuales */
 .lateral-btn {
+    position: absolute;
+    top: 5px;
+    left: 5px;
     width: 60px;
     height: 60px;
     display: flex;
@@ -88,18 +92,14 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
     outline: none;
     padding: 0;
     text-decoration: none;
-    transform: translateX(-100px);
     opacity: 0;
-    position: relative;
-}
-
-.lateral-social-buttons.lateral-show .lateral-btn {
-    animation: lateralSlideInLeft 0.5s ease forwards;
+    transform: scale(0.5);
 }
 
 .lateral-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.1) !important;
     box-shadow: var(--shadow-medium);
+    z-index: 1052;
 }
 
 /* Botón WhatsApp */
@@ -109,7 +109,7 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
-    margin-top: 90px;
+    margin-top: 0;
 }
 
 /* Botón Facebook */
@@ -119,7 +119,7 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
-    margin-top: 10px;
+    margin-top: 0;
 }
 
 /* Botón TikTok */
@@ -129,61 +129,109 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
     background-size: 60%;
     background-repeat: no-repeat;
     background-position: center;
-    margin-top: 10px;
+    margin-top: 0;
 }
 
-/* Animaciones */
-@keyframes lateralSlideInLeft {
-    0% {
-        transform: translateX(-100px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
+/* Animaciones Radial 90 grados Inverso (Hacia Arriba e Izquierda) */
+.lateral-social-buttons.lateral-show .lateral-whatsapp {
+    animation: radialUp 0.5s ease forwards;
 }
 
-@keyframes lateralSlideOutLeft {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-100px);
-        opacity: 0;
-    }
+.lateral-social-buttons.lateral-show .lateral-facebook {
+    animation: radialDiagonal 0.5s ease forwards;
+    animation-delay: 0.1s;
 }
 
-.lateral-social-buttons.lateral-hide .lateral-btn {
-    animation: lateralSlideOutLeft 10s ease forwards;
+.lateral-social-buttons.lateral-show .lateral-tiktok {
+    animation: radialLeft 0.5s ease forwards;
+    animation-delay: 0.2s;
+}
+
+/* Animaciones de salida */
+.lateral-social-buttons.lateral-hide .lateral-whatsapp {
+    animation: radialOut 0.4s ease forwards;
+}
+
+.lateral-social-buttons.lateral-hide .lateral-facebook {
+    animation: radialOut 0.4s ease forwards;
+}
+
+.lateral-social-buttons.lateral-hide .lateral-tiktok {
+    animation: radialOut 0.4s ease forwards;
+}
+
+@keyframes radialUp {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    100% { transform: translate(0, -85px) scale(1); opacity: 1; }
+}
+
+@keyframes radialDiagonal {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    100% { transform: translate(-70px, -70px) scale(1); opacity: 1; }
+}
+
+@keyframes radialLeft {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    100% { transform: translate(-85px, 0) scale(1); opacity: 1; }
+}
+
+@keyframes radialOut {
+    0% { opacity: 1; }
+    100% { transform: translate(0, 0) scale(0.5); opacity: 0; }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .lateral-menu-container {
-        left: 1rem;
+        right: 1.5rem;
+        bottom: 1.5rem;
     }
-    .lateral-main-btn,
+    .lateral-main-btn {
+        width: 60px;
+        height: 60px;
+    }
     .lateral-btn {
         width: 50px;
         height: 50px;
+        top: 5px;
+        left: 5px;
     }
-    .lateral-menu-icon {
-        font-size: 16px;
+    
+    @keyframes radialUp {
+        100% { transform: translate(0, -75px) scale(1); opacity: 1; }
+    }
+    @keyframes radialDiagonal {
+        100% { transform: translate(-60px, -60px) scale(1); opacity: 1; }
+    }
+    @keyframes radialLeft {
+        100% { transform: translate(-75px, 0) scale(1); opacity: 1; }
     }
 }
 
 @media (max-width: 480px) {
     .lateral-menu-container {
-        left: 0.5rem;
+        right: 1rem;
+        bottom: 1rem;
+    }
+    .lateral-main-btn {
+        width: 55px;
+        height: 55px;
     }
     .lateral-btn {
         width: 45px;
         height: 45px;
+        top: 5px;
+        left: 5px;
     }
-    .lateral-menu-icon {
-        font-size: 14px;
+    
+    @keyframes radialUp {
+        100% { transform: translate(0, -65px) scale(1); opacity: 1; }
+    }
+    @keyframes radialDiagonal {
+        100% { transform: translate(-50px, -50px) scale(1); opacity: 1; }
+    }
+    @keyframes radialLeft {
+        100% { transform: translate(-65px, 0) scale(1); opacity: 1; }
     }
 }
 
@@ -193,31 +241,9 @@ ESTILOS DEL MENÚ LATERAL DE REDES SOCIALES (flotantes.css)
 }
 
 .lateral-show {
-    animation: slideInLeft 0.6s forwards;
+    /* override the old animation if it was applied directly */
 }
 
 .lateral-hide {
-    animation: slideOutLeft 0.4s forwards;
-}
-
-@keyframes slideInLeft {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOutLeft {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
+    /* override the old animation if it was applied directly */
 }
