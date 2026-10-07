@@ -74,6 +74,7 @@ $orderCode = 'PED-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
       
       <!-- COLUMNA IZQUIERDA: FORMULARIO PASO A PASO -->
       <form id="checkoutForm" onsubmit="handleFormSubmit(event)">
+        <?= csrf_field() ?>
         
         <!-- PASO 1: DATOS DE CONTACTO & FACTURACIÓN -->
         <div style="background:#FFFFFF;border-radius:var(--cb-radius);border:1px solid var(--cb-border);box-shadow:var(--cb-shadow-sm);padding:1.75rem;margin-bottom:1.75rem;">
@@ -838,6 +839,7 @@ function ejecutarCargoBackend(tokenId) {
   overlay.style.display = 'flex';
 
   const payload = {
+    csrf_token: document.querySelector('input[name="csrf_token"]').value,
     token_id: tokenId,
     order_code: lastGeneratedOrderCode,
     tipo_comprobante: formData.tipo_comprobante,

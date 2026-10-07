@@ -74,8 +74,8 @@ define('COLOR_LAVENDER', '#E7E9F7');
 define('COLOR_SHADOW', '#8E9394');
 
 // Pasarela de Pagos Culqi (Modo Sandbox de Pruebas)
-define('CULQI_PUBLIC_KEY', getenv('CULQI_PUBLIC_KEY') ?: 'pk_test_b8e5dbad0a0ff6a2');
-define('CULQI_PRIVATE_KEY', getenv('CULQI_PRIVATE_KEY') ?: 'sk_test_615bc063ca8bb233');
+define('CULQI_PUBLIC_KEY', getenv('CULQI_PUBLIC_KEY') ?: '');
+define('CULQI_PRIVATE_KEY', getenv('CULQI_PRIVATE_KEY') ?: '');
 
 // Zona horaria
 date_default_timezone_set('America/Lima');

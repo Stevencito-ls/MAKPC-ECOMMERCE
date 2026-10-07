@@ -105,6 +105,10 @@ class TiendaController extends Controller
             $data = $_POST;
         }
 
+        if (!verify_csrf($data['csrf_token'] ?? null)) {
+            $this->json(['success' => false, 'message' => 'Token de seguridad inválido o sesión expirada.'], 403);
+        }
+
         $tokenId = trim($data['token_id'] ?? '');
         $orderCode = trim($data['order_code'] ?? '') ?: ('PED-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4)));
         $tipoComprobante = strtolower(trim($data['tipo_comprobante'] ?? 'boleta'));
@@ -132,13 +136,28 @@ class TiendaController extends Controller
             $this->json(['success' => false, 'message' => 'El carrito de compras no contiene productos.'], 400);
         }
 
-        // Calcular subtotal real
+        // Validar y calcular subtotal real desde la Base de Datos
         $subtotal = 0;
+        $itemsReales = [];
+        $productoModel = new Producto();
+        
         foreach ($items as $item) {
-            $p = (float)($item['price'] ?? 0);
+            $prodId = (int)($item['id'] ?? 0);
             $q = (int)($item['qty'] ?? 1);
-            $subtotal += ($p * $q);
+            if ($prodId > 0 && $q > 0) {
+                $dbProd = $productoModel->find($prodId);
+                if ($dbProd) {
+                    $precioReal = (float)$dbProd['precio'];
+                    $subtotal += ($precioReal * $q);
+                    
+                    // Sobreescribir el precio del cliente con el precio real del servidor
+                    $item['price'] = $precioReal;
+                    $item['name'] = $dbProd['nombre']; // Opcional, pero más seguro
+                    $itemsReales[] = $item;
+                }
+            }
         }
+        $items = $itemsReales; // Actualizar lista de items con datos validados
 
         // Costo de envío según zona de Tumbes
         $costoEnvio = 0;
@@ -150,7 +169,8 @@ class TiendaController extends Controller
             $costoEnvio = ($subtotal >= 300) ? 0 : 10.00;
         }
 
-        $descuento = (float)($data['descuento'] ?? 0);
+        $descuentoRaw = (float)($data['descuento'] ?? 0);
+        $descuento = max(0, min($descuentoRaw, $subtotal * 0.5));
         $total = max(0, $subtotal - $descuento + $costoEnvio);
         $montoCentavos = (int)round($total * 100);
 
@@ -185,7 +205,7 @@ class TiendaController extends Controller
                 'Authorization: Bearer ' . $culqiPrivateKey
             ],
             CURLOPT_TIMEOUT => 25,
-            CURLOPT_SSL_VERIFYPEER => false
+            CURLOPT_SSL_VERIFYPEER => true
         ]);
 
         $responseRaw = curl_exec($ch);
@@ -193,7 +213,7 @@ class TiendaController extends Controller
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        $isSandboxMode = str_starts_with($culqiPrivateKey, 'sk_test_') || str_starts_with($tokenId, 'tkn_test_') || str_starts_with($tokenId, 'offline_');
+        $isOfflineTest = str_starts_with($tokenId, 'offline_');
 
         if ($responseRaw) {
             $res = json_decode($responseRaw, true);
@@ -202,11 +222,11 @@ class TiendaController extends Controller
                 $authCode = $res['reference_code'] ?? ($res['outcome']['user_message'] ?? ('AUT-' . strtoupper(substr(uniqid(), -6))));
                 $cardBrand = $res['source']['iin']['card_brand'] ?? ($res['source']['brand'] ?? 'YAPE');
                 $pagoAprobado = true;
-            } elseif ($isSandboxMode) {
-                // En modo Sandbox / Pruebas, autorizar la simulación si la cuenta de prueba de Culqi está en verificación
+            } elseif ($isOfflineTest) {
+                // Modo simulado explícito (offline/contraentrega/transferencia simulada)
                 $chargeId = 'chr_test_' . substr(md5(uniqid()), 0, 16);
                 $authCode = 'AUTH-' . rand(100000, 999999);
-                $cardBrand = (stripos($tokenId, 'yape') !== false) ? 'YAPE SANDBOX' : 'TARJETA VISA SANDBOX';
+                $cardBrand = (stripos($tokenId, 'yape') !== false) ? 'YAPE SANDBOX' : 'OFFLINE TEST';
                 $pagoAprobado = true;
             } else {
                 $errorMsg = $res['user_message'] ?? ($res['merchant_message'] ?? 'La transacción fue denegada por la pasarela de pagos.');
@@ -216,11 +236,10 @@ class TiendaController extends Controller
                 ], 400);
             }
         } else {
-            // Fallback de Sandbox si no hay conectividad a api.culqi.com en entorno local
-            if ($isSandboxMode) {
+            if ($isOfflineTest) {
                 $chargeId = 'chr_test_' . substr(md5(uniqid()), 0, 16);
                 $authCode = 'AUTH-' . rand(100000, 999999);
-                $cardBrand = (stripos($tokenId, 'yape') !== false) ? 'YAPE SANDBOX' : 'TARJETA VISA SANDBOX';
+                $cardBrand = 'OFFLINE TEST';
                 $pagoAprobado = true;
             } else {
                 $this->json([
@@ -1121,7 +1140,7 @@ class TiendaController extends Controller
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_TIMEOUT => 5,
-                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYPEER => true,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) MAKPC/1.0'
             ]);
@@ -1168,7 +1187,7 @@ class TiendaController extends Controller
                 CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_TIMEOUT => 5,
-                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYPEER => true,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) MAKPC/1.0'
             ]);

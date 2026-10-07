@@ -34,20 +34,8 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/config/app.php';
 require_once __DIR__ . '/config/database.php';
 
-// 2. Cargar Núcleo MVC
-require_once __DIR__ . '/core/Database.php';
-require_once __DIR__ . '/core/Model.php';
-require_once __DIR__ . '/core/Controller.php';
-
-// 3. Autocargar Modelos de Ecommerce MAKPC
-foreach (glob(__DIR__ . '/models/*.php') as $modelFile) {
-    require_once $modelFile;
-}
-
-// 4. Controladores
-require_once __DIR__ . '/controllers/TiendaController.php';
-require_once __DIR__ . '/controllers/AuthController.php';
-require_once __DIR__ . '/controllers/PanelController.php';
+// 2. Autocargar Clases de Ecommerce MAKPC (Composer)
+require_once __DIR__ . '/vendor/autoload.php';
 
 $tienda = new TiendaController();
 
@@ -117,7 +105,6 @@ switch ($action) {
         
         // Determinar si es una ruta administrativa
         if (($sub === '' || in_array($sub, $adminActions)) && isLoggedIn() && hasRole(['admin', 'vendedor'])) {
-            require_once __DIR__ . '/controllers/ProductoController.php';
             $controller = new ProductoController();
             $method = $sub === '' ? 'index' : $sub;
             $id = isset($parts[2]) ? $parts[2] : ($_GET['id'] ?? null);
@@ -151,7 +138,6 @@ switch ($action) {
             'inventario' => 'InventarioController'
         ];
         $controllerName = $controllersMap[$action];
-        require_once __DIR__ . '/controllers/' . $controllerName . '.php';
         $controller = new $controllerName();
         $method = $param ?: 'index';
         if (!method_exists($controller, $method)) {

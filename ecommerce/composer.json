@@ -1,0 +1,11 @@
+{
+    "name": "makpc/ecommerce",
+    "description": "MAKPC Ecommerce Platform",
+    "autoload": {
+        "classmap": [
+            "core/",
+            "models/",
+            "controllers/"
+        ]
+    }
+}

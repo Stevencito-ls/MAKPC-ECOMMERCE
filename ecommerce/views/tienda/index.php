@@ -914,7 +914,7 @@ if (!empty($ofertasActivas) && !empty($productos)) {
 
   // Temporizador Flash Deals
   (function() {
-    const countDownDate = <?php if(!empty($ofertasFin)): ?>new Date("<?= date('Y-m-d\TH:i:s', strtotime($ofertasFin)) ?>").getTime()<?php else: ?>0<?php endif; ?>;
+    const countDownDate = <?php if(!empty($ofertasFin)): ?><?= strtotime($ofertasFin) * 1000 ?><?php else: ?>0<?php endif; ?>;
 
     const hEl = document.getElementById('flashTimerHours');
     const mEl = document.getElementById('flashTimerMinutes');

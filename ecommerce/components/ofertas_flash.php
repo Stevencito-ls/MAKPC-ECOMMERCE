@@ -19,12 +19,11 @@ $flashProducts = array_slice($productos ?? [], 0, 4);
         <span class="deals-modal-badge">Precios Cyber Online</span>
       </div>
 
-      <!-- Temporizador Regresivo -->
-      <div class="deals-modal-timer">
+      <div class="deals-modal-timer" data-endtime="<?= strtotime($ofertasFin ?? date('Y-m-d 23:59:59')) ?>">
         <span>TERMINA EN:</span>
-        <span class="deals-timer-box" id="flashTimerHours">08</span> :
-        <span class="deals-timer-box" id="flashTimerMinutes">42</span> :
-        <span class="deals-timer-box" id="flashTimerSeconds">19</span>
+        <span class="deals-timer-box" id="flashTimerHours">--</span> :
+        <span class="deals-timer-box" id="flashTimerMinutes">--</span> :
+        <span class="deals-timer-box" id="flashTimerSeconds">--</span>
       </div>
 
       <!-- Botón de Cerrar Modal -->
@@ -53,12 +52,19 @@ $flashProducts = array_slice($productos ?? [], 0, 4);
               </h3>
 
               <div class="cb-stock-meter-wrap">
+                <?php
+                  $stockActual = (int)$fp['stock'];
+                  $vendidos = (int)$fp['veces_vendido'];
+                  $totalUnidades = $stockActual + $vendidos;
+                  if ($totalUnidades === 0) { $totalUnidades = 1; }
+                  $porcentaje = ($vendidos / $totalUnidades) * 100;
+                ?>
                 <div class="cb-stock-meter-track">
-                  <div class="cb-stock-meter-bar" style="width:75%;"></div>
+                  <div class="cb-stock-meter-bar" style="width:<?= round($porcentaje) ?>%;"></div>
                 </div>
                 <div class="cb-stock-meter-text">
-                  <span>Vendidos: 15 / 20</span>
-                  <span>¡Últimas 5 unidades!</span>
+                  <span>Vendidos: <?= $vendidos ?> / <?= $totalUnidades ?></span>
+                  <span>¡Últimas <?= $stockActual ?> unidades!</span>
                 </div>
               </div>
 
@@ -110,3 +116,35 @@ $flashProducts = array_slice($productos ?? [], 0, 4);
 
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const timerContainer = document.querySelector('.deals-modal-timer');
+  if (!timerContainer) return;
+  const endTimeStr = timerContainer.getAttribute('data-endtime');
+  if (!endTimeStr) return;
+  
+  const countDownDate = new Date(Number(endTimeStr) * 1000).getTime();
+  
+  const timerInterval = setInterval(function() {
+    const now = new Date().getTime();
+    const distance = countDownDate - now;
+    
+    if (distance < 0) {
+      clearInterval(timerInterval);
+      document.getElementById("flashTimerHours").innerText = "00";
+      document.getElementById("flashTimerMinutes").innerText = "00";
+      document.getElementById("flashTimerSeconds").innerText = "00";
+      return;
+    }
+    
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    document.getElementById("flashTimerHours").innerText = hours.toString().padStart(2, '0');
+    document.getElementById("flashTimerMinutes").innerText = minutes.toString().padStart(2, '0');
+    document.getElementById("flashTimerSeconds").innerText = seconds.toString().padStart(2, '0');
+  }, 1000);
+});
+</script>

@@ -310,11 +310,11 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
       </div>
 
       <!-- Temporizador Regresivo -->
-      <div class="deals-modal-timer">
+      <div class="deals-modal-timer" data-endtime="<?= strtotime($ofertasFin ?? date('Y-m-d 23:59:59')) ?>">
         <span>TERMINA EN:</span>
-        <span class="deals-timer-box" id="flashTimerHours">08</span> :
-        <span class="deals-timer-box" id="flashTimerMinutes">42</span> :
-        <span class="deals-timer-box" id="flashTimerSeconds">19</span>
+        <span class="deals-timer-box" id="flashTimerHours">--</span> :
+        <span class="deals-timer-box" id="flashTimerMinutes">--</span> :
+        <span class="deals-timer-box" id="flashTimerSeconds">--</span>
       </div>
 
       <!-- Botón de Cerrar Modal -->
@@ -344,12 +344,19 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
               </h3>
 
               <div class="cb-stock-meter-wrap">
+                <?php
+                  $stockActual = (int)$fp['stock'];
+                  $vendidos = (int)$fp['veces_vendido'];
+                  $totalUnidades = $stockActual + $vendidos;
+                  if ($totalUnidades === 0) { $totalUnidades = 1; }
+                  $porcentaje = ($vendidos / $totalUnidades) * 100;
+                ?>
                 <div class="cb-stock-meter-track">
-                  <div class="cb-stock-meter-bar" style="width:75%;"></div>
+                  <div class="cb-stock-meter-bar" style="width:<?= round($porcentaje) ?>%;"></div>
                 </div>
                 <div class="cb-stock-meter-text">
-                  <span>Vendidos: 15 / 20</span>
-                  <span>¡Últimas 5 unidades!</span>
+                  <span>Vendidos: <?= $vendidos ?> / <?= $totalUnidades ?></span>
+                  <span>¡Últimas <?= $stockActual ?> unidades!</span>
                 </div>
               </div>
 
@@ -655,23 +662,32 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
 
   // Temporizador Flash Deals
   (function() {
-    let hours = 8, minutes = 42, seconds = 19;
+    const timerContainer = document.querySelector('.deals-modal-timer');
+    if (!timerContainer) return;
+    const endTimeStr = timerContainer.getAttribute('data-endtime');
+    if (!endTimeStr) return;
+    
+    const countDownDate = new Date(Number(endTimeStr) * 1000).getTime();
     const hEl = document.getElementById('flashTimerHours');
     const mEl = document.getElementById('flashTimerMinutes');
     const sEl = document.getElementById('flashTimerSeconds');
     
     if (hEl && mEl && sEl) {
       setInterval(() => {
-        seconds--;
-        if (seconds < 0) {
-          seconds = 59;
-          minutes--;
-          if (minutes < 0) {
-            minutes = 59;
-            hours--;
-            if (hours < 0) hours = 12;
-          }
+        const now = new Date().getTime();
+        const distance = countDownDate - now;
+
+        if (distance < 0) {
+          hEl.textContent = '00';
+          mEl.textContent = '00';
+          sEl.textContent = '00';
+          return;
         }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
         hEl.textContent = String(hours).padStart(2, '0');
         mEl.textContent = String(minutes).padStart(2, '0');
         sEl.textContent = String(seconds).padStart(2, '0');
