@@ -156,8 +156,17 @@ class UsuarioController extends Controller {
             $this->redirect('usuario');
         }
 
-        $this->usuarioModel->delete($id);
-        setFlash('success', "Usuario '{$user['nombre_completo']}' eliminado exitosamente.");
+        try {
+            $this->usuarioModel->delete($id);
+            setFlash('success', "Usuario '{$user['nombre_completo']}' eliminado exitosamente.");
+        } catch (PDOException $e) {
+            // Error 23000 es violación de integridad referencial (llaves foráneas)
+            if ($e->getCode() == '23000') {
+                setFlash('danger', "No se puede eliminar al usuario '{$user['nombre_completo']}' porque tiene registros asociados en el sistema (ventas, kardex, órdenes). Por favor, usa el botón 'Desactivar' en su lugar.");
+            } else {
+                setFlash('danger', "Error de base de datos al eliminar: " . $e->getMessage());
+            }
+        }
         $this->redirect('usuario');
     }
 }
