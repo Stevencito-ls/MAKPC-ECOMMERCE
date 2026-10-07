@@ -259,4 +259,119 @@ class ProductoController extends Controller {
 
         return null;
     }
+
+    /**
+     * Exportar plantilla CSV (Excel) para carga masiva
+     */
+    public function exportarPlantilla() {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=plantilla_productos.csv');
+        
+        // Agregar BOM para que Excel lea UTF-8 correctamente
+        echo "\xEF\xBB\xBF";
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, [
+            'nombre', 'id_categoria', 'marca', 'descripcion', 
+            'precio', 'precio_anterior', 'stock', 'dias_garantia', 
+            'imagen_preset', 'etiqueta', 'destacado', 'activo'
+        ]);
+        
+        // Fila de ejemplo
+        fputcsv($output, [
+            'Laptop Gamer RTX 3060', '1', 'Asus', 'Laptop de alto rendimiento', 
+            '3500.00', '4000.00', '10', '365', 
+            'prod_1.jpg', 'OFERTA', '1', '1'
+        ]);
+        
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * Importar productos masivamente desde CSV (Plantilla Excel)
+     */
+    public function importarCSV() {
+        if (!$this->isPost()) {
+            $this->redirect('producto');
+        }
+
+        if (!verify_csrf($this->input('csrf_token'))) {
+            setFlash('danger', 'Token de seguridad expirado.');
+            $this->redirect('producto');
+        }
+
+        if (!isset($_FILES['archivo_csv']) || $_FILES['archivo_csv']['error'] !== UPLOAD_ERR_OK) {
+            setFlash('danger', 'No se ha seleccionado un archivo CSV válido.');
+            $this->redirect('producto');
+        }
+
+        $fileTmp = $_FILES['archivo_csv']['tmp_name'];
+        $handle = fopen($fileTmp, 'r');
+        if ($handle === false) {
+            setFlash('danger', 'No se pudo leer el archivo CSV.');
+            $this->redirect('producto');
+        }
+
+        // Remover posible BOM
+        $bom = fread($handle, 3);
+        if ($bom !== "\xEF\xBB\xBF") {
+            rewind($handle);
+        }
+
+        $header = fgetcsv($handle);
+        if (!$header || count($header) < 10) {
+            setFlash('danger', 'El archivo no tiene el formato correcto o faltan columnas.');
+            fclose($handle);
+            $this->redirect('producto');
+        }
+
+        $importados = 0;
+        $errores = 0;
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (count($row) < 12) continue; // Ignorar filas vacías o incompletas
+
+            $nombre = trim($row[0]);
+            $idCategoria = (int)$row[1];
+            $precio = (float)$row[4];
+
+            if (empty($nombre) || $idCategoria <= 0 || $precio <= 0) {
+                $errores++;
+                continue;
+            }
+
+            // Slug
+            $slugBase = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $nombre), '-'));
+            $slug = $slugBase;
+            $i = 1;
+            while ($this->productoModel->slugExiste($slug)) {
+                $slug = "{$slugBase}-{$i}";
+                $i++;
+            }
+
+            $this->productoModel->create([
+                'nombre' => $nombre,
+                'id_categoria' => $idCategoria,
+                'slug' => $slug,
+                'marca' => trim($row[2]) ?: 'MAKPC',
+                'descripcion' => trim($row[3]),
+                'precio' => $precio,
+                'precio_anterior' => !empty($row[5]) ? (float)$row[5] : null,
+                'stock' => (int)$row[6],
+                'dias_garantia' => (int)$row[7],
+                'imagen' => trim($row[8]) ?: 'prod_1.jpg',
+                'etiqueta' => trim($row[9]) ?: null,
+                'destacado' => (int)$row[10] ? 1 : 0,
+                'activo' => (int)$row[11] ? 1 : 0,
+                'calificacion' => 5.0,
+                'num_resenas' => 1
+            ]);
+            $importados++;
+        }
+
+        fclose($handle);
+        setFlash('success', "Importación masiva completada: {$importados} productos importados, {$errores} omitidos.");
+        $this->redirect('producto');
+    }
 }
