@@ -172,6 +172,14 @@ if ($flash): ?>
                     <svg style="width:12px;height:12px;fill:currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
                     <span><?= e($p['comprobante_numero']) ?></span>
                   </a>
+                <?php elseif (!empty($p['ruta_comprobante_pdf'])): ?>
+                  <a href="<?= url($p['ruta_comprobante_pdf']) ?>" 
+                     class="badge badge-yellow" 
+                     style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:800;"
+                     title="Ver Boleta PDF Subida">
+                    <svg style="width:12px;height:12px;fill:currentColor;" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    <span>Manual PDF</span>
+                  </a>
                 <?php else: ?>
                   <span style="font-size:0.75rem;color:var(--color-gray-500);font-style:italic;">Sin Comprobante</span>
                 <?php endif; ?>

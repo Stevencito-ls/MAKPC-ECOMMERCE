@@ -284,6 +284,7 @@ CREATE TABLE pedidos_tienda (
     culqi_charge_id VARCHAR(100) NULL,
     culqi_authorization_code VARCHAR(100) NULL,
     culqi_brand VARCHAR(50) NULL,
+    ruta_comprobante_pdf VARCHAR(255) NULL,
     
     items_json JSON NOT NULL,
     
