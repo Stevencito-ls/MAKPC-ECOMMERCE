@@ -39,6 +39,10 @@ class CajaController extends Controller {
 
     public function abrir() {
         if ($this->isPost()) {
+            if (!verify_csrf($this->input('csrf_token'))) {
+                setFlash('danger', 'Token CSRF inválido.');
+                $this->redirect('caja');
+            }
             if ($this->cajaModel->getCajaAbierta()) {
                 setFlash('danger', 'Ya existe una caja abierta.');
                 $this->redirect('caja');
@@ -60,6 +64,10 @@ class CajaController extends Controller {
 
     public function cerrar() {
         if ($this->isPost()) {
+            if (!verify_csrf($this->input('csrf_token'))) {
+                setFlash('danger', 'Token CSRF inválido.');
+                $this->redirect('caja');
+            }
             $cajaAbierta = $this->cajaModel->getCajaAbierta();
             if (!$cajaAbierta) {
                 setFlash('danger', 'No hay ninguna caja abierta.');
@@ -86,6 +94,10 @@ class CajaController extends Controller {
 
     public function movimiento() {
         if ($this->isPost()) {
+            if (!verify_csrf($this->input('csrf_token'))) {
+                setFlash('danger', 'Token CSRF inválido.');
+                $this->redirect('caja');
+            }
             $cajaAbierta = $this->cajaModel->getCajaAbierta();
             if (!$cajaAbierta) {
                 setFlash('danger', 'Debes abrir una caja primero.');
@@ -93,6 +105,10 @@ class CajaController extends Controller {
             }
 
             $tipo = $this->input('tipo'); // INGRESO, EGRESO
+            if (!in_array($tipo, ['INGRESO', 'EGRESO'])) {
+                setFlash('danger', 'Tipo de movimiento inválido.');
+                $this->redirect('caja');
+            }
             $monto = (float)$this->input('monto');
             $concepto = $this->input('concepto');
             $metodo_pago = $this->input('metodo_pago', 'EFECTIVO');

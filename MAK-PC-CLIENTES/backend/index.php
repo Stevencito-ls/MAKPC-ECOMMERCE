@@ -8,7 +8,13 @@ declare(strict_types=1);
  */
 
 // 1. Manejo de CORS y Preflight OPTIONS
-header('Access-Control-Allow-Origin: *');
+$origin = $_SERVER['HTTP_ORIGIN'] ?? (isset($_SERVER['HTTP_HOST']) ? (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] : '');
+$allowedOrigins = ['https://www.makpc.com', 'https://makpc.com', 'http://localhost', 'http://localhost:8000', 'http://localhost:3000', 'http://127.0.0.1'];
+
+if (in_array($origin, $allowedOrigins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+}
+header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
@@ -168,8 +174,5 @@ try {
     }
 
 } catch (Throwable $e) {
-    Response::serverError("Excepción no controlada en el servidor: " . $e->getMessage(), [
-        'file' => $e->getFile(),
-        'line' => $e->getLine()
-    ]);
+    Response::serverError("Excepción no controlada en el servidor.");
 }

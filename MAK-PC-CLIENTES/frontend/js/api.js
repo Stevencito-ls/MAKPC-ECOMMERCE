@@ -73,6 +73,7 @@ const API = (() => {
     };
 
     const config = {
+      credentials: 'include',
       ...options,
       headers: {
         ...defaultHeaders,
@@ -87,10 +88,7 @@ const API = (() => {
       `${window.location.origin}/api.php`,
       `${window.location.origin}/MAK-PC/frontend/api.php`,
       `${window.location.origin}/MAK-PC/backend/index.php`,
-      `${window.location.origin}/backend/index.php`,
-      'http://localhost/api.php',
-      'http://localhost/MAK-PC/backend/index.php',
-      'http://localhost:8000'
+      `${window.location.origin}/backend/index.php`
     ];
     // Eliminar duplicados
     const uniqueCandidates = [...new Set(candidateBases)];

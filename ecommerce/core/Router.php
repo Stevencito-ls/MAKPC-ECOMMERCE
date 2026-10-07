@@ -127,11 +127,6 @@ class Router {
     }
 
     private function loadModels() {
-        $modelDir = __DIR__ . '/../models/';
-        if (is_dir($modelDir)) {
-            foreach (glob($modelDir . '*.php') as $model) {
-                require_once $model;
-            }
-        }
+        // Redundante por autoloader PSR-4 en app.php
     }
 }

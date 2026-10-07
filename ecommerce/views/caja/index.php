@@ -29,6 +29,7 @@
             <p style="color:#64748b;margin-bottom:1.5rem;">Debe abrir la caja para registrar transacciones.</p>
             
             <form action="<?= url('caja/abrir') ?>" method="POST" style="max-width:300px;margin:0 auto;text-align:left;">
+              <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
               <div class="form-group">
                 <label>Monto de Apertura (Efectivo Base) S/</label>
                 <input type="number" step="0.10" name="monto_apertura" class="form-control" value="0.00" required>
@@ -60,6 +61,7 @@
           </div>
 
           <form action="<?= url('caja/cerrar') ?>" method="POST" onsubmit="return confirm('¿Está seguro de cerrar la caja actual?');" style="background:#f8fafc;padding:1rem;border-radius:8px;border:1px solid #e2e8f0;">
+            <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
             <h4 style="margin-top:0;margin-bottom:1rem;font-size:0.95rem;color:#334155;">Cerrar Caja</h4>
             <div style="display:flex;gap:1rem;align-items:flex-end;">
               <div class="form-group" style="margin:0;flex:1;">
@@ -131,6 +133,7 @@
     </div>
     <div class="card-body">
       <form action="<?= url('caja/movimiento') ?>" method="POST">
+        <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
         <input type="hidden" name="tipo" id="inputMovTipo">
         
         <div class="form-group">

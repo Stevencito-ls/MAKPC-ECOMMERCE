@@ -23,7 +23,7 @@ class PanelController extends Controller {
 
         // Métricas de inventario comercial
         $totalProductos = $productoModel->count();
-        $productosActivos = $productoModel->count('activo = 1');
+        $productosActivos = $productoModel->count(['activo' => 1]);
         $stockBajo = $productoModel->contarPorStock('bajo');
         $agotados = $productoModel->contarPorStock('agotado');
 
@@ -36,7 +36,7 @@ class PanelController extends Controller {
         $totalPiezasAuditadas = $detalleModel->count();
 
         $usuarioModel = new Usuario();
-        $totalUsuarios = $usuarioModel->count('activo = 1');
+        $totalUsuarios = $usuarioModel->count(['activo' => 1]);
 
         $this->view('panel/index', [
             'title' => 'Panel de Control | MAKPC Enterprises',

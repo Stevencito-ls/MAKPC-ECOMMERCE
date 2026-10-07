@@ -20,7 +20,10 @@ class Model {
      */
     public function all($orderBy = null) {
         $sql = "SELECT * FROM {$this->table}";
-        if ($orderBy) $sql .= " ORDER BY $orderBy";
+        if ($orderBy) {
+            $orderBy = preg_replace('/[^a-zA-Z0-9_,.\s]/', '', $orderBy);
+            $sql .= " ORDER BY $orderBy";
+        }
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
@@ -100,7 +103,25 @@ class Model {
      */
     public function count($where = null, $params = []) {
         $sql = "SELECT COUNT(*) as total FROM {$this->table}";
-        if ($where) $sql .= " WHERE $where";
+        
+        if (is_array($where)) {
+            $conditions = [];
+            $params = [];
+            foreach ($where as $col => $val) {
+                $conditions[] = "$col = ?";
+                $params[] = $val;
+            }
+            if ($conditions) {
+                $sql .= " WHERE " . implode(' AND ', $conditions);
+            }
+        } elseif (is_string($where)) {
+            // Mitigación básica para raw strings
+            if (preg_match('/;|--|\/\*/', $where)) {
+                throw new Exception("SQL Invalido en count()");
+            }
+            $sql .= " WHERE $where";
+        }
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return (int)($stmt->fetch()['total'] ?? 0);

@@ -140,11 +140,13 @@ class ReciboService {
             $reciboId = (int)$this->db->lastInsertId();
 
             // Actualizar último correlativo en la empresa
-            $this->db->exec("UPDATE configuracion_empresa SET ultimo_correlativo_recibo = {$nuevoCorrelativo} WHERE id = 1");
+            $stmtConf = $this->db->prepare("UPDATE configuracion_empresa SET ultimo_correlativo_recibo = :corr WHERE id = 1");
+            $stmtConf->execute([':corr' => $nuevoCorrelativo]);
 
             // Si el pago es total o si se solicita, marcar la orden como ENTREGADO
             if (!empty($data['marcar_entregado']) && $data['marcar_entregado'] === true) {
-                $this->db->exec("UPDATE ordenes_servicio SET estado = 'ENTREGADO', fecha_entrega = NOW() WHERE id = {$ordenId}");
+                $stmtOrdUpd = $this->db->prepare("UPDATE ordenes_servicio SET estado = 'ENTREGADO', fecha_entrega = NOW() WHERE id = :id");
+                $stmtOrdUpd->execute([':id' => $ordenId]);
             }
 
             $this->db->commit();
@@ -215,7 +217,8 @@ class ReciboService {
 
             if ($marcarOrdenEntregada && $nuevoEstadoPago === 'CANCELADO_TOTAL') {
                 $ordenId = (int)$recibo['orden_id'];
-                $this->db->exec("UPDATE ordenes_servicio SET estado = 'ENTREGADO', fecha_entrega = NOW() WHERE id = {$ordenId}");
+                $stmtOrdUpd2 = $this->db->prepare("UPDATE ordenes_servicio SET estado = 'ENTREGADO', fecha_entrega = NOW() WHERE id = :id");
+                $stmtOrdUpd2->execute([':id' => $ordenId]);
             }
 
             $this->db->commit();

@@ -282,14 +282,18 @@ class TiendaController extends Controller
             'items_json' => json_encode($items, JSON_UNESCAPED_UNICODE)
         ]);
 
-        // 2. Descontar Stock en Productos
+        // 2. Descontar Stock en Productos y Registrar en Kardex
         $pdo = $pedidoModel->getPdo();
+        $kardexModel = new Kardex();
         foreach ($items as $it) {
             $prodId = (int)($it['id'] ?? 0);
             $qty = (int)($it['qty'] ?? 1);
             if ($prodId > 0 && $qty > 0) {
                 $stStmt = $pdo->prepare("UPDATE productos SET stock = GREATEST(0, stock - :qty1), veces_vendido = veces_vendido + :qty2 WHERE id_producto = :id");
                 $stStmt->execute([':qty1' => $qty, ':qty2' => $qty, ':id' => $prodId]);
+                
+                // Registrar movimiento en Kardex por la salida de venta
+                $kardexModel->registrarMovimiento($prodId, 'SALIDA', $qty, "Venta E-Commerce - Pedido {$orderCode}");
             }
         }
 

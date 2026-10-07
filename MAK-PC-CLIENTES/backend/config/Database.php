@@ -13,9 +13,9 @@ use PDOException;
 class Database {
     private static ?PDO $instance = null;
 
-    private static string $host = '127.0.0.1';
-    private static string $dbName = 'makpc_enterprises_db';
-    private static string $user = 'root';
+    private static string $host = '';
+    private static string $dbName = '';
+    private static string $user = '';
     private static string $pass = '';
     private static string $charset = 'utf8mb4';
     private static int $port = 3306;
@@ -73,7 +73,8 @@ class Database {
             try {
                 self::$instance = new PDO($dsn, self::$user, self::$pass, $options);
             } catch (PDOException $e) {
-                Response::json(500, false, null, "Error de conexión a la base de datos: " . $e->getMessage());
+                // No exponer $e->getMessage() en producción
+                Response::json(500, false, null, "Error de conexión a la base de datos.");
                 exit;
             }
         }

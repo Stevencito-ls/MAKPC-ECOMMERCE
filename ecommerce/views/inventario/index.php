@@ -49,7 +49,8 @@
             <td><strong>#<?= $p['id_producto'] ?></strong></td>
             <td>
               <div style="display:flex;align-items:center;gap:10px;">
-                <img src="<?= e($p['imagen']) ?>" alt="img" style="width:40px;height:40px;object-fit:cover;border-radius:4px;background:#f1f5f9;">
+                <?php $imgName = !empty($p['imagen']) && !str_contains($p['imagen'], '://') ? $p['imagen'] : 'prod_1.jpg'; ?>
+                <img src="<?= asset('img/productos/' . $imgName) ?>" alt="img" style="width:40px;height:40px;object-fit:cover;border-radius:4px;background:#f1f5f9;">
                 <span><?= e($p['nombre']) ?></span>
               </div>
             </td>
@@ -85,6 +86,7 @@
       
       <form id="formStock" method="POST" action="">
         <div class="form-group">
+          <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
           <label>Cantidad a Ingresar</label>
           <input type="number" name="cantidad" class="form-control" required min="1" value="1" id="inputCantidad">
         </div>
