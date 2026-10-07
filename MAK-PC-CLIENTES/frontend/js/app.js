@@ -78,23 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Inicialización del sistema
    */
   const init = async () => {
-    // 1. Usuario Genérico por Defecto (Taller)
-    const currentUser = { id: 1, nombre_completo: 'Taller Local', rol: 'ADMIN' };
-
-    // 2. Actualizar UI con datos del usuario
-    const badge = document.getElementById('current-user-badge');
-    if (badge) {
-      const avatar = badge.querySelector('.user-avatar');
-      const name = badge.querySelector('.user-name');
-      const role = badge.querySelector('.user-role');
-      
-      if (avatar) avatar.textContent = 'TL';
-      if (name) name.textContent = 'Taller';
-      if (role) role.textContent = 'Operador Local';
-    }
-
-    // 3. Variables Globales (para usar en otras funciones)
-    window.currentUser = currentUser;
+    // El usuario global (window.currentUser) y la UI ahora vienen directamente desde PHP SSO
 
     setupEventListeners();
     await checkApiHealth();
@@ -106,6 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * Abrir Modal de Recepción Express
    */
   const abrirNuevoIngreso = () => {
+    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'vendedor') {
+      alert("Acceso Denegado: Solo los Administradores o Vendedores pueden recepcionar nuevos equipos.");
+      return;
+    }
     if (dom.formRecepcion) {
       dom.formRecepcion.reset();
     }
@@ -510,6 +498,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * Acción 1: Atender Orden / Diagnóstico Técnico
    */
   const atenderOrden = async (ordenId) => {
+    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'tecnico') {
+      alert("Acceso Denegado: Solo los Administradores o Técnicos pueden atender y diagnosticar equipos.");
+      return;
+    }
     try {
       const res = await API.getOrdenById(ordenId);
       const ord = res.data;
@@ -560,6 +552,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * Acción 2: Cobrar y Emitir Recibo A5 (Paso Único Integrado)
    */
   const cobrarYEntregar = async (ordenId) => {
+    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'vendedor') {
+      alert("Acceso Denegado: Solo los Administradores o Vendedores/Caja pueden realizar cobros y entregas.");
+      return;
+    }
     try {
       const resOrd = await API.getOrdenById(ordenId);
       const ord = resOrd.data;

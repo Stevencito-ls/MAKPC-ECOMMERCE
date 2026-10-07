@@ -1,3 +1,23 @@
+<?php
+require_once __DIR__ . '/../../ecommerce/config/app.php';
+
+// Verificar sesión compartida
+if (!isLoggedIn()) {
+    header("Location: ../../ecommerce/login");
+    exit;
+}
+
+$userId = auth('id');
+$userRole = auth('rol');
+$userName = auth('nombre_completo');
+
+// Extraer iniciales (ej. "Juan Pérez" -> "JP")
+$words = explode(" ", $userName);
+$initials = strtoupper(substr($words[0], 0, 1));
+if (isset($words[1])) {
+    $initials .= strtoupper(substr($words[1], 0, 1));
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,10 +66,10 @@
         </div>
 
         <div class="user-badge" title="Operador en mostrador">
-          <div class="user-avatar">AR</div>
+          <div class="user-avatar"><?= htmlspecialchars($initials) ?></div>
           <div class="user-meta">
-            <div class="user-name">Ana Recepción</div>
-            <div class="user-role">Mostrador</div>
+            <div class="user-name"><?= htmlspecialchars($userName) ?></div>
+            <div class="user-role"><?= htmlspecialchars(strtoupper($userRole)) ?></div>
           </div>
         </div>
       </div>
@@ -318,7 +338,7 @@
             </div>
           </div>
           
-          <input type="hidden" id="orden-tecnico-asignado" value="2">
+          <input type="hidden" id="orden-tecnico-asignado" value="<?= htmlspecialchars($userId) ?>">
         </div>
 
         <div class="modal-footer">
@@ -490,6 +510,14 @@
   <!-- Contenedor para Notificaciones Toast -->
   <div id="toast-container"></div>
 
+  <script>
+    // Inyectar datos de sesión globalmente para la API de JS
+    window.currentUser = {
+      id: <?= json_encode($userId) ?>,
+      nombre: <?= json_encode($userName) ?>,
+      rol: <?= json_encode($userRole) ?>
+    };
+  </script>
   <!-- Scripts -->
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>

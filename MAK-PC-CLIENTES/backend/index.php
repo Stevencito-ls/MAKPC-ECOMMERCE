@@ -17,6 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// 1.5. Verificar sesión de MAKPC-ECOMMERCE
+require_once __DIR__ . '/../../ecommerce/config/app.php';
+if (!isLoggedIn()) {
+    header('Content-Type: application/json');
+    http_response_code(401);
+    echo json_encode(['error' => true, 'message' => 'No autorizado. Sesión expirada o inválida.']);
+    exit;
+}
+
+
 // 2. Autoloader PSR-4 para clases internas
 spl_autoload_register(function ($class) {
     $prefixMap = [
