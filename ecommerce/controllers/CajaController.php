@@ -4,8 +4,10 @@
  */
 class CajaController extends Controller {
 
-    private $cajaModel;
-    private $movimientoModel;
+    /** @var Caja */
+    private Caja $cajaModel;
+    /** @var CajaMovimiento */
+    private CajaMovimiento $movimientoModel;
 
     public function __construct() {
         $this->requireRole(['admin', 'vendedor']); // Permite a vendedores operar la caja

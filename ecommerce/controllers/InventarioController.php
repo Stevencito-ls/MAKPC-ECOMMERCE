@@ -4,9 +4,12 @@
  */
 class InventarioController extends Controller {
 
-    private $productoModel;
-    private $kardexModel;
-    private $serieModel;
+    /** @var Producto */
+    private Producto $productoModel;
+    /** @var Kardex */
+    private Kardex $kardexModel;
+    /** @var ProductoSerie */
+    private ProductoSerie $serieModel;
 
     public function __construct() {
         $this->requireRole(['admin', 'vendedor']);
@@ -26,7 +29,7 @@ class InventarioController extends Controller {
         ]);
     }
 
-    public function agregarStock($idProducto) {
+    public function agregarStock(string|int $idProducto) {
         if ($this->isPost()) {
             $cantidad = (int)$this->input('cantidad', 0);
             $seriesRaw = trim($this->input('series', ''));

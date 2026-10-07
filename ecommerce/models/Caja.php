@@ -7,7 +7,7 @@ class Caja extends Model {
         return $this->queryOne("SELECT * FROM {$this->table} WHERE estado = 'ABIERTA' ORDER BY id DESC LIMIT 1");
     }
 
-    public function calcularMontoActual($idCaja) {
+    public function calcularMontoActual(string|int $idCaja) {
         $caja = $this->find($idCaja);
         if (!$caja) return 0;
         
