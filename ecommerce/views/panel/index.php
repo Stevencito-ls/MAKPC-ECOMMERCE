@@ -450,7 +450,7 @@ if ($flash): ?>
                 </td>
                 <td>
                   <?php if (!empty($ped['comprobante_numero'])): ?>
-                    <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" target="_blank" 
+                    <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" 
                        class="badge <?= str_starts_with($ped['comprobante_numero'], 'F') ? 'badge-primary' : 'badge-celeste' ?>" 
                        style="text-decoration:none;font-weight:800;" title="Ver Comprobante Electrónico SUNAT">
                       <?= e($ped['comprobante_numero']) ?>
@@ -486,7 +486,7 @@ if ($flash): ?>
                       Ver
                     </a>
                     <?php if (!empty($ped['comprobante_numero'])): ?>
-                      <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" target="_blank" class="btn btn-sm btn-primary" style="padding:0.25rem 0.5rem;font-size:0.75rem;">
+                      <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" class="btn btn-sm btn-primary" style="padding:0.25rem 0.5rem;font-size:0.75rem;">
                         SUNAT
                       </a>
                     <?php endif; ?>

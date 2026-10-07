@@ -33,7 +33,7 @@ if ($flash): ?>
 
   <div class="page-header-actions">
     <?php if (!empty($pedido['comprobante_numero'])): ?>
-      <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" target="_blank" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;">
+      <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;">
         <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
         <span>Imprimir Comprobante SUNAT</span>
       </a>
@@ -160,7 +160,7 @@ if ($flash): ?>
         
         <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--color-gray-200);">
           <a href="https://wa.me/51<?= preg_replace('/[^0-9]/', '', $pedido['cliente_telefono']) ?>?text=<?= urlencode("Estimado(a) {$pedido['cliente_nombre']}, le saludamos del taller central MAKPC Enterprises respecto a su pedido {$pedido['codigo_pedido']}.") ?>" 
-             target="_blank" class="btn btn-success" style="width:100%;justify-content:center;background:#25D366;border-color:#25D366;font-weight:700;">
+ class="btn btn-success" style="width:100%;justify-content:center;background:#25D366;border-color:#25D366;font-weight:700;">
             <span>Contactar por WhatsApp</span> &rarr;
           </a>
         </div>
@@ -199,7 +199,7 @@ if ($flash): ?>
           <div><strong>Hash Digital SHA-256:</strong> <code><?= e(substr($pedido['codigo_hash'], 0, 18)) ?>...</code></div>
           <div><strong>Estado SUNAT:</strong> <span style="color:var(--color-success);font-weight:700;">Aceptado / Emitido</span></div>
           <div style="margin-top:0.75rem;">
-            <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;">
+            <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;">
               <span>Ver / Imprimir Comprobante Oficial</span> &rarr;
             </a>
           </div>

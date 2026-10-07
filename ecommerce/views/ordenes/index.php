@@ -17,7 +17,7 @@ if ($flash): ?>
     <p>Recepción, diagnóstico, ejecución de trabajos y trazabilidad de garantías</p>
   </div>
   <div class="page-header-actions">
-    <a href="<?= url('orden/crear') ?>" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
+    <a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/frontend/" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
       Nueva Orden de Servicio
     </a>
@@ -120,7 +120,7 @@ if ($flash): ?>
                   <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="btn btn-sm btn-primary" title="Ver Detalle">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                   </a>
-                  <a href="<?= url('orden/imprimir/' . $ord['id']) ?>" target="_blank" class="btn btn-sm btn-yellow" title="Imprimir Ticket">
+                  <a href="<?= url('orden/imprimir/' . $ord['id']) ?>" class="btn btn-sm btn-yellow" title="Imprimir Ticket">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                   </a>
                   <a href="<?= url('orden/editar/' . $ord['id']) ?>" class="btn btn-sm btn-outline" title="Editar">

@@ -42,7 +42,7 @@ if ($flash): ?>
             <?php endforeach; ?>
           </select>
           <small style="color:var(--color-shadow);margin-top:4px;">
-            ¿El equipo no está en la lista? <a href="<?= url('equipo/crear') ?>" target="_blank" style="color:var(--color-celeste);font-weight:600;">Registrarlo primero aquí</a>
+            ¿El equipo no está en la lista? <a href="<?= url('equipo/crear') ?>" style="color:var(--color-celeste);font-weight:600;">Registrarlo primero aquí</a>
           </small>
         </div>
 
