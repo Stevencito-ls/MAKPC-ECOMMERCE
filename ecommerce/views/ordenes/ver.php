@@ -117,7 +117,7 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
         <div style="display:flex;gap:2rem;border-top:1px solid #edf0f5;padding-top:1rem;">
           <div>
             <span style="font-size:0.8rem;color:var(--color-shadow);text-transform:uppercase;font-weight:700;">Garantía de Servicio:</span>
-            <div style="font-weight:700;color:var(--color-blue);"><?= (int)$orden['garantia_meses'] ?> Meses</div>
+            <div style="font-weight:700;color:var(--color-blue);"><?= (int)($orden['garantia_meses'] ?? 0) ?> Meses</div>
           </div>
           <?php if (!empty($orden['fecha_entrega'])): ?>
             <div>
@@ -146,8 +146,8 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
             <?= e($orden['telefono']) ?>
           </a>
         </div>
-        <div><span>DNI / RUC:</span> <?= e($orden['dni'] ?: 'No registrado') ?></div>
-        <div><span>Dirección:</span> <?= e($orden['direccion'] ?: 'No registrada') ?></div>
+        <div><span>DNI / RUC:</span> <?= e($orden['dni'] ?? 'No registrado') ?></div>
+        <div><span>Dirección:</span> <?= e($orden['direccion'] ?? 'No registrada') ?></div>
       </div>
     </div>
 
@@ -161,9 +161,9 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
           <span class="badge badge-revision"><?= e($orden['tipo_equipo']) ?></span>
           <strong style="margin-left:4px;"><?= e($orden['equipo_marca']) ?> <?= e($orden['equipo_modelo']) ?></strong>
         </div>
-        <div><span>N° Serie:</span> <code><?= e($orden['numero_serie'] ?: 'S/N') ?></code></div>
-        <div><span>Cód. Patrimonial:</span> <?= e($orden['codigo_patrimonial'] ?: '-') ?></div>
-        <div><span>Detalles:</span> <?= e($orden['color_detalles'] ?: '-') ?></div>
+        <div><span>N° Serie:</span> <code><?= e($orden['numero_serie'] ?? 'S/N') ?></code></div>
+        <div><span>Cód. Patrimonial:</span> <?= e($orden['codigo_patrimonial'] ?? '-') ?></div>
+        <div><span>Detalles:</span> <?= e($orden['color_detalles'] ?? '-') ?></div>
       </div>
     </div>
 
