@@ -103,7 +103,7 @@ if ($flash): ?>
                   </a>
                   <form action="<?= url('usuario/eliminar/' . $u['id']) ?>" method="POST" style="display:inline;">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-sm btn-danger" style="background-color: var(--color-red); color: white;" onclick="return confirm('⚠️ ¿ESTÁS SEGURO?\n\nEsta acción eliminará al usuario de forma permanente y no se puede deshacer.')" title="Eliminar cuenta permanentemente">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('⚠️ ¿ESTÁS SEGURO?\n\nEsta acción eliminará al usuario de forma permanente y no se puede deshacer.')" title="Eliminar cuenta permanentemente">
                         Eliminar
                     </button>
                   </form>
