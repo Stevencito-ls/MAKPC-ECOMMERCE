@@ -96,4 +96,49 @@ class PedidoController extends Controller {
         }
         $this->redirect("tienda/comprobante/{$codigo}");
     }
+    /**
+     * Subir Boleta PDF manualmente
+     */
+    public function subirBoleta() {
+        if (!$this->isPost()) {
+            $this->redirect('pedido');
+        }
+
+        if (!verify_csrf($this->input('csrf_token'))) {
+            setFlash('danger', 'Token de seguridad inválido. Intente nuevamente.');
+            $this->redirect('pedido');
+        }
+
+        $idPedido = (int)$this->input('id_pedido');
+        $codigoPedido = trim($this->input('codigo_pedido'));
+
+        if (isset($_FILES['boleta_pdf']) && $_FILES['boleta_pdf']['error'] === UPLOAD_ERR_OK) {
+            $fileTmp = $_FILES['boleta_pdf']['tmp_name'];
+            $fileName = $_FILES['boleta_pdf']['name'];
+            $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+            if ($ext === 'pdf') {
+                $uploadDir = __DIR__ . '/../uploads/boletas/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+                $newFileName = 'boleta_' . $codigoPedido . '_' . time() . '.pdf';
+                $destPath = $uploadDir . $newFileName;
+
+                if (move_uploaded_file($fileTmp, $destPath)) {
+                    $this->pedidoModel->update($idPedido, ['ruta_comprobante_pdf' => 'uploads/boletas/' . $newFileName]);
+                    setFlash('success', 'Boleta PDF subida y adjuntada correctamente a la orden ' . $codigoPedido . '.');
+                } else {
+                    setFlash('danger', 'Error al guardar el archivo PDF.');
+                }
+            } else {
+                setFlash('danger', 'Formato no permitido. Solo se aceptan archivos PDF.');
+            }
+        } else {
+            setFlash('danger', 'No se ha seleccionado ningún archivo PDF válido.');
+        }
+
+        $this->redirect(!empty($codigoPedido) ? "pedido/ver/{$codigoPedido}" : 'pedido');
+    }
 }

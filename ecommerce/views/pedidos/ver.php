@@ -33,7 +33,7 @@ if ($flash): ?>
 
   <div class="page-header-actions">
     <?php if (!empty($pedido['comprobante_numero'])): ?>
-      <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" target="_blank" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;">
+      <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:0.4rem;">
         <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
         <span>Imprimir Comprobante SUNAT</span>
       </a>
@@ -160,7 +160,7 @@ if ($flash): ?>
         
         <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--color-gray-200);">
           <a href="https://wa.me/51<?= preg_replace('/[^0-9]/', '', $pedido['cliente_telefono']) ?>?text=<?= urlencode("Estimado(a) {$pedido['cliente_nombre']}, le saludamos del taller central MAKPC Enterprises respecto a su pedido {$pedido['codigo_pedido']}.") ?>" 
-             target="_blank" class="btn btn-success" style="width:100%;justify-content:center;background:#25D366;border-color:#25D366;font-weight:700;">
+ class="btn btn-success" style="width:100%;justify-content:center;background:#25D366;border-color:#25D366;font-weight:700;">
             <span>Contactar por WhatsApp</span> &rarr;
           </a>
         </div>
@@ -184,28 +184,57 @@ if ($flash): ?>
       </div>
     </div>
 
-    <!-- TARJETA COMPROBANTE SUNAT -->
-    <?php if (!empty($pedido['comprobante_numero'])): ?>
-      <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--color-navy);">
-        <div class="card-header">
-          <h3 style="margin:0;font-size:1rem;display:flex;align-items:center;gap:0.5rem;">
-            <svg style="width:16px;height:16px;fill:var(--color-navy);" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-            <span>Comprobante Electrónico SUNAT</span>
-          </h3>
-        </div>
-        <div style="padding:1.25rem;font-size:0.82rem;line-height:1.7;">
-          <div><strong>Tipo de Documento:</strong> <?= e($pedido['comprobante_tipo'] ?: 'Boleta') ?></div>
-          <div><strong>Número Oficial:</strong> <strong style="color:var(--color-blue);font-size:0.95rem;"><?= e($pedido['comprobante_numero']) ?></strong></div>
-          <div><strong>Hash Digital SHA-256:</strong> <code><?= e(substr($pedido['codigo_hash'], 0, 18)) ?>...</code></div>
-          <div><strong>Estado SUNAT:</strong> <span style="color:var(--color-success);font-weight:700;">Aceptado / Emitido</span></div>
-          <div style="margin-top:0.75rem;">
-            <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;">
-              <span>Ver / Imprimir Comprobante Oficial</span> &rarr;
+    <!-- TARJETA COMPROBANTE SUNAT O BOLETA MANUAL -->
+    <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--color-navy);">
+      <div class="card-header">
+        <h3 style="margin:0;font-size:1rem;display:flex;align-items:center;gap:0.5rem;">
+          <svg style="width:16px;height:16px;fill:var(--color-navy);" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          <span>Comprobante / Boleta PDF</span>
+        </h3>
+      </div>
+      <div style="padding:1.25rem;font-size:0.82rem;line-height:1.7;">
+        
+        <?php if (!empty($pedido['comprobante_numero'])): ?>
+          <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--color-gray-200);">
+            <div><strong>Tipo de Documento:</strong> <?= e($pedido['comprobante_tipo'] ?: 'Boleta') ?></div>
+            <div><strong>Número Oficial:</strong> <strong style="color:var(--color-blue);font-size:0.95rem;"><?= e($pedido['comprobante_numero']) ?></strong></div>
+            <div><strong>Hash Digital SHA-256:</strong> <code><?= e(substr($pedido['codigo_hash'], 0, 18)) ?>...</code></div>
+            <div><strong>Estado SUNAT:</strong> <span style="color:var(--color-success);font-weight:700;">Aceptado / Emitido</span></div>
+            <div style="margin-top:0.75rem;">
+              <a href="<?= url("tienda/comprobante/{$pedido['codigo_pedido']}") ?>" class="btn btn-outline" style="width:100%;justify-content:center;font-size:0.85rem;">
+                <span>Ver / Imprimir Comprobante SUNAT</span> &rarr;
+              </a>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <?php if (!empty($pedido['ruta_comprobante_pdf'])): ?>
+          <div style="margin-bottom: 1rem;">
+            <div style="color:var(--color-success);font-weight:bold;margin-bottom:0.5rem;">&#10003; Boleta PDF adjunta manualmente</div>
+            <a href="<?= url($pedido['ruta_comprobante_pdf']) ?>" class="btn btn-sm btn-yellow" style="width:100%;justify-content:center;font-size:0.85rem;">
+              <span>Ver Boleta Subida</span>
             </a>
           </div>
-        </div>
+        <?php endif; ?>
+
+        <form method="POST" action="<?= url('pedido/subirBoleta') ?>" enctype="multipart/form-data">
+          <?= csrf_field() ?>
+          <input type="hidden" name="id_pedido" value="<?= (int)$pedido['id_pedido'] ?>">
+          <input type="hidden" name="codigo_pedido" value="<?= e($pedido['codigo_pedido']) ?>">
+          
+          <div style="margin-bottom:0.5rem;">
+            <label style="display:block;font-size:0.8rem;font-weight:700;margin-bottom:0.25rem;color:var(--color-navy);">
+              <?= (!empty($pedido['ruta_comprobante_pdf'])) ? 'Reemplazar' : 'Subir' ?> Boleta PDF (Manual):
+            </label>
+            <input type="file" name="boleta_pdf" accept="application/pdf" class="form-control" style="font-size:0.8rem;padding:0.4rem;" required>
+          </div>
+          <button type="submit" class="btn btn-sm btn-primary" style="width:100%;justify-content:center;">
+            <span>Subir y Adjuntar PDF</span>
+          </button>
+        </form>
+
       </div>
-    <?php endif; ?>
+    </div>
 
     <!-- TARJETA ACTUALIZAR ESTADO DE DESPACHO -->
     <div class="card">

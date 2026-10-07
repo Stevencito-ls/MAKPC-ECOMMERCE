@@ -53,7 +53,7 @@
         <strong>Horario:</strong> Lun a Sáb: 8:30 AM - 7:30 PM
       </p>
       <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:0.75rem;">
-        <a href="<?= url('landing') ?>" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--cb-cyan);text-decoration:none;font-weight:700;">
+        <a href="<?= url('landing') ?>" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--cb-cyan);text-decoration:none;font-weight:700;">
           <span>🏢 Portal Institucional & Historia &rarr;</span>
         </a>
         <div style="display:flex;gap:0.75rem;margin-top:0.25rem;">
@@ -81,7 +81,7 @@
 <!-- Botón Flotante de WhatsApp con SVG -->
 <a href="https://wa.me/51975513327?text=Hola%20MAKPC,%20deseo%20asesoria%20para%20armar%20mi%20PC%20o%20comprar%20componentes" 
    class="cb-whatsapp-float" 
-   target="_blank" 
+ 
    title="¿Necesitas ayuda? Chatea con un asesor técnico por WhatsApp"
    aria-label="Chatear por WhatsApp">
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
@@ -131,7 +131,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         <span>Ver Carrito Completo & Pagar</span>
       </a>
-      <a href="#" class="btn-cart-checkout" id="btnCartCheckout" target="_blank">
+      <a href="#" class="btn-cart-checkout" id="btnCartCheckout">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         <span>Finalizar Pedido por WhatsApp</span> &rarr;
       </a>

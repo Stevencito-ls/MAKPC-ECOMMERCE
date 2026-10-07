@@ -152,7 +152,7 @@ $installMsg = "Hola MAKPC, deseo cotizar la compra e instalación en taller del 
 
           <a 
             href="https://wa.me/51975513327?text=<?= urlencode($whatsappMsg) ?>" 
-            target="_blank" 
+ 
             class="cb-btn-hero-outline"
             style="width:100%;justify-content:center;background:#25D366;border-color:#25D366;color:#FFFFFF;padding:0.85rem 1.5rem;font-size:0.95rem;"
           >
@@ -162,7 +162,7 @@ $installMsg = "Hola MAKPC, deseo cotizar la compra e instalación en taller del 
 
           <a 
             href="https://wa.me/51975513327?text=<?= urlencode($installMsg) ?>" 
-            target="_blank" 
+ 
             class="cb-btn-hero-outline"
             style="width:100%;justify-content:center;border-color:var(--cb-navy);color:var(--cb-navy);padding:0.75rem 1.5rem;font-size:0.88rem;"
           >
@@ -245,7 +245,7 @@ $installMsg = "Hola MAKPC, deseo cotizar la compra e instalación en taller del 
                 <a 
                   href="https://wa.me/51975513327?text=Hola%20MAKPC,%20estoy%20interesado%20en%20el%20producto:%20<?= urlencode($rel['nombre']) ?>" 
                   class="cb-btn-quick-wa" 
-                  target="_blank" 
+ 
                   title="Consultar por WhatsApp"
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>

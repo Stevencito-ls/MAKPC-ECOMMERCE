@@ -220,7 +220,7 @@
         </a>
       </li>
       <li>
-        <a href="<?= url('../landing/') ?>" target="_blank" title="Portal Corporativo e Historia MAK-PC S.A.C.">
+        <a href="<?= url('../landing/') ?>" title="Portal Corporativo e Historia MAK-PC S.A.C.">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           <span style="color:var(--cb-gold);font-weight:700;">Conócenos</span>
         </a>
@@ -271,7 +271,7 @@
     ?>
     
     <li><a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/">Servicio Técnico y Taller</a></li>
-    <li><a href="<?= url('../landing/') ?>" target="_blank" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
+    <li><a href="<?= url('../landing/') ?>" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
   </ul>
 
   <div class="mobile-drawer-actions">

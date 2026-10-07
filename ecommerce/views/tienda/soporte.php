@@ -130,7 +130,7 @@ if ($flash): ?>
         <div style="margin-top:1rem;display:flex;justify-content:flex-end;">
           <a 
             href="https://wa.me/51975513327?text=Hola%20MAKPC,%20deseo%20consultar%20el%20avance%20de%20mi%20orden:%20<?= urlencode($resultadoOrden['codigo_orden']) ?>" 
-            target="_blank" 
+ 
             class="cb-btn-hero-primary"
             style="font-size:0.85rem;padding:0.6rem 1.2rem;background:#25D366;border-color:#25D366;"
           >
@@ -198,7 +198,7 @@ if ($flash): ?>
         <div style="margin-top:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
           <a 
             href="<?= url("tienda/comprobante/{$resultadoPedido['codigo_pedido']}") ?>" 
-            target="_blank" 
+ 
             class="cb-btn-hero-primary"
             style="font-size:0.85rem;padding:0.6rem 1.2rem;background:var(--cb-navy);border-color:var(--cb-navy);"
           >
@@ -208,7 +208,7 @@ if ($flash): ?>
 
           <a 
             href="https://wa.me/51975513327?text=Hola%20MAKPC,%20consulto%20por%20mi%20orden%20web:%20<?= urlencode($resultadoPedido['codigo_pedido']) ?>" 
-            target="_blank" 
+ 
             class="cb-btn-hero-primary"
             style="font-size:0.85rem;padding:0.6rem 1.2rem;background:#25D366;border-color:#25D366;"
           >

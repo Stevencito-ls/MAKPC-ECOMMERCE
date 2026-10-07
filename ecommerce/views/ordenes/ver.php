@@ -26,19 +26,19 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
   <div>
     <h1>
       Orden #<?= e($orden['codigo_orden']) ?>
-      <span class="badge <?= $stBadge ?>" style="font-size:0.85rem;margin-left:8px;"><?= e($orden['estado']) ?></span>
-      <?php if ($orden['es_inmediato']): ?>
+      <span class="badge <?= $stBadge ?>" style="font-size:0.85rem;margin-left:8px;"><?= e($orden['estado'] ?? 'Pendiente') ?></span>
+      <?php if (!empty($orden['es_inmediato'])): ?>
         <span class="badge-urgent-pill" style="font-size:0.75rem;vertical-align:middle;margin-left:6px;">URGENTE</span>
       <?php endif; ?>
     </h1>
-    <p>Ingresado el <?= date('d/m/Y \a \l\a\s H:i', strtotime($orden['fecha_recepcion'])) ?> — Técnico: <strong><?= e($orden['tecnico_responsable']) ?></strong></p>
+    <p>Ingresado el <?= date('d/m/Y \a \l\a\s H:i', strtotime($orden['fecha_recepcion'] ?? 'now')) ?> — Técnico: <strong><?= e($orden['tecnico_responsable'] ?? 'No asignado') ?></strong></p>
   </div>
   <div class="page-header-actions">
     <a href="https://wa.me/51<?= preg_replace('/[^0-9]/', '', $orden['telefono']) ?>?text=<?= urlencode($msgWhatsApp) ?>" target="_blank" class="btn btn-yellow" style="background:#25D366;color:#fff;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
       Notificar WhatsApp
     </a>
-    <a href="<?= url('orden/imprimir/' . $orden['id']) ?>" target="_blank" class="btn btn-celeste">
+    <a href="<?= url('orden/imprimir/' . $orden['id']) ?>" class="btn btn-celeste">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
       Imprimir Hoja de Servicio
     </a>
@@ -117,7 +117,7 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
         <div style="display:flex;gap:2rem;border-top:1px solid #edf0f5;padding-top:1rem;">
           <div>
             <span style="font-size:0.8rem;color:var(--color-shadow);text-transform:uppercase;font-weight:700;">Garantía de Servicio:</span>
-            <div style="font-weight:700;color:var(--color-blue);"><?= (int)$orden['garantia_meses'] ?> Meses</div>
+            <div style="font-weight:700;color:var(--color-blue);"><?= (int)($orden['garantia_meses'] ?? 0) ?> Meses</div>
           </div>
           <?php if (!empty($orden['fecha_entrega'])): ?>
             <div>
@@ -146,8 +146,8 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
             <?= e($orden['telefono']) ?>
           </a>
         </div>
-        <div><span>DNI / RUC:</span> <?= e($orden['dni'] ?: 'No registrado') ?></div>
-        <div><span>Dirección:</span> <?= e($orden['direccion'] ?: 'No registrada') ?></div>
+        <div><span>DNI / RUC:</span> <?= e($orden['dni'] ?? 'No registrado') ?></div>
+        <div><span>Dirección:</span> <?= e($orden['direccion'] ?? 'No registrada') ?></div>
       </div>
     </div>
 
@@ -161,9 +161,9 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
           <span class="badge badge-revision"><?= e($orden['tipo_equipo']) ?></span>
           <strong style="margin-left:4px;"><?= e($orden['equipo_marca']) ?> <?= e($orden['equipo_modelo']) ?></strong>
         </div>
-        <div><span>N° Serie:</span> <code><?= e($orden['numero_serie'] ?: 'S/N') ?></code></div>
-        <div><span>Cód. Patrimonial:</span> <?= e($orden['codigo_patrimonial'] ?: '-') ?></div>
-        <div><span>Detalles:</span> <?= e($orden['color_detalles'] ?: '-') ?></div>
+        <div><span>N° Serie:</span> <code><?= e($orden['numero_serie'] ?? 'S/N') ?></code></div>
+        <div><span>Cód. Patrimonial:</span> <?= e($orden['codigo_patrimonial'] ?? '-') ?></div>
+        <div><span>Detalles:</span> <?= e($orden['color_detalles'] ?? '-') ?></div>
       </div>
     </div>
 
@@ -175,19 +175,19 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
       <div class="card-body" style="display:flex;flex-direction:column;gap:0.75rem;">
         <div style="display:flex;justify-content:space-between;">
           <span>Mano de Obra:</span>
-          <strong><?= formatPrecio($orden['costo_mano_obra']) ?></strong>
+          <strong><?= formatPrecio($orden['costo_mano_obra'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;">
           <span>Repuestos / Piezas:</span>
-          <strong><?= formatPrecio($orden['costo_repuestos']) ?></strong>
+          <strong><?= formatPrecio($orden['costo_repuestos'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-top:1px solid #edf0f5;padding-top:0.5rem;font-size:1.05rem;">
           <strong>Total Estimado:</strong>
-          <strong style="color:var(--color-blue);"><?= formatPrecio($orden['costo_total']) ?></strong>
+          <strong style="color:var(--color-blue);"><?= formatPrecio($orden['costo_total'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;color:var(--color-success);">
           <span>Adelanto Abonado:</span>
-          <strong>- <?= formatPrecio($orden['adelanto']) ?></strong>
+          <strong>- <?= formatPrecio($orden['adelanto'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-top:2px solid var(--color-lavender);padding-top:0.6rem;font-size:1.15rem;">
           <strong style="color:var(--color-danger);">Saldo por Cobrar:</strong>
