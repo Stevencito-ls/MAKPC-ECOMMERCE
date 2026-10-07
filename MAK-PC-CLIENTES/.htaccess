@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Redirigir la raíz a frontend/index.html
-    RewriteRule ^$ frontend/index.html [L]
+    # Redirigir la raíz a frontend/index.php
+    RewriteRule ^$ frontend/index.php [L]
 
     # Si el archivo o directorio no existe en la raíz, enrutamos internamente a frontend/
     RewriteCond %{REQUEST_FILENAME} !-f
