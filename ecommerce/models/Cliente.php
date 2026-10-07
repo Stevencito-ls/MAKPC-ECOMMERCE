@@ -9,8 +9,8 @@ class Cliente extends Model {
      */
     public function conEquipos($id) {
         return $this->query(
-            "SELECT c.*, COUNT(e.id_equipo) as total_equipos
-             FROM clientes c LEFT JOIN equipos e ON c.id = e.id_cliente
+            "SELECT c.*, COUNT(o.id) as total_equipos
+             FROM clientes c LEFT JOIN ordenes_servicio o ON c.id = o.cliente_id
              WHERE c.id = ? GROUP BY c.id", [$id]
         );
     }
@@ -20,17 +20,16 @@ class Cliente extends Model {
      * @return array
      */
     public function buscar($term) {
-        return $this->search(['nombres_apellidos', 'dni', 'telefono', 'correo'], $term);
+        return $this->search(['nombres_razon_social', 'numero_documento', 'telefono', 'email'], $term);
     }
 
     public function conEstadisticas() {
         return $this->query(
             "SELECT c.*, 
-                    COUNT(DISTINCT e.id_equipo) as total_equipos,
-                    COUNT(DISTINCT o.id_orden) as total_ordenes
+                    COUNT(DISTINCT o.id) as total_equipos,
+                    COUNT(DISTINCT o.id) as total_ordenes
              FROM clientes c 
-             LEFT JOIN equipos e ON c.id = e.id_cliente
-             LEFT JOIN ordenes_servicio o ON e.id_equipo = o.id_equipo
+             LEFT JOIN ordenes_servicio o ON c.id = o.cliente_id
              GROUP BY c.id
              ORDER BY c.creado_en DESC"
         );

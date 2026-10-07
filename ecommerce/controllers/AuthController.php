@@ -61,7 +61,8 @@ class AuthController extends Controller {
                         $error = 'Por favor complete su usuario y contraseña.';
                     } else {
                         // 2. Búsqueda de usuario y verificación criptográfica
-                        $user = $this->usuarioModel->findByUsuario($usuario);
+                        // Permite entrar por email o nombre de usuario
+                        $user = $this->usuarioModel->findByEmailOrUsuario($usuario);
 
                         if ($user && !empty($user['activo']) && password_verify($password, $user['password_hash'])) {
                             // Éxito: Limpiar intentos fallidos
@@ -73,8 +74,8 @@ class AuthController extends Controller {
                             // Regenerar token CSRF para la nueva sesión autenticada
                             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-                            $_SESSION['usuario_id'] = (int)$user['id_usuario'];
-                            $_SESSION['usuario'] = $user['usuario'];
+                            $_SESSION['usuario_id'] = (int)$user['id'];
+                            $_SESSION['usuario'] = $user['usuario'] ?? $user['email'];
                             $_SESSION['nombre_completo'] = $user['nombre_completo'];
                             $_SESSION['rol'] = $user['rol'];
                             $_SESSION['login_time'] = time();

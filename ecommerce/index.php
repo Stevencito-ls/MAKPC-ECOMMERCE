@@ -52,14 +52,14 @@ require_once __DIR__ . '/controllers/PanelController.php';
 $tienda = new TiendaController();
 
 // 5. Detección Inteligente de Acción
-$action = $_GET['action'] ?? $_GET['r'] ?? '';
-$param  = $_GET['slug'] ?? $_GET['id'] ?? '';
-
-if (empty($action) && !empty($_SERVER['PATH_INFO'])) {
-    $parts = explode('/', trim($_SERVER['PATH_INFO'], '/'));
-    $action = $parts[0] ?? '';
-    $param  = $parts[1] ?? '';
+$routeString = $_GET['action'] ?? $_GET['r'] ?? '';
+if (empty($routeString) && !empty($_SERVER['PATH_INFO'])) {
+    $routeString = $_SERVER['PATH_INFO'];
 }
+
+$parts = explode('/', trim($routeString, '/'));
+$action = $parts[0] ?? '';
+$param  = $parts[1] ?? '';
 
 if (empty($action)) {
     $action = 'index';
@@ -112,8 +112,53 @@ switch ($action) {
 
     // Catálogo y Productos
     case 'producto':
-        $slug = $param ?: ($_GET['slug'] ?? '');
-        $tienda->producto($slug);
+        $sub = $param ?: ($_GET['slug'] ?? '');
+        $adminActions = ['crear', 'editar', 'eliminar', 'toggle'];
+        
+        // Determinar si es una ruta administrativa
+        if (($sub === '' || in_array($sub, $adminActions)) && isLoggedIn() && hasRole(['admin', 'vendedor'])) {
+            require_once __DIR__ . '/controllers/ProductoController.php';
+            $controller = new ProductoController();
+            $method = $sub === '' ? 'index' : $sub;
+            $id = isset($parts[2]) ? $parts[2] : ($_GET['id'] ?? null);
+            if ($method !== 'index' && $id !== null) {
+                $controller->$method($id);
+            } else {
+                $controller->$method();
+            }
+        } else {
+            $tienda->producto($sub);
+        }
+        break;
+
+    // Controladores Administrativos
+    case 'pedido':
+    case 'orden':
+    case 'cliente':
+    case 'equipo':
+    case 'componente':
+    case 'usuario':
+        $controllersMap = [
+            'pedido' => 'PedidoController',
+            'orden' => 'OrdenController',
+            'cliente' => 'ClienteController',
+            'equipo' => 'EquipoController',
+            'componente' => 'ComponenteController',
+            'usuario' => 'UsuarioController'
+        ];
+        $controllerName = $controllersMap[$action];
+        require_once __DIR__ . '/controllers/' . $controllerName . '.php';
+        $controller = new $controllerName();
+        $method = $param ?: 'index';
+        if (!method_exists($controller, $method)) {
+            $method = 'index';
+        }
+        $id = isset($parts[2]) ? $parts[2] : ($_GET['id'] ?? null);
+        if ($method !== 'index' && $id !== null) {
+            $controller->$method($id);
+        } else {
+            $controller->$method();
+        }
         break;
 
     // Autenticación & Panel

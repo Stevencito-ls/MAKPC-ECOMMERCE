@@ -65,22 +65,22 @@
   <div class="grid-2">
     <div>
       <div class="info-group"><strong>Cliente:</strong> <div><?= e($orden['cliente_nombre']) ?></div></div>
-      <div class="info-group"><strong>Teléfono:</strong> <div><?= e($orden['telefono']) ?></div></div>
-      <div class="info-group"><strong>DNI / RUC:</strong> <div><?= e($orden['dni'] ?: 'No registrado') ?></div></div>
+      <div class="info-group"><strong>Teléfono:</strong> <div><?= e($orden['cliente_telefono'] ?? $orden['telefono'] ?? 'No registrado') ?></div></div>
+      <div class="info-group"><strong>DNI / RUC:</strong> <div><?= e($orden['cliente_documento'] ?? $orden['dni'] ?? 'No registrado') ?></div></div>
     </div>
     <div>
       <div class="info-group"><strong>Equipo:</strong> <div><?= e($orden['tipo_equipo']) ?> - <?= e($orden['equipo_marca']) ?> <?= e($orden['equipo_modelo']) ?></div></div>
       <div class="info-group"><strong>N° de Serie:</strong> <div><?= e($orden['numero_serie'] ?: 'S/N') ?></div></div>
-      <div class="info-group"><strong>Accesorios:</strong> <div><?= e($orden['accesorios_entregados'] ?: 'Solo equipo') ?></div></div>
+      <div class="info-group"><strong>Accesorios:</strong> <div><?= e($orden['accesorios'] ?? $orden['accesorios_entregados'] ?? 'Solo equipo') ?></div></div>
     </div>
   </div>
 
   <div class="section-title">2. Recepción Física & Falla Reportada</div>
   <div class="info-group"><strong>Estado Físico en Ingreso:</strong></div>
-  <div class="box-bordered"><?= e($orden['estado_recepcion_fisico']) ?></div>
+  <div class="box-bordered"><?= e($orden['estado_fisico'] ?? $orden['estado_recepcion_fisico'] ?? '') ?></div>
 
   <div class="info-group"><strong>Falla Manifestada:</strong></div>
-  <div class="box-bordered"><?= e($orden['falla_reportada']) ?></div>
+  <div class="box-bordered"><?= e($orden['motivo_ingreso'] ?? $orden['falla_reportada'] ?? '') ?></div>
 
   <?php if (!empty($componentes)): ?>
     <div class="section-title">3. Trazabilidad de Componentes & Repuestos</div>
@@ -112,39 +112,39 @@
   <table class="totals-table">
     <tr>
       <td>Mano de Obra:</td>
-      <td style="text-align:right;">S/ <?= number_format($orden['costo_mano_obra'], 2) ?></td>
+      <td style="text-align:right;">S/ <?= number_format((float)($orden['costo_mano_obra'] ?? 0), 2) ?></td>
     </tr>
     <tr>
       <td>Repuestos:</td>
-      <td style="text-align:right;">S/ <?= number_format($orden['costo_repuestos'], 2) ?></td>
+      <td style="text-align:right;">S/ <?= number_format((float)($orden['costo_repuestos'] ?? 0), 2) ?></td>
     </tr>
     <tr style="font-weight:bold;background:#E7E9F7;">
       <td>TOTAL:</td>
-      <td style="text-align:right;">S/ <?= number_format($orden['costo_total'], 2) ?></td>
+      <td style="text-align:right;">S/ <?= number_format((float)($orden['costo_total'] ?? 0), 2) ?></td>
     </tr>
     <tr>
       <td>Abono / Adelanto:</td>
-      <td style="text-align:right;">- S/ <?= number_format($orden['adelanto'], 2) ?></td>
+      <td style="text-align:right;">- S/ <?= number_format((float)($orden['adelanto'] ?? 0), 2) ?></td>
     </tr>
     <tr style="font-weight:bold;color:#b91c1c;">
       <td>SALDO POR CANCELAR:</td>
-      <td style="text-align:right;">S/ <?= number_format($orden['costo_total'] - $orden['adelanto'], 2) ?></td>
+      <td style="text-align:right;">S/ <?= number_format((float)($orden['costo_total'] ?? 0) - (float)($orden['adelanto'] ?? 0), 2) ?></td>
     </tr>
   </table>
 
   <div class="signatures">
     <div class="sig-box">
       Firma del Técnico Responsable<br>
-      <?= e($orden['tecnico_responsable']) ?>
+      <?= e($orden['tecnico_responsable'] ?? 'Taller MAKPC') ?>
     </div>
     <div class="sig-box">
       Firma del Cliente Conforme<br>
-      DNI: <?= e($orden['dni'] ?: '____________________') ?>
+      DNI: <?= e($orden['cliente_documento'] ?? $orden['dni'] ?? '____________________') ?>
     </div>
   </div>
 
   <div class="terms">
-    <strong>TÉRMINOS Y CONDICIONES:</strong> El taller no se responsabiliza por pérdida de información de almacenamiento (se recomienda realizar copias de seguridad previas). Pasados los 30 días posteriores al aviso de equipo listo, la empresa cobrará S/ 2.00 diarios por concepto de almacenaje. Garantía otorgada de <?= (int)$orden['garantia_meses'] ?> meses exclusivamente sobre las piezas y trabajos especificados en esta orden.
+    <strong>TÉRMINOS Y CONDICIONES:</strong> El taller no se responsabiliza por pérdida de información de almacenamiento (se recomienda realizar copias de seguridad previas). Pasados los 30 días posteriores al aviso de equipo listo, la empresa cobrará S/ 2.00 diarios por concepto de almacenaje. Garantía otorgada de <?= (int)($orden['garantia_meses'] ?? 3) ?> meses exclusivamente sobre las piezas y trabajos especificados en esta orden.
   </div>
 </div>
 

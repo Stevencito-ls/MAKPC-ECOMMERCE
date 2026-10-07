@@ -17,7 +17,7 @@ class UsuarioController extends Controller {
      * Listado de usuarios del sistema y auditoría
      */
     public function index() {
-        $usuarios = $this->usuarioModel->all('id_usuario ASC');
+        $usuarios = $this->usuarioModel->all('id ASC');
 
         $this->view('usuarios/index', [
             'title' => 'Gestión de Usuarios & Roles | MAKPC',

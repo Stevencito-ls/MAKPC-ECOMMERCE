@@ -12,10 +12,10 @@ if ($flash): ?>
 <div class="page-header">
   <div>
     <h1>✏️ Editar Cliente</h1>
-    <p>Actualizar información de <?= e($cliente['nombres_apellidos']) ?></p>
+    <p>Actualizar información de <?= e($cliente['nombres_razon_social']) ?></p>
   </div>
   <div class="page-header-actions">
-    <a href="<?= url('cliente/ver/' . $cliente['id_cliente']) ?>" class="btn btn-outline">
+    <a href="<?= url('cliente/ver/' . $cliente['id']) ?>" class="btn btn-outline">
       🔙 Volver al Perfil
     </a>
   </div>
@@ -26,12 +26,12 @@ if ($flash): ?>
     <h3>📝 Modificar Datos</h3>
   </div>
   <div class="card-body">
-    <form action="<?= url('cliente/editar/' . $cliente['id_cliente']) ?>" method="POST">
+    <form action="<?= url('cliente/editar/' . $cliente['id']) ?>" method="POST">
       <?= csrf_field() ?>
       <div class="form-grid">
         <div class="form-group" style="grid-column:1 / -1;">
-          <label for="nombres_apellidos">Nombres y Apellidos *</label>
-          <input type="text" id="nombres_apellidos" name="nombres_apellidos" class="form-control" required value="<?= e($cliente['nombres_apellidos']) ?>">
+          <label for="nombres_razon_social">Nombres y Apellidos *</label>
+          <input type="text" id="nombres_razon_social" name="nombres_razon_social" class="form-control" required value="<?= e($cliente['nombres_razon_social']) ?>">
         </div>
 
         <div class="form-group">
@@ -45,13 +45,13 @@ if ($flash): ?>
         </div>
 
         <div class="form-group">
-          <label for="dni">DNI / RUC (Opcional)</label>
-          <input type="text" id="dni" name="dni" class="form-control" value="<?= e($cliente['dni']) ?>">
+          <label for="numero_documento">numero_documento / RUC (Opcional)</label>
+          <input type="text" id="numero_documento" name="numero_documento" class="form-control" value="<?= e($cliente['numero_documento']) ?>">
         </div>
 
         <div class="form-group">
-          <label for="correo">Correo Electrónico</label>
-          <input type="email" id="correo" name="correo" class="form-control" value="<?= e($cliente['correo']) ?>">
+          <label for="email">email Electrónico</label>
+          <input type="email" id="email" name="email" class="form-control" value="<?= e($cliente['email']) ?>">
         </div>
 
         <div class="form-group" style="grid-column:1 / -1;">
@@ -66,7 +66,7 @@ if ($flash): ?>
       </div>
 
       <div style="margin-top:1.5rem;display:flex;justify-content:flex-end;gap:1rem;">
-        <a href="<?= url('cliente/ver/' . $cliente['id_cliente']) ?>" class="btn btn-outline">Cancelar</a>
+        <a href="<?= url('cliente/ver/' . $cliente['id']) ?>" class="btn btn-outline">Cancelar</a>
         <button type="submit" class="btn btn-yellow">💾 Actualizar Cambios</button>
       </div>
     </form>

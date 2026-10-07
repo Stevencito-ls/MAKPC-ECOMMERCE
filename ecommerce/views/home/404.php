@@ -18,7 +18,7 @@
         <span>Ir al Catálogo de Productos</span> &rarr;
       </a>
 
-      <a href="<?= url('tienda/crear-pc') ?>" class="cb-btn-hero-outline" style="padding:0.8rem 1.75rem;font-size:0.95rem;text-decoration:none;border-color:#161D45;color:#161D45;">
+      <a href="<?= url('crear-pc') ?>" class="cb-btn-hero-outline" style="padding:0.8rem 1.75rem;font-size:0.95rem;text-decoration:none;border-color:#161D45;color:#161D45;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         <span>Armador de PC a Medida</span>
       </a>
@@ -30,3 +30,4 @@
     </div>
   </div>
 </div>
+

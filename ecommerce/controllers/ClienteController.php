@@ -12,7 +12,7 @@ class ClienteController extends Controller {
         if ($busqueda) {
             $clientes = $clienteModel->buscar($busqueda);
         } else {
-            $clientes = $clienteModel->all('nombres_apellidos ASC');
+            $clientes = $clienteModel->all('nombres_razon_social ASC');
         }
 
         $this->view('clientes/index', [
@@ -29,10 +29,10 @@ class ClienteController extends Controller {
                 $this->redirect('cliente/crear');
             }
 
-            $nombres = trim($this->input('nombres_apellidos'));
+            $nombres = trim($this->input('nombres_razon_social'));
             $telefono = trim($this->input('telefono'));
-            $dni = trim($this->input('dni')) ?: null;
-            $correo = trim($this->input('correo')) ?: null;
+            $numero_documento = trim($this->input('numero_documento')) ?: null;
+            $email = trim($this->input('email')) ?: null;
             $direccion = trim($this->input('direccion')) ?: null;
             $notas = trim($this->input('notas_cliente')) ?: null;
 
@@ -46,8 +46,8 @@ class ClienteController extends Controller {
                 'nombres_razon_social' => $nombres,
                 'telefono' => $telefono,
                 'telefono_secundario' => trim($this->input('telefono_secundario')) ?: null,
-                'numero_documento' => $dni,
-                'email' => $correo,
+                'numero_documento' => $numero_documento,
+                'email' => $email,
                 'direccion' => $direccion,
                 'notas_cliente' => $notas
             ]);
@@ -75,20 +75,18 @@ class ClienteController extends Controller {
             $this->redirect('cliente');
         }
 
-        $equipos = $equipoModel->where('id_cliente', $id);
         $ordenes = $ordenModel->query(
-            "SELECT o.*, CONCAT(e.marca, ' ', e.modelo) as equipo
+            "SELECT o.*, CONCAT(o.marca, ' ', o.modelo) as equipo
              FROM ordenes_servicio o
-             INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-             WHERE e.id_cliente = ?
+             WHERE o.cliente_id = ?
              ORDER BY o.fecha_recepcion DESC",
             [$id]
         );
 
         $this->view('clientes/ver', [
-            'title' => $cliente['nombres_apellidos'],
+            'title' => $cliente['nombres_razon_social'] ?? 'Cliente',
             'cliente' => $cliente,
-            'equipos' => $equipos,
+            'equipos' => [],
             'ordenes' => $ordenes
         ]);
     }
@@ -111,7 +109,7 @@ class ClienteController extends Controller {
                 $this->redirect('cliente/editar/' . $id);
             }
 
-            $nombres = trim($this->input('nombres_apellidos'));
+            $nombres = trim($this->input('nombres_razon_social'));
             $telefono = trim($this->input('telefono'));
 
             if (empty($nombres) || empty($telefono)) {
@@ -123,8 +121,8 @@ class ClienteController extends Controller {
                 'nombres_razon_social' => $nombres,
                 'telefono' => $telefono,
                 'telefono_secundario' => trim($this->input('telefono_secundario')) ?: null,
-                'numero_documento' => trim($this->input('dni')) ?: null,
-                'email' => trim($this->input('correo')) ?: null,
+                'numero_documento' => trim($this->input('numero_documento')) ?: null,
+                'email' => trim($this->input('email')) ?: null,
                 'direccion' => trim($this->input('direccion')) ?: null,
                 'notas_cliente' => trim($this->input('notas_cliente')) ?: null
             ]);
@@ -151,8 +149,7 @@ class ClienteController extends Controller {
             $ordenModel = new OrdenServicio();
             $ordenesExistentes = $ordenModel->query(
                 "SELECT COUNT(*) as total FROM ordenes_servicio o 
-                 INNER JOIN equipos e ON o.id_equipo = e.id_equipo 
-                 WHERE e.id_cliente = ?", 
+                 WHERE o.cliente_id = ?", 
                 [$id]
             );
             $totalOrdenes = (int)($ordenesExistentes[0]['total'] ?? 0);

@@ -4,11 +4,10 @@ class OrdenServicio extends Model {
     protected $primaryKey = 'id';
 
     public function listarCompleto($filtroEstado = null, $busqueda = null) {
-        $sql = "SELECT o.*, e.marca, e.modelo, e.tipo_equipo, 
-                       c.nombres_apellidos as cliente_nombre, c.telefono as cliente_telefono
+        $sql = "SELECT o.*, 
+                       c.nombres_razon_social as cliente_nombre, c.telefono as cliente_telefono
                 FROM ordenes_servicio o
-                INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-                INNER JOIN clientes c ON e.id_cliente = c.id";
+                INNER JOIN clientes c ON o.cliente_id = c.id";
         $params = [];
         $conditions = [];
 
@@ -17,7 +16,7 @@ class OrdenServicio extends Model {
             $params[] = $filtroEstado;
         }
         if ($busqueda) {
-            $conditions[] = "(o.codigo_orden LIKE ? OR c.nombres_apellidos LIKE ? OR c.telefono LIKE ? OR e.numero_serie LIKE ?)";
+            $conditions[] = "(o.codigo_orden LIKE ? OR c.nombres_razon_social LIKE ? OR c.telefono LIKE ? OR o.numero_serie LIKE ?)";
             $params = array_merge($params, ["%$busqueda%", "%$busqueda%", "%$busqueda%", "%$busqueda%"]);
         }
         if ($conditions) {
@@ -32,12 +31,11 @@ class OrdenServicio extends Model {
      * @return array|false
      */
     public function verCompleto($id) {
-        $sql = "SELECT o.*, e.*, c.*,
-                       e.marca as equipo_marca, e.modelo as equipo_modelo,
-                       c.nombres_apellidos as cliente_nombre
+        $sql = "SELECT o.*, c.*,
+                       o.marca as equipo_marca, o.modelo as equipo_modelo,
+                       c.nombres_razon_social as cliente_nombre
                 FROM ordenes_servicio o
-                INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-                INNER JOIN clientes c ON e.id_cliente = c.id
+                INNER JOIN clientes c ON o.cliente_id = c.id
                 WHERE o.id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
@@ -61,10 +59,9 @@ class OrdenServicio extends Model {
     public function recientes($limit = 5) {
         $limit = (int)$limit;
         return $this->query(
-            "SELECT o.*, c.nombres_apellidos as cliente_nombre, CONCAT(e.marca, ' ', e.modelo) as equipo
+            "SELECT o.*, c.nombres_razon_social as cliente_nombre, CONCAT(o.marca, ' ', o.modelo) as equipo
              FROM ordenes_servicio o
-             INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-             INNER JOIN clientes c ON e.id_cliente = c.id
+             INNER JOIN clientes c ON o.cliente_id = c.id
              ORDER BY o.fecha_recepcion DESC LIMIT $limit"
         );
     }

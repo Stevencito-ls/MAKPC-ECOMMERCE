@@ -42,7 +42,7 @@ class Database {
      * Obtiene la instancia activa de PDO con configuración optimizada
      */
     public static function getConnection(): PDO {
-        $envPath = __DIR__ . '/../../.env';
+        $envPath = __DIR__ . '/../../../.env';
         if (file_exists($envPath)) {
             $env = parse_ini_file($envPath);
             if ($env) {

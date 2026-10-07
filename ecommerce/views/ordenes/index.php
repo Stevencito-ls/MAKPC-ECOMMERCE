@@ -93,10 +93,10 @@ if ($flash): ?>
             <tr>
               <td>
                 <div class="code-badge-wrapper">
-                  <a href="<?= url('orden/ver/' . $ord['id_orden']) ?>" class="order-code-link">
+                  <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="order-code-link">
                     <?= e($ord['codigo_orden']) ?>
                   </a>
-                  <?php if ($ord['es_inmediato']): ?>
+                  <?php if (!empty($ord['es_inmediato'])): ?>
                     <span class="badge-urgent-pill">URGENTE</span>
                   <?php endif; ?>
                 </div>
@@ -112,18 +112,18 @@ if ($flash): ?>
                 <?= e($ord['marca']) ?> <?= e($ord['modelo']) ?>
                 <div style="font-size:0.75rem;color:var(--color-celeste);"><?= e($ord['tipo_equipo']) ?></div>
               </td>
-              <td><?= e($ord['servicio_solicitado'] ?: 'Reparación / Diagnóstico') ?></td>
+              <td><?= e($ord['motivo_ingreso'] ?? 'Reparación / Diagnóstico') ?></td>
               <td><span class="badge <?= $badge ?>"><?= e($ord['estado']) ?></span></td>
-              <td><strong><?= formatPrecio($ord['costo_total']) ?></strong></td>
+              <td><strong><?= formatPrecio($ord['costo_total'] ?? 0) ?></strong></td>
               <td>
                 <div class="table-actions-cell">
-                  <a href="<?= url('orden/ver/' . $ord['id_orden']) ?>" class="btn btn-sm btn-primary" title="Ver Detalle">
+                  <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="btn btn-sm btn-primary" title="Ver Detalle">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                   </a>
-                  <a href="<?= url('orden/imprimir/' . $ord['id_orden']) ?>" target="_blank" class="btn btn-sm btn-yellow" title="Imprimir Ticket">
+                  <a href="<?= url('orden/imprimir/' . $ord['id']) ?>" target="_blank" class="btn btn-sm btn-yellow" title="Imprimir Ticket">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                   </a>
-                  <a href="<?= url('orden/editar/' . $ord['id_orden']) ?>" class="btn btn-sm btn-outline" title="Editar">
+                  <a href="<?= url('orden/editar/' . $ord['id']) ?>" class="btn btn-sm btn-outline" title="Editar">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                   </a>
                 </div>

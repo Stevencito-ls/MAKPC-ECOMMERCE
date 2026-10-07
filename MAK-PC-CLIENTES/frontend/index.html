@@ -32,7 +32,7 @@
           <div class="brand-meta-list">
             <span class="meta-item"><i class="ph-bold ph-identification-card"></i> RUC: 20409456520</span>
             <span class="meta-sep">&bull;</span>
-            <span class="meta-item"><i class="ph-bold ph-phone"></i> 960 702 605</span>
+            <span class="meta-item"><i class="ph-bold ph-phone"></i> 975 513 327</span>
             <span class="meta-sep meta-sep-location">&bull;</span>
             <span class="meta-item meta-item-location"><i class="ph-bold ph-map-pin"></i> Tumbes, Perú</span>
           </div>
@@ -155,7 +155,7 @@
               <th>Equipo / Modelo</th>
               <th>Falla / Motivo</th>
               <th>Estado Técnico</th>
-              <th>Comprobante / Saldo</th>
+              <th>Costos y Saldos</th>
               <th>Fecha Ingreso</th>
               <th style="text-align: center; min-width: 170px;">Acción Contextual</th>
             </tr>
@@ -250,6 +250,7 @@
                 <option value="SERVIDOR">Servidor</option>
                 <option value="OTRO">Otro Dispositivo</option>
               </select>
+              <input type="text" id="equipo-tipo-otro" class="form-control" placeholder="Especifique el dispositivo" style="display: none; margin-top: 0.5rem;">
             </div>
 
             <div class="col-3 form-group">
@@ -282,7 +283,7 @@
               <label for="orden-prioridad">Prioridad</label>
               <select id="orden-prioridad" class="form-control">
                 <option value="BAJA">Baja</option>
-                <option value="MEDIA" selected>Normal / Media</option>
+                <option value="MEDIA" selected>Normal</option>
                 <option value="ALTA">Alta</option>
                 <option value="URGENTE">Urgente</option>
               </select>
@@ -301,13 +302,19 @@
 
             <!-- Fila 4: Condición Económica Inicial -->
             <div class="col-6 form-group">
-              <label for="orden-costo-estimado">Costo Estimado (Opcional en S/.)</label>
-              <input type="number" step="0.50" min="0" id="orden-costo-estimado" class="form-control" placeholder="0.00">
+              <label for="orden-costo-estimado" style="display:flex; justify-content:space-between;">
+                  <span>Costo Estimado (Opcional en S/.)</span>
+                  <span id="orden-costo-usd" style="color:var(--success); font-weight:600; font-size:0.9rem;">$ 0.00</span>
+              </label>
+              <input type="number" step="0.50" min="0" id="orden-costo-estimado" class="form-control" placeholder="S/. 0.00" style="font-weight: 600;">
             </div>
 
             <div class="col-6 form-group">
-              <label for="orden-monto-adelanto">Adelanto Inicial (A Cuenta S/.)</label>
-              <input type="number" step="0.50" min="0" id="orden-monto-adelanto" class="form-control" placeholder="0.00">
+              <label for="orden-monto-adelanto" style="display:flex; justify-content:space-between;">
+                  <span>Adelanto Inicial (A Cuenta S/.)</span>
+                  <span id="orden-adelanto-usd" style="color:var(--success); font-weight:600; font-size:0.9rem;">$ 0.00</span>
+              </label>
+              <input type="number" step="0.50" min="0" id="orden-monto-adelanto" class="form-control" placeholder="S/. 0.00" style="font-weight: 600; color: var(--navy-900);">
             </div>
           </div>
           
@@ -315,7 +322,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-close-modal">Cancelar</button>
+          <button type="button" class="btn btn-close-modal" style="background: var(--slate-200); color: var(--slate-700); font-weight: 600; border: none;">Cancelar</button>
           <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.75rem;">
             <i class="ph-bold ph-floppy-disk"></i> Registrar y Generar Orden
           </button>
@@ -417,17 +424,26 @@
 
           <div class="form-grid">
             <div class="col-4 form-group">
-              <label for="cobro-monto-total">Monto Total (S/.) <span class="required">*</span></label>
+              <label for="cobro-monto-total" style="display:flex; justify-content:space-between;">
+                  <span>Monto Total (S/.) <span class="required">*</span></span>
+                  <span id="cobro-total-usd" style="color:var(--success); font-weight:600; font-size:0.9rem;">$ 0.00</span>
+              </label>
               <input type="number" step="0.50" min="1" id="cobro-monto-total" class="form-control" required style="font-weight: 700; font-size: 1.15rem; color: var(--navy-900);">
             </div>
 
             <div class="col-4 form-group">
-              <label for="cobro-monto-a-cuenta">A Cuenta Previo (S/.)</label>
+              <label for="cobro-monto-a-cuenta" style="display:flex; justify-content:space-between;">
+                  <span>A Cuenta Previo (S/.)</span>
+                  <span id="cobro-acuenta-usd" style="color:var(--success); font-weight:600; font-size:0.9rem;">$ 0.00</span>
+              </label>
               <input type="number" step="0.50" min="0" id="cobro-monto-a-cuenta" class="form-control" value="0.00">
             </div>
 
             <div class="col-4 form-group">
-              <label for="cobro-monto-saldo">Saldo a Pagar (S/.)</label>
+              <label for="cobro-monto-saldo" style="display:flex; justify-content:space-between;">
+                  <span>Saldo a Pagar (S/.)</span>
+                  <span id="cobro-saldo-usd" style="color:var(--danger); font-weight:600; font-size:0.9rem;">$ 0.00</span>
+              </label>
               <input type="text" id="cobro-monto-saldo" class="form-control" readonly style="background: #fee2e2; font-weight: 800; font-size: 1.15rem; color: var(--danger);">
             </div>
 
@@ -477,6 +493,7 @@
   <!-- Scripts -->
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/currency.js?v=1.1"></script>
+  <script src="js/app.js?v=2.6"></script>
 </body>
 </html>

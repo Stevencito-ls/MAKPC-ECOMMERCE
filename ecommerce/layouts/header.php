@@ -89,7 +89,7 @@
     <div class="cb-actions">
       
       <!-- BOTÓN ESTRELLA: CREA TU PC -->
-      <a href="<?= url('tienda/crear-pc') ?>" class="cb-btn-builder" title="Arma tu PC con asesoría anti cuello de botella">
+      <a href="<?= url('crear-pc') ?>" class="cb-btn-builder" title="Arma tu PC con asesoría anti cuello de botella">
         <span class="pulse-dot"></span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-4 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
         <span>Crea tu PC</span>
@@ -190,7 +190,7 @@
             <span class="cb-promo-tag">DESTACADO 2026</span>
             <h5>Armador de PC Inteligente</h5>
             <p>Selecciona tus partes sin miedo al cuello de botella con cálculo de vatios en vivo.</p>
-            <a href="<?= url('tienda/crear-pc') ?>" class="cb-promo-btn">
+            <a href="<?= url('crear-pc') ?>" class="cb-promo-btn">
               <span>Probar Estudio &rarr;</span>
             </a>
           </div>
@@ -220,7 +220,7 @@
         </a>
       </li>
       <li>
-        <a href="<?= url('landing') ?>" target="_blank" title="Portal Corporativo e Historia MAK-PC S.A.C.">
+        <a href="<?= url('../landing/') ?>" target="_blank" title="Portal Corporativo e Historia MAK-PC S.A.C.">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cb-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           <span style="color:var(--cb-gold);font-weight:700;">Conócenos</span>
         </a>
@@ -251,7 +251,7 @@
 
   <ul class="mobile-drawer-links">
     <li>
-      <a href="<?= url('tienda/crear-pc') ?>" style="color:var(--cb-gold);font-weight:800;background:rgba(252,200,39,0.1);">
+      <a href="<?= url('crear-pc') ?>" style="color:var(--cb-gold);font-weight:800;background:rgba(252,200,39,0.1);">
         Crea tu PC (Armador Inteligente) &rarr;
       </a>
     </li>
@@ -271,7 +271,7 @@
     ?>
     
     <li><a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/">Servicio Técnico y Taller</a></li>
-    <li><a href="<?= url('landing') ?>" target="_blank" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
+    <li><a href="<?= url('../landing/') ?>" target="_blank" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
   </ul>
 
   <div class="mobile-drawer-actions">
@@ -298,3 +298,5 @@
 <div class="mobile-drawer-overlay" id="publicDrawerOverlay"></div>
 
 <main class="public-main-container">
+
+

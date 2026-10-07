@@ -26,7 +26,7 @@ if ($flash): ?>
   <div class="card-header">
     <div style="flex:1;max-width:400px;">
       <form action="<?= url('cliente') ?>" method="GET" style="display:flex;gap:0.5rem;">
-        <input type="text" name="q" class="form-control" placeholder="Buscar por nombre, teléfono o DNI..." value="<?= e($busqueda ?? '') ?>">
+        <input type="text" name="q" class="form-control" placeholder="Buscar por nombre, teléfono o numero_documento..." value="<?= e($busqueda ?? '') ?>">
         <button type="submit" class="btn btn-primary">Buscar</button>
       </form>
     </div>
@@ -42,8 +42,8 @@ if ($flash): ?>
           <th>ID</th>
           <th>Nombres y Apellidos</th>
           <th>Teléfono (WhatsApp)</th>
-          <th>DNI / RUC</th>
-          <th>Correo</th>
+          <th>numero_documento / RUC</th>
+          <th>email</th>
           <th>Equipos</th>
           <th>Acciones</th>
         </tr>
@@ -58,10 +58,10 @@ if ($flash): ?>
         <?php else: ?>
           <?php foreach ($clientes as $c): ?>
             <tr>
-              <td>#<?= $c['id_cliente'] ?></td>
+              <td>#<?= $c['id'] ?></td>
               <td>
-                <a href="<?= url('cliente/ver/' . $c['id_cliente']) ?>" style="font-weight:700;color:var(--color-blue);">
-                  <?= e($c['nombres_apellidos']) ?>
+                <a href="<?= url('cliente/ver/' . $c['id']) ?>" style="font-weight:700;color:var(--color-blue);">
+                  <?= e($c['nombres_razon_social']) ?>
                 </a>
               </td>
               <td>
@@ -69,21 +69,21 @@ if ($flash): ?>
                   📱 <?= e($c['telefono']) ?>
                 </a>
               </td>
-              <td><?= e($c['dni'] ?: '-') ?></td>
-              <td><?= e($c['correo'] ?: '-') ?></td>
+              <td><?= e($c['numero_documento'] ?: '-') ?></td>
+              <td><?= e($c['email'] ?: '-') ?></td>
               <td>
                 <span class="badge badge-revision">
                   <?= isset($c['total_equipos']) ? $c['total_equipos'] . ' eq.' : 'Ver' ?>
                 </span>
               </td>
               <td style="white-space:nowrap;">
-                <a href="<?= url('cliente/ver/' . $c['id_cliente']) ?>" class="btn btn-sm btn-primary" title="Ver Detalle">
+                <a href="<?= url('cliente/ver/' . $c['id']) ?>" class="btn btn-sm btn-primary" title="Ver Detalle">
                   👁️
                 </a>
-                <a href="<?= url('cliente/editar/' . $c['id_cliente']) ?>" class="btn btn-sm btn-outline" title="Editar">
+                <a href="<?= url('cliente/editar/' . $c['id']) ?>" class="btn btn-sm btn-outline" title="Editar">
                   ✏️
                 </a>
-                <a href="<?= url('cliente/eliminar/' . $c['id_cliente']) ?>" class="btn btn-sm btn-danger" data-confirm="¿Desea eliminar a este cliente? También se desvincularán sus registros." title="Eliminar">
+                <a href="<?= url('cliente/eliminar/' . $c['id']) ?>" class="btn btn-sm btn-danger" data-confirm="¿Desea eliminar a este cliente? También se desvincularán sus registros." title="Eliminar">
                   🗑️
                 </a>
               </td>

@@ -26,12 +26,17 @@ class TiendaController extends Controller
         $categorias = $categoriaModel->activas();
         $marcas = $productoModel->marcasDisponibles();
 
+        $configModel = new Configuracion();
+        $config = $configModel->getConfig();
+
         $this->view('tienda/index', [
             'title' => 'Catálogo de Productos',
             'productos' => $productos,
             'categorias' => $categorias,
             'marcas' => $marcas,
-            'filtros' => $filtros
+            'filtros' => $filtros,
+            'ofertasActivas' => !empty($config['ofertas_activas']),
+            'ofertasFin' => $config['ofertas_fin'] ?? null
         ]);
     }
 
@@ -1083,7 +1088,8 @@ class TiendaController extends Controller
             'title' => 'Crea tu PC a Medida | Asesoría Inteligente Anti Cuello de Botella',
             'componentes' => $componentes,
             'presets' => $presets,
-            'accesorios' => $accesorios
+            'accesorios' => $accesorios,
+            'isPcBuilder' => true
         ]);
     }
 

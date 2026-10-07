@@ -56,10 +56,10 @@ if ($flash): ?>
             'vendedor' => 'badge-vendedor',
             default => 'badge-revision'
           };
-          $esPropio = ((int)$u['id_usuario'] === (int)auth('id'));
+          $esPropio = ((int)$u['id'] === (int)auth('id'));
         ?>
           <tr>
-            <td><strong>#<?= (int)$u['id_usuario'] ?></strong></td>
+            <td><strong>#<?= (int)$u['id'] ?></strong></td>
             <td>
               <code>@<?= e($u['usuario']) ?></code>
               <?php if ($esPropio): ?>
@@ -85,7 +85,7 @@ if ($flash): ?>
                 <button 
                   type="button" 
                   class="btn btn-sm btn-outline" 
-                  onclick="abrirModalReset(<?= (int)$u['id_usuario'] ?>, '<?= e(addslashes($u['usuario'])) ?>', '<?= e(addslashes($u['nombre_completo'])) ?>')"
+                  onclick="abrirModalReset(<?= (int)$u['id'] ?>, '<?= e(addslashes($u['usuario'])) ?>', '<?= e(addslashes($u['nombre_completo'])) ?>')"
                   title="Restablecer Contraseña"
                   style="display:inline-flex;align-items:center;gap:4px;"
                 >
@@ -94,7 +94,7 @@ if ($flash): ?>
                 </button>
                 <?php if (!$esPropio): ?>
                   <a 
-                    href="<?= url('usuario/toggle/' . $u['id_usuario']) ?>" 
+                    href="<?= url('usuario/toggle/' . $u['id']) ?>" 
                     class="btn btn-sm <?= $u['activo'] ? 'btn-outline' : 'btn-primary' ?>" 
                     onclick="return confirm('¿Deseas cambiar el estado de este colaborador?')"
                     title="<?= $u['activo'] ? 'Desactivar cuenta' : 'Activar cuenta' ?>"

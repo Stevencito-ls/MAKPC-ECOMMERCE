@@ -6,7 +6,7 @@
  */
 
 // Cargar archivo .env si existe en la raíz
-$envFile = dirname(__DIR__) . '/.env';
+$envFile = dirname(dirname(__DIR__)) . '/.env';
 if (file_exists($envFile) && is_readable($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
@@ -232,7 +232,7 @@ function hasRole($roles)
 {
     if (!isset($_SESSION['usuario_id'])) return false;
     $allowed = is_array($roles) ? $roles : [$roles];
-    return in_array($_SESSION['rol'] ?? '', $allowed);
+    return in_array(strtolower(trim($_SESSION['rol'] ?? '')), $allowed);
 }
 
 /**
@@ -277,7 +277,7 @@ function generarCodigoTicket($pdo)
  * @return string
  */
 if (!function_exists('montoEnLetrasSoles')) {
-    function montoEnLetrasSoles($monto) {
+    function montoEnLetrasSoles(float|int|string $monto) {
         $monto = (float)$monto;
         $enteros = floor($monto);
         $centavos = str_pad((string)round(($monto - $enteros) * 100), 2, '0', STR_PAD_LEFT);

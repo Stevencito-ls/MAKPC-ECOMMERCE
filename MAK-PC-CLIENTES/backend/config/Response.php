@@ -55,4 +55,8 @@ class Response {
     public static function serverError(string $message = 'Error interno del servidor', mixed $errorDetail = null): void {
         self::json(500, false, $errorDetail, $message);
     }
+
+    public static function unauthorized(string $message = 'Acceso no autorizado', mixed $errors = null): void {
+        self::json(401, false, $errors, $message);
+    }
 }

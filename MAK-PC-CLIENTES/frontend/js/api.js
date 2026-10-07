@@ -18,9 +18,19 @@ const API = (() => {
       return origin;
     }
 
-    // 2. Si se ejecuta en subcarpeta /MAK-PC/
-    if (pathname.toLowerCase().includes('/mak-pc/')) {
-      return `${origin}/MAK-PC/frontend/api.php`;
+    // 2. Extraer dinámicamente la ruta base hasta la carpeta del proyecto
+    // Asumimos que el HTML se sirve desde la raíz o desde frontend/
+    const pathParts = pathname.split('/').filter(p => p !== '');
+    
+    // Si estamos en un entorno con subcarpetas (ej: /MAKPC-ECOMMERCE/MAK-PC-CLIENTES/)
+    if (pathParts.length > 0) {
+        // Encontramos la carpeta del proyecto o usamos la ruta actual sin "frontend" o "index.html"
+        let basePath = pathname;
+        if (basePath.endsWith('index.html')) basePath = basePath.replace(/index\.html$/, '');
+        if (basePath.endsWith('login.html')) basePath = basePath.replace(/login\.html$/, '');
+        if (basePath.endsWith('frontend/')) basePath = basePath.replace(/frontend\/$/, '');
+        
+        return `${origin}${basePath}api.php`;
     }
 
     // 3. Si DocumentRoot de Laragon está configurado directamente en /frontend
@@ -132,6 +142,12 @@ const API = (() => {
 
     // ---- SALUD Y ESTADO ----
     checkHealth: () => request('/api/health'),
+
+    // ---- AUTENTICACIÓN ----
+    login: (credentials) => request('/api/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    }),
 
     // ---- DASHBOARD ----
     getDashboardMetrics: () => request('/api/dashboard/resumen'),

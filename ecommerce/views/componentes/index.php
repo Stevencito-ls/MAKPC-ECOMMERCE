@@ -59,7 +59,7 @@ if ($flash): ?>
           <?php foreach ($registros as $reg): ?>
             <tr>
               <td>
-                <a href="<?= url('orden/ver/' . $reg['id_orden']) ?>" style="font-weight:700;color:var(--color-blue);">
+                <a href="<?= url('orden/ver/' . $reg['id']) ?>" style="font-weight:700;color:var(--color-blue);">
                   <?= e($reg['codigo_orden']) ?>
                 </a>
               </td>

@@ -78,6 +78,39 @@ document.addEventListener('DOMContentLoaded', () => {
    * Inicialización del sistema
    */
   const init = async () => {
+    // 1. Verificación de Autenticación
+    const userStr = localStorage.getItem('usuario_makpc');
+    if (!userStr) {
+      window.location.href = 'login.html';
+      return;
+    }
+    const currentUser = JSON.parse(userStr);
+
+    // 2. Actualizar UI con datos del usuario
+    const badge = document.getElementById('current-user-badge');
+    if (badge) {
+      const avatar = badge.querySelector('.user-avatar');
+      const name = badge.querySelector('.user-name');
+      const role = badge.querySelector('.user-role');
+      
+      const initials = currentUser.nombre_completo.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      avatar.textContent = initials;
+      name.textContent = currentUser.nombre_completo;
+      role.textContent = currentUser.rol === 'ADMIN' ? 'Administrador' : (currentUser.rol === 'TECNICO' ? 'Técnico' : 'Recepción');
+
+      badge.style.cursor = 'pointer';
+      badge.title = 'Cerrar Sesión';
+      badge.addEventListener('click', () => {
+        if(confirm('¿Deseas cerrar sesión?')) {
+          localStorage.removeItem('usuario_makpc');
+          window.location.href = 'login.html';
+        }
+      });
+    }
+
+    // 3. Variables Globales (para usar en otras funciones)
+    window.currentUser = currentUser;
+
     setupEventListeners();
     await checkApiHealth();
     await loadDashboard();
@@ -91,7 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dom.formRecepcion) {
       dom.formRecepcion.reset();
     }
+    if (window.toggleOtroDispositivo) window.toggleOtroDispositivo();
     Utils.openModal(dom.modalNuevoIngreso);
+    if (window.updateUSDEquivalents) window.updateUSDEquivalents();
     setTimeout(() => {
       const inputDoc = document.getElementById('cliente-doc');
       if (inputDoc) inputDoc.focus();
@@ -138,6 +173,29 @@ document.addEventListener('DOMContentLoaded', () => {
       dom.selectFilterEstado.addEventListener('change', () => loadOrdenes());
     }
 
+    // Toggle de input de 'Otro Dispositivo'
+    const equipoTipoSelect = document.getElementById('equipo-tipo');
+    const equipoTipoOtro = document.getElementById('equipo-tipo-otro');
+    
+    window.toggleOtroDispositivo = () => {
+      if (equipoTipoSelect && equipoTipoOtro) {
+        if (equipoTipoSelect.value === 'OTRO') {
+          equipoTipoOtro.style.display = 'block';
+          equipoTipoOtro.required = true;
+          // Pequeño retardo para asegurar que el DOM actualice la UI
+          setTimeout(() => equipoTipoOtro.focus(), 50);
+        } else {
+          equipoTipoOtro.style.display = 'none';
+          equipoTipoOtro.required = false;
+          equipoTipoOtro.value = '';
+        }
+      }
+    };
+
+    if (equipoTipoSelect) {
+      equipoTipoSelect.addEventListener('change', window.toggleOtroDispositivo);
+    }
+
     // Modal Técnico: Guardar Diagnóstico
     if (dom.formTecnico) {
       dom.formTecnico.addEventListener('submit', handleGuardarDiagnostico);
@@ -163,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dom.cobroMontoSaldo.value = `S/. ${saldo.toFixed(2)}`;
         dom.cobroMontoLetras.value = Utils.numeroALetrasClient(total);
+        if (window.updateUSDEquivalents) window.updateUSDEquivalents();
       };
 
       dom.cobroMontoTotal.addEventListener('input', recalcularCobro);
@@ -329,7 +388,10 @@ document.addEventListener('DOMContentLoaded', () => {
                    <div style="font-size: 0.75rem; color: ${saldo > 0 ? 'var(--danger)' : 'var(--success)'}; font-weight: 700;">
                      ${saldo > 0 ? `Saldo: ${Utils.formatMoney(saldo)}` : `Cancelado Total`}
                    </div>`
-                : `<span style="font-size: 0.75rem; color: var(--slate-400); font-style: italic;">Sin Comprobante</span>`
+                : `<div style="font-weight: 600; font-size: 0.8rem; color: var(--slate-600);">Est: ${Utils.formatMoney(ord.costo_estimado || 0)}</div>
+                   <div style="font-size: 0.75rem; color: ${(ord.monto_adelanto > 0) ? 'var(--success)' : 'var(--slate-400)'}; font-weight: ${(ord.monto_adelanto > 0) ? '700' : '400'};">
+                     A cuenta: ${Utils.formatMoney(ord.monto_adelanto || 0)}
+                   </div>`
               }
             </td>
             <td style="font-size: 0.8rem; color: var(--slate-600);">
@@ -410,13 +472,21 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // 2. Crear Orden de Servicio
+      const tipoEquipo = document.getElementById('equipo-tipo').value;
+      const tipoOtro = document.getElementById('equipo-tipo-otro')?.value.trim();
+      let modeloFinal = document.getElementById('equipo-modelo').value.trim();
+      
+      if (tipoEquipo === 'OTRO' && tipoOtro) {
+          modeloFinal = `${tipoOtro} - ${modeloFinal}`;
+      }
+
       const ordenPayload = {
         cliente_id: clienteRes.data.id,
-        recepcionista_id: 3, // Ana Recepción
-        tecnico_id: document.getElementById('orden-tecnico-asignado').value || 2,
-        tipo_equipo: document.getElementById('equipo-tipo').value,
+        recepcionista_id: window.currentUser.id,
+        tecnico_id: document.getElementById('orden-tecnico-asignado').value || window.currentUser.id,
+        tipo_equipo: tipoEquipo,
         marca: document.getElementById('equipo-marca').value.trim(),
-        modelo: document.getElementById('equipo-modelo').value.trim(),
+        modelo: modeloFinal,
         numero_serie: document.getElementById('equipo-serie').value.trim(),
         accesorios_dejados: document.getElementById('equipo-accesorios').value.trim(),
         password_equipo: document.getElementById('equipo-password').value.trim(),
@@ -532,13 +602,20 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.cobroEquipoInfo.textContent = `${ord.tipo_equipo} ${ord.marca} ${ord.modelo}`;
         
         dom.cobroConcepto.value = ord.solucion_tecnica || `Servicio técnico y mantenimiento para ${ord.tipo_equipo} ${ord.marca} ${ord.modelo}.`;
-        dom.cobroMontoTotal.value = '150.00';
-        dom.cobroMontoACuenta.value = '0.00';
-        dom.cobroMontoSaldo.value = 'S/. 150.00';
-        dom.cobroMontoLetras.value = Utils.numeroALetrasClient(150.00);
+        
+        // Usar los montos reales de la orden ingresada
+        const estimadoTotal = parseFloat(ord.costo_estimado) || 0;
+        const adelantoPrevio = parseFloat(ord.monto_adelanto) || 0;
+        const saldoCalculado = Math.max(0, estimadoTotal - adelantoPrevio);
+
+        dom.cobroMontoTotal.value = estimadoTotal > 0 ? estimadoTotal.toFixed(2) : '';
+        dom.cobroMontoACuenta.value = adelantoPrevio > 0 ? adelantoPrevio.toFixed(2) : '0.00';
+        dom.cobroMontoSaldo.value = `S/. ${saldoCalculado.toFixed(2)}`;
+        dom.cobroMontoLetras.value = Utils.numeroALetrasClient(estimadoTotal);
       }
 
       Utils.openModal(dom.modalCobro);
+      if (window.updateUSDEquivalents) window.updateUSDEquivalents();
     } catch (error) {
       Utils.showToast('Error', 'No se pudo preparar el cobro: ' + error.message, 'error');
     }

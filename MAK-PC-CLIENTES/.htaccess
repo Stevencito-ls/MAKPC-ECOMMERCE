@@ -1,5 +1,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Si la solicitud va a la raíz del proyecto, redirigir al frontend
+    
+    # Redirigir la raíz a frontend/index.html
     RewriteRule ^$ frontend/index.html [L]
+
+    # Si el archivo o directorio no existe en la raíz, enrutamos internamente a frontend/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ frontend/$1 [L]
 </IfModule>

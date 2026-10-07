@@ -4,7 +4,7 @@
  * Con soporte para variables de entorno (Docker, AWS, VPS, Cloud Run)
  */
 
-$envPath = __DIR__ . '/../.env';
+$envPath = __DIR__ . '/../../.env';
 if (file_exists($envPath)) {
     $env = parse_ini_file($envPath);
     if ($env) {

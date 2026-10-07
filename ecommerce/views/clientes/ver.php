@@ -13,17 +13,15 @@ if ($flash): ?>
 
 <div class="page-header">
   <div>
-    <h1>👤 <?= e($cliente['nombres_apellidos']) ?></h1>
+    <h1>👤 <?= e($cliente['nombres_razon_social'] ?? 'Cliente') ?></h1>
     <p>Perfil del cliente, inventario de equipos y trazabilidad de servicios</p>
   </div>
   <div class="page-header-actions">
-    <a href="https://wa.me/51<?= preg_replace('/[^0-9]/', '', $cliente['telefono']) ?>?text=Hola%20<?= urlencode($cliente['nombres_apellidos']) ?>%20le%20saludamos%20de%20MAKPC" target="_blank" class="btn btn-yellow" style="background:#25D366;color:#fff;">
+    <a href="https://wa.me/51<?= preg_replace('/[^0-9]/', '', $cliente['telefono']) ?>?text=Hola%20<?= urlencode($cliente['nombres_razon_social']) ?>%20le%20saludamos%20de%20MAKPC" target="_blank" class="btn btn-yellow" style="background:#25D366;color:#fff;">
       💬 WhatsApp Directo
     </a>
-    <a href="<?= url('equipo/crear?cliente_id=' . $cliente['id_cliente']) ?>" class="btn btn-celeste">
-      💻 Añadir Equipo
-    </a>
-    <a href="<?= url('cliente/editar/' . $cliente['id_cliente']) ?>" class="btn btn-outline">
+    <!-- Removed Añadir Equipo button -->
+    <a href="<?= url('cliente/editar/' . $cliente['id']) ?>" class="btn btn-outline">
       ✏️ Editar Datos
     </a>
   </div>
@@ -83,56 +81,7 @@ if ($flash): ?>
   </div>
 </div>
 
-<!-- EQUIPOS DEL CLIENTE -->
-<div class="card" style="margin-bottom:2rem;">
-  <div class="card-header">
-    <h3>💻 Equipos Asociados (<?= count($equipos) ?>)</h3>
-    <a href="<?= url('equipo/crear?cliente_id=' . $cliente['id_cliente']) ?>" class="btn btn-sm btn-yellow">
-      ➕ Agregar Equipo
-    </a>
-  </div>
-  <div class="table-responsive">
-    <table class="custom-table">
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Marca / Modelo</th>
-          <th>N° Serie</th>
-          <th>Código Patrimonial</th>
-          <th>Color / Detalles</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if (empty($equipos)): ?>
-          <tr>
-            <td colspan="6" style="text-align:center;padding:1.5rem;color:var(--color-shadow);">
-              El cliente aún no tiene equipos registrados.
-            </td>
-          </tr>
-        <?php else: ?>
-          <?php foreach ($equipos as $eq): ?>
-            <tr>
-              <td><span class="badge badge-revision"><?= e($eq['tipo_equipo']) ?></span></td>
-              <td><strong><?= e($eq['marca']) ?> <?= e($eq['modelo']) ?></strong></td>
-              <td><code><?= e($eq['numero_serie'] ?: 'S/N') ?></code></td>
-              <td><?= e($eq['codigo_patrimonial'] ?: '-') ?></td>
-              <td><?= e($eq['color_detalles'] ?: '-') ?></td>
-              <td style="white-space:nowrap;">
-                <a href="<?= url('orden/crear?equipo_id=' . $eq['id_equipo']) ?>" class="btn btn-sm btn-yellow" title="Generar Orden">
-                  ⚡ Crear Orden
-                </a>
-                <a href="<?= url('equipo/editar/' . $eq['id_equipo']) ?>" class="btn btn-sm btn-outline" title="Editar">
-                  ✏️
-                </a>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </div>
-</div>
+<!-- EQUIPOS OMITIDO -->
 
 <!-- HISTORIAL DE ÓRDENES -->
 <div class="card">
@@ -174,12 +123,12 @@ if ($flash): ?>
               <td><?= date('d/m/Y H:i', strtotime($o['fecha_recepcion'])) ?></td>
               <td><?= e($o['equipo']) ?></td>
               <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                <?= e($o['falla_reportada']) ?>
+                <?= e($o['motivo_ingreso'] ?? '') ?>
               </td>
               <td><span class="badge <?= $stBadge ?>"><?= e($o['estado']) ?></span></td>
-              <td><strong><?= formatPrecio($o['costo_total']) ?></strong></td>
+              <td><strong><?= formatPrecio($o['costo_total'] ?? 0) ?></strong></td>
               <td>
-                <a href="<?= url('orden/ver/' . $o['id_orden']) ?>" class="btn btn-sm btn-primary">
+                <a href="<?= url('orden/ver/' . $o['id']) ?>" class="btn btn-sm btn-primary">
                   Ver Orden
                 </a>
               </td>

@@ -10,7 +10,7 @@ if ($flash): ?>
   </div>
 <?php endif; 
 
-$saldo = (float)$orden['costo_total'] - (float)$orden['adelanto'];
+$saldo = (float)($orden['costo_total'] ?? 0) - (float)($orden['adelanto'] ?? 0);
 $stBadge = match($orden['estado']) {
   'Pendiente' => 'badge-pendiente',
   'En Reparacion' => 'badge-reparacion',
@@ -38,11 +38,11 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
       Notificar WhatsApp
     </a>
-    <a href="<?= url('orden/imprimir/' . $orden['id_orden']) ?>" target="_blank" class="btn btn-celeste">
+    <a href="<?= url('orden/imprimir/' . $orden['id']) ?>" target="_blank" class="btn btn-celeste">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
       Imprimir Hoja de Servicio
     </a>
-    <a href="<?= url('orden/editar/' . $orden['id_orden']) ?>" class="btn btn-outline">
+    <a href="<?= url('orden/editar/' . $orden['id']) ?>" class="btn btn-outline">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
       Editar Orden
     </a>
@@ -55,7 +55,7 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
     <div style="font-weight:700;color:var(--color-blue);font-size:0.95rem;">
       Cambio Rápido de Estado Operativo:
     </div>
-    <form action="<?= url('orden/cambiarEstado/' . $orden['id_orden']) ?>" method="POST" style="display:flex;align-items:center;gap:0.75rem;">
+    <form action="<?= url('orden/cambiarEstado/' . $orden['id']) ?>" method="POST" style="display:flex;align-items:center;gap:0.75rem;">
       <?= csrf_field() ?>
       <select name="estado" class="form-control" style="width:auto;min-width:180px;">
         <option value="Pendiente" <?= ($orden['estado'] === 'Pendiente') ? 'selected' : '' ?>>Pendiente</option>
@@ -80,22 +80,22 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
         <div>
           <strong style="color:var(--color-blue);font-size:0.85rem;text-transform:uppercase;">Falla Reportada por el Cliente:</strong>
           <p style="margin-top:0.25rem;color:#374151;font-size:0.95rem;background:var(--color-lavender);padding:0.75rem;border-radius:var(--radius-sm);">
-            <?= nl2br(e($orden['falla_reportada'])) ?>
+            <?= nl2br(e($orden['motivo_ingreso'] ?? '')) ?>
           </p>
         </div>
 
         <div>
           <strong style="color:var(--color-blue);font-size:0.85rem;text-transform:uppercase;">Estado Físico en Recepción:</strong>
           <p style="margin-top:0.25rem;color:#374151;font-size:0.9rem;">
-            <?= nl2br(e($orden['estado_recepcion_fisico'])) ?>
+            <?= nl2br(e($orden['estado_fisico'] ?? '')) ?>
           </p>
         </div>
 
-        <?php if (!empty($orden['accesorios_entregados'])): ?>
+        <?php if (!empty($orden['accesorios'])): ?>
           <div>
             <strong style="color:var(--color-blue);font-size:0.85rem;text-transform:uppercase;">Accesorios Dejados:</strong>
             <p style="margin-top:0.25rem;color:#374151;font-size:0.9rem;">
-              <?= e($orden['accesorios_entregados']) ?>
+              <?= e($orden['accesorios']) ?>
             </p>
           </div>
         <?php endif; ?>
@@ -257,7 +257,7 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
         </h4>
         <form action="<?= url('componente/agregar') ?>" method="POST">
           <?= csrf_field() ?>
-          <input type="hidden" name="id_orden" value="<?= $orden['id_orden'] ?>">
+          <input type="hidden" name="id_orden" value="<?= $orden['id'] ?>">
           <div class="form-grid">
             <div class="form-group">
               <label for="tipo_componente">Tipo de Componente *</label>

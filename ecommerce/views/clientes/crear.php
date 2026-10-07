@@ -34,8 +34,8 @@ if ($flash): ?>
       <?= csrf_field() ?>
       <div class="form-grid">
         <div class="form-group" style="grid-column:1 / -1;">
-          <label for="nombres_apellidos">Nombres y Apellidos *</label>
-          <input type="text" id="nombres_apellidos" name="nombres_apellidos" class="form-control" required placeholder="Ej: Carlos Mendoza Alarcón">
+          <label for="nombres_razon_social">Nombres y Apellidos *</label>
+          <input type="text" id="nombres_razon_social" name="nombres_razon_social" class="form-control" required placeholder="Ej: Carlos Mendoza Alarcón">
         </div>
 
         <div class="form-group">
@@ -50,11 +50,11 @@ if ($flash): ?>
 
         <div class="form-group">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
-            <label for="dni" style="margin:0;">DNI / RUC</label>
-            <span id="dniDocBadge" style="font-size:0.75rem;font-weight:700;display:none;"></span>
+            <label for="numero_documento" style="margin:0;">numero_documento / RUC</label>
+            <span id="numero_documentoDocBadge" style="font-size:0.75rem;font-weight:700;display:none;"></span>
           </div>
           <div style="display:flex;gap:6px;">
-            <input type="text" id="dni" name="dni" class="form-control" placeholder="Ej: 70000000 o RUC" maxlength="11">
+            <input type="text" id="numero_documento" name="numero_documento" class="form-control" placeholder="Ej: 70000000 o RUC" maxlength="11">
             <button type="button" id="btnConsultarDoc" onclick="consultarDocCliente()" class="btn btn-primary btn-sm" style="white-space:nowrap;padding:0.35rem 0.75rem;display:inline-flex;align-items:center;gap:0.3rem;" title="Consultar en RENIEC o SUNAT">
               <svg style="width:13px;height:13px;fill:currentColor;" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
               <span>Validar</span>
@@ -63,8 +63,8 @@ if ($flash): ?>
         </div>
 
         <div class="form-group">
-          <label for="correo">Correo Electrónico</label>
-          <input type="email" id="correo" name="correo" class="form-control" placeholder="Ej: cliente@correo.com">
+          <label for="email">email Electrónico</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="Ej: cliente@email.com">
         </div>
 
         <div class="form-group" style="grid-column:1 / -1;">
@@ -91,18 +91,18 @@ if ($flash): ?>
 
 <script>
 async function consultarDocCliente() {
-  const inp = document.getElementById('dni');
-  const badge = document.getElementById('dniDocBadge');
+  const inp = document.getElementById('numero_documento');
+  const badge = document.getElementById('numero_documentoDocBadge');
   const btn = document.getElementById('btnConsultarDoc');
   const val = (inp.value || '').trim();
 
-  let tipo = 'dni';
+  let tipo = 'numero_documento';
   if (val.length === 11) {
     tipo = 'ruc';
   } else if (val.length === 8) {
-    tipo = 'dni';
+    tipo = 'numero_documento';
   } else {
-    alert('Ingrese un DNI (8 dígitos) o RUC (11 dígitos) válido.');
+    alert('Ingrese un numero_documento (8 dígitos) o RUC (11 dígitos) válido.');
     inp.focus();
     return;
   }
@@ -119,15 +119,15 @@ async function consultarDocCliente() {
     if (data.success) {
       badge.style.color = '#10B981';
       badge.textContent = '✓ ' + (data.origen || 'Verificado');
-      if (tipo === 'dni') {
-        document.getElementById('nombres_apellidos').value = data.nombre_completo;
-        document.getElementById('nombres_apellidos').style.background = '#ECFDF5';
-        setTimeout(() => document.getElementById('nombres_apellidos').style.background = '', 1500);
+      if (tipo === 'numero_documento') {
+        document.getElementById('nombres_razon_social').value = data.nombre_completo;
+        document.getElementById('nombres_razon_social').style.background = '#ECFDF5';
+        setTimeout(() => document.getElementById('nombres_razon_social').style.background = '', 1500);
       } else {
-        document.getElementById('nombres_apellidos').value = data.razon_social;
+        document.getElementById('nombres_razon_social').value = data.razon_social;
         document.getElementById('direccion').value = data.direccion || '';
-        document.getElementById('nombres_apellidos').style.background = '#ECFDF5';
-        setTimeout(() => document.getElementById('nombres_apellidos').style.background = '', 1500);
+        document.getElementById('nombres_razon_social').style.background = '#ECFDF5';
+        setTimeout(() => document.getElementById('nombres_razon_social').style.background = '', 1500);
       }
     } else {
       badge.style.color = '#EF4444';
@@ -142,7 +142,7 @@ async function consultarDocCliente() {
   }
 }
 
-document.getElementById('dni')?.addEventListener('input', function() {
+document.getElementById('numero_documento')?.addEventListener('input', function() {
   const l = this.value.trim().length;
   if (l === 8 || l === 11) {
     consultarDocCliente();

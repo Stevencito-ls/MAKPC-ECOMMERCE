@@ -264,14 +264,33 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
                   <span class="kw-card-badge <?= $badgeClass ?>"><?= $badgeText ?></span>
                 <?php endif; ?>
 
-                <a href="<?= url('tienda/producto/' . $p['slug']) ?>" class="kw-card-img-wrap" title="<?= e($p['nombre']) ?>">
+                <?php
+                  $productData = json_encode([
+                      'id' => $p['id_producto'],
+                      'nombre' => $p['nombre'],
+                      'precio' => $p['precio'],
+                      'precio_anterior' => $p['precio_anterior'],
+                      'marca' => $p['marca'] ?: ($p['categoria_nombre'] ?? 'MAKPC'),
+                      'descripcion' => $p['descripcion'] ?? 'Sin descripción detallada.',
+                      'stock' => $stockNum,
+                      'imagen' => asset('img/productos/' . $imgFile),
+                      'url' => url('tienda/producto/' . $p['slug'])
+                  ], JSON_HEX_APOS | JSON_HEX_QUOT);
+                ?>
+                <a href="<?= url('tienda/producto/' . $p['slug']) ?>" 
+                   onclick="event.preventDefault(); openQuickView(this);"
+                   data-product="<?= htmlspecialchars($productData, ENT_QUOTES, 'UTF-8') ?>"
+                   class="kw-card-img-wrap" title="<?= e($p['nombre']) ?>">
                   <img src="<?= asset('img/productos/' . $imgFile) ?>" alt="<?= e($p['nombre']) ?>" class="kw-card-img" loading="lazy">
                 </a>
 
                 <div class="kw-card-body">
                   <span class="kw-card-brand"><?= e($p['marca'] ?: ($p['categoria_nombre'] ?? 'MAKPC')) ?></span>
                   <h3 class="kw-card-title">
-                    <a href="<?= url('tienda/producto/' . $p['slug']) ?>" title="<?= e($p['nombre']) ?>">
+                    <a href="<?= url('tienda/producto/' . $p['slug']) ?>"
+                       onclick="event.preventDefault(); openQuickView(this);"
+                       data-product="<?= htmlspecialchars($productData, ENT_QUOTES, 'UTF-8') ?>"
+                       title="<?= e($p['nombre']) ?>">
                       <?= e($p['nombre']) ?>
                     </a>
                   </h3>
@@ -324,8 +343,19 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
 
 </section>
 
+<?php 
+$flashProducts = [];
+if (!empty($ofertasActivas) && !empty($productos)) {
+    $flashProducts = array_filter($productos, function($p) {
+        return !empty($p['precio_anterior']) && (float)$p['precio_anterior'] > (float)$p['precio'];
+    });
+    $flashProducts = array_slice($flashProducts, 0, 4);
+}
+?>
+
+<?php if (!empty($ofertasActivas) && !empty($flashProducts)): ?>
 <!-- ==============================================================================
-     2. VENTANA FLOTANTE DE OFERTAS RELÁMPAGO 24H (MODAL CERRABLE & BOTÓN FLOTANTE)
+     2. VENTANA FLOTANTE DE OFERTAS RELÁMPAGO (MODAL CERRABLE & BOTÓN FLOTANTE)
      ============================================================================== -->
 <div class="deals-modal-overlay" id="dealsModalOverlay" onclick="handleDealsBackdropClick(event)">
   <div class="deals-modal-card" id="dealsModalCard">
@@ -335,7 +365,7 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
       <div class="deals-modal-title-box">
         <h3 class="deals-modal-title">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="#F59E0B" stroke="#D97706" stroke-width="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          OFERTAS RELÁMPAGO 24 HORAS
+          OFERTAS RELÁMPAGO
         </h3>
         <span class="deals-modal-badge">Precios Cyber Online</span>
       </div>
@@ -343,26 +373,32 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
       <!-- Temporizador Regresivo -->
       <div class="deals-modal-timer">
         <span>TERMINA EN:</span>
-        <span class="deals-timer-box" id="flashTimerHours">08</span> :
-        <span class="deals-timer-box" id="flashTimerMinutes">42</span> :
-        <span class="deals-timer-box" id="flashTimerSeconds">19</span>
+        <span class="deals-timer-box" id="flashTimerHours">00</span> :
+        <span class="deals-timer-box" id="flashTimerMinutes">00</span> :
+        <span class="deals-timer-box" id="flashTimerSeconds">00</span>
       </div>
 
       <!-- Botón de Cerrar Modal -->
       <button type="button" class="deals-modal-close" onclick="cerrarOfertasModal()" title="Cerrar ventana de ofertas" aria-label="Cerrar">&times;</button>
     </div>
 
-    <!-- Cuerpo del Modal con 4 Productos en Oferta -->
+    <!-- Cuerpo del Modal con Productos en Oferta -->
     <div class="deals-modal-body">
       <div class="deals-modal-grid">
         <?php 
-        $flashProducts = array_slice($productos, 0, 4);
         foreach ($flashProducts as $fp): 
           $imgFile = $fp['imagen'] ?: 'prod_1.jpg';
           $precioNum = (float)$fp['precio'];
+          // Calcular % descuento
+          $descPorc = 0;
+          if (!empty($fp['precio_anterior']) && (float)$fp['precio_anterior'] > 0) {
+              $descPorc = round(((float)$fp['precio_anterior'] - $precioNum) / (float)$fp['precio_anterior'] * 100);
+          }
         ?>
           <article class="cb-product-card" style="border-color:#FCD34D;">
-            <span class="cb-card-badge discount" style="background:#DC2626;">-25% OFERTA</span>
+            <?php if($descPorc > 0): ?>
+            <span class="cb-card-badge discount" style="background:#DC2626;">-<?= $descPorc ?>% OFERTA</span>
+            <?php endif; ?>
             
             <a href="<?= url('tienda/producto/' . $fp['slug']) ?>" class="cb-card-media-wrapper" title="<?= e($fp['nombre']) ?>">
               <img src="<?= asset('img/productos/' . $imgFile) ?>" alt="<?= e($fp['nombre']) ?>" class="cb-card-real-img" loading="lazy">
@@ -379,8 +415,7 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
                   <div class="cb-stock-meter-bar" style="width:75%;"></div>
                 </div>
                 <div class="cb-stock-meter-text">
-                  <span>Vendidos: 15 / 20</span>
-                  <span>¡Últimas 5 unidades!</span>
+                  <span>En Stock: <?= e($fp['stock']) ?></span>
                 </div>
               </div>
 
@@ -405,14 +440,6 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                   <span>Añadir</span>
                 </button>
-                <a 
-                  href="https://wa.me/51975513327?text=Hola%20MAKPC,%20quiero%20la%20oferta%20flash:%20<?= urlencode($fp['nombre']) ?>%20(S/%20<?= number_format($precioNum, 2) ?>)" 
-                  class="cb-btn-quick-wa" 
-                  target="_blank" 
-                  title="Comprar directo por WhatsApp"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                </a>
               </div>
             </div>
           </article>
@@ -434,11 +461,12 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
 </div>
 
 <!-- Botón Flotante Permanente para Reabrir Ofertas -->
-<button type="button" class="btn-flotante-ofertas" id="btnTriggerOfertas" onclick="abrirOfertasModal()" title="Ver Ofertas Relámpago 24H">
+<button type="button" class="btn-flotante-ofertas" id="btnTriggerOfertas" onclick="abrirOfertasModal()" title="Ver Ofertas Relámpago">
   <span class="flotante-pulse"></span>
   <svg width="18" height="18" viewBox="0 0 24 24" fill="#F59E0B" stroke="#D97706" stroke-width="1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-  <span>Ofertas Flash 24H (-25%)</span>
+  <span>Ofertas Flash</span>
 </button>
+<?php endif; ?>
 
 <!-- ==============================================================================
      3. SPOTLIGHT BANNER "CREA TU PC" (DEBAJO DEL CATÁLOGO)
@@ -458,11 +486,11 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
         Nuestro configurador inteligente analiza compatibilidad de socket, consumo eléctrico y balance CPU/GPU en tiempo real para oficina, estudio, streaming o gaming competitivo.
       </p>
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-        <a href="<?= url('tienda/crear-pc') ?>" class="cb-btn-hero-primary" style="font-size:0.92rem;padding:0.75rem 1.4rem;">
+        <a href="<?= url('crear-pc') ?>" class="cb-btn-hero-primary" style="font-size:0.92rem;padding:0.75rem 1.4rem;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-4 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
           <span>Abrir Estudio Crea tu PC</span> &rarr;
         </a>
-        <a href="<?= url('tienda/crear-pc#presets') ?>" class="cb-btn-hero-outline" style="font-size:0.92rem;padding:0.75rem 1.4rem;">
+        <a href="<?= url('crear-pc#presets') ?>" class="cb-btn-hero-outline" style="font-size:0.92rem;padding:0.75rem 1.4rem;">
           <span>Ver 4 Presets Listos</span>
         </a>
       </div>
@@ -650,6 +678,206 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
 </section>
 
 <!-- ==============================================================================
+     QUICK VIEW MODAL (GLASSMORPHISM)
+     ============================================================================== -->
+<div class="quick-view-overlay" id="quickViewOverlay" onclick="handleQuickViewBackdropClick(event)">
+  <div class="quick-view-card glass-modal" id="quickViewCard">
+    <button type="button" class="quick-view-close" onclick="cerrarQuickView()" title="Cerrar">&times;</button>
+    <div class="quick-view-content">
+      <div class="qv-image-col">
+        <img src="" id="qvImage" alt="Producto">
+      </div>
+      <div class="qv-details-col">
+        <span class="qv-brand" id="qvBrand">Marca</span>
+        <h2 class="qv-title" id="qvTitle">Nombre del Producto</h2>
+        <div class="qv-price-row">
+          <span class="qv-price-current" id="qvPriceCurrent">S/. 0.00</span>
+          <span class="qv-price-old" id="qvPriceOld" style="display:none;">S/. 0.00</span>
+        </div>
+        <div class="qv-stock-badge" id="qvStock">En Stock</div>
+        <div class="qv-description" id="qvDescription">Descripción aquí...</div>
+        
+        <div class="qv-actions">
+          <button type="button" class="cb-btn-add-cart btn-add-cart-action" id="qvBtnAdd" style="flex:1;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            Añadir al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Estilos Glassmorphism para Quick View Modal */
+  .quick-view-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .quick-view-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .glass-modal {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+  .quick-view-card {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 16px;
+    padding: 2rem;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  .quick-view-overlay.active .quick-view-card {
+    transform: scale(1) translateY(0);
+  }
+  .quick-view-close {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .quick-view-close:hover {
+    background: rgba(255,255,255,0.4);
+  }
+  .quick-view-content {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .qv-image-col {
+    flex: 1;
+    min-width: 250px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qv-image-col img {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+  }
+  .qv-details-col {
+    flex: 1.5;
+    min-width: 300px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .qv-brand {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cb-gold, #FCD34D);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+  .qv-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 0 1rem;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .qv-price-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .qv-price-current {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #10B981; /* Verde esmeralda */
+  }
+  .qv-price-old {
+    font-size: 1.1rem;
+    text-decoration: line-through;
+    color: #94A3B8;
+  }
+  .qv-stock-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    align-self: flex-start;
+  }
+  .qv-stock-badge.low {
+    background: rgba(239, 68, 68, 0.2);
+    color: #F87171;
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+  .qv-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #E2E8F0;
+    margin-bottom: 1.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+  
+  .qv-description::-webkit-scrollbar {
+    width: 6px;
+  }
+  .qv-description::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+  }
+  .qv-description ul, .qv-description ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .qv-description li {
+    margin-bottom: 0.3rem;
+  }
+  .qv-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+  }
+  @media (max-width: 768px) {
+    .quick-view-content {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<!-- ==============================================================================
      8. SCRIPTS DE CONTROL DEL MODAL Y TEMPORIZADOR
      ============================================================================== -->
 <script>
@@ -686,23 +914,28 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
 
   // Temporizador Flash Deals
   (function() {
-    let hours = 8, minutes = 42, seconds = 19;
+    const countDownDate = <?php if(!empty($ofertasFin)): ?>new Date("<?= date('Y-m-d\TH:i:s', strtotime($ofertasFin)) ?>").getTime()<?php else: ?>0<?php endif; ?>;
+
     const hEl = document.getElementById('flashTimerHours');
     const mEl = document.getElementById('flashTimerMinutes');
     const sEl = document.getElementById('flashTimerSeconds');
     
-    if (hEl && mEl && sEl) {
+    if (hEl && mEl && sEl && countDownDate > 0) {
       setInterval(() => {
-        seconds--;
-        if (seconds < 0) {
-          seconds = 59;
-          minutes--;
-          if (minutes < 0) {
-            minutes = 59;
-            hours--;
-            if (hours < 0) hours = 12;
-          }
+        const now = new Date().getTime();
+        const distance = countDownDate - now;
+
+        if (distance < 0) {
+          hEl.textContent = '00';
+          mEl.textContent = '00';
+          sEl.textContent = '00';
+          return;
         }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
         hEl.textContent = String(hours).padStart(2, '0');
         mEl.textContent = String(minutes).padStart(2, '0');
         sEl.textContent = String(seconds).padStart(2, '0');
@@ -710,12 +943,96 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
     }
 
     // Auto-apertura sutil solo en primera visita a tienda si no se está filtrando
-    <?php if (!$isSearchOrFilter): ?>
+    <?php if (!$isSearchOrFilter && !empty($ofertasActivas) && !empty($flashProducts)): ?>
       if (!sessionStorage.getItem('makpc_ofertas_dismissed')) {
         setTimeout(abrirOfertasModal, 2000);
       }
     <?php endif; ?>
   })();
+
+  // Control de Quick View
+  function openQuickView(element) {
+    const rawData = element.getAttribute('data-product');
+    if (!rawData) return;
+    const p = JSON.parse(rawData);
+
+    document.getElementById('qvBrand').textContent = p.marca;
+    document.getElementById('qvTitle').textContent = p.nombre;
+    document.getElementById('qvDescription').innerHTML = p.descripcion;
+    document.getElementById('qvImage').src = p.imagen;
+    document.getElementById('qvImage').alt = p.nombre;
+
+    // Precios
+    const pCur = parseFloat(p.precio);
+    const pOld = parseFloat(p.precio_anterior);
+    document.getElementById('qvPriceCurrent').textContent = 'S/. ' + pCur.toFixed(2);
+    if (!isNaN(pOld) && pOld > pCur) {
+      document.getElementById('qvPriceOld').textContent = 'S/. ' + pOld.toFixed(2);
+      document.getElementById('qvPriceOld').style.display = 'inline-block';
+    } else {
+      document.getElementById('qvPriceOld').style.display = 'none';
+    }
+
+    // Stock
+    const stock = parseInt(p.stock, 10);
+    const stockEl = document.getElementById('qvStock');
+    if (stock > 5) {
+      stockEl.textContent = 'En Stock: ' + stock + ' unidades';
+      stockEl.className = 'qv-stock-badge';
+    } else if (stock > 0) {
+      stockEl.textContent = '¡Últimas ' + stock + ' unidades!';
+      stockEl.className = 'qv-stock-badge low';
+    } else {
+      stockEl.textContent = 'Agotado Temporalmente';
+      stockEl.className = 'qv-stock-badge low';
+    }
+
+    // Actualizar botón "Añadir"
+    const btnAdd = document.getElementById('qvBtnAdd');
+    btnAdd.setAttribute('data-id', p.id);
+    btnAdd.setAttribute('data-name', p.nombre);
+    btnAdd.setAttribute('data-price', p.precio);
+    btnAdd.setAttribute('data-img', p.imagen);
+    
+    if (stock <= 0) {
+      btnAdd.disabled = true;
+      btnAdd.style.opacity = '0.5';
+      btnAdd.style.cursor = 'not-allowed';
+      btnAdd.innerHTML = 'Agotado';
+    } else {
+      btnAdd.disabled = false;
+      btnAdd.style.opacity = '1';
+      btnAdd.style.cursor = 'pointer';
+      btnAdd.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> Añadir al Carrito`;
+    }
+
+    // Mostrar Modal
+    const modal = document.getElementById('quickViewOverlay');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarQuickView() {
+    const modal = document.getElementById('quickViewOverlay');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function handleQuickViewBackdropClick(e) {
+    if (e.target.id === 'quickViewOverlay') {
+      cerrarQuickView();
+    }
+  }
+
+  // Cerrar con tecla Escape (ampliado)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      cerrarOfertasModal();
+      cerrarQuickView();
+    }
+  });
 
   // Toggle Wishlist
   function toggleWishlist(id, btn) {
@@ -727,3 +1044,4 @@ $isSearchOrFilter = !empty($activeCat) || !empty($filtros['busqueda']) || !empty
     }
   }
 </script>
+

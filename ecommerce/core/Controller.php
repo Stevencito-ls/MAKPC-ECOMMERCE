@@ -103,7 +103,7 @@ class Controller {
     protected function requireRole($roles) {
         $this->requireAuth();
         $allowed = is_array($roles) ? $roles : [$roles];
-        $userRole = $_SESSION['rol'] ?? '';
+        $userRole = strtolower(trim($_SESSION['rol'] ?? ''));
 
         if (!in_array($userRole, $allowed)) {
             setFlash('danger', 'Acceso denegado: tu rol (' . ucfirst($userRole) . ') no tiene permisos para esta acción.');
@@ -139,6 +139,6 @@ class Controller {
     protected function hasRole($roles) {
         if (!isset($_SESSION['usuario_id'])) return false;
         $allowed = is_array($roles) ? $roles : [$roles];
-        return in_array($_SESSION['rol'] ?? '', $allowed);
+        return in_array(strtolower(trim($_SESSION['rol'] ?? '')), $allowed);
     }
 }

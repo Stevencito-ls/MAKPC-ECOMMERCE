@@ -15,7 +15,7 @@ if ($flash): ?>
     <p>Actualizar diagnóstico, solución técnica, costos y estado operativo</p>
   </div>
   <div class="page-header-actions">
-    <a href="<?= url('orden/ver/' . $orden['id_orden']) ?>" class="btn btn-outline">
+    <a href="<?= url('orden/ver/' . $orden['id']) ?>" class="btn btn-outline">
       &larr; Volver a la Orden
     </a>
   </div>
@@ -26,7 +26,7 @@ if ($flash): ?>
     <h3>Edición de Orden de Servicio</h3>
   </div>
   <div class="card-body">
-    <form action="<?= url('orden/editar/' . $orden['id_orden']) ?>" method="POST">
+    <form action="<?= url('orden/editar/' . $orden['id']) ?>" method="POST">
       <?= csrf_field() ?>
       <div class="form-grid">
         <div class="form-group">
@@ -92,7 +92,7 @@ if ($flash): ?>
       </div>
 
       <div style="margin-top:2rem;display:flex;justify-content:flex-end;gap:1rem;">
-        <a href="<?= url('orden/ver/' . $orden['id_orden']) ?>" class="btn btn-outline">Cancelar</a>
+        <a href="<?= url('orden/ver/' . $orden['id']) ?>" class="btn btn-outline">Cancelar</a>
         <button type="submit" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
           Guardar Cambios

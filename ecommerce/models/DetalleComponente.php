@@ -18,11 +18,10 @@ class DetalleComponente extends Model {
     public function buscarPorSerie($serie) {
         return $this->query(
             "SELECT d.*, o.codigo_orden, o.estado as estado_orden,
-                    c.nombres_apellidos as cliente_nombre, CONCAT(e.marca, ' ', e.modelo) as equipo
+                    c.id as id_cliente, c.nombres_razon_social as cliente_nombre, CONCAT(o.marca, ' ', o.modelo) as equipo
              FROM detalle_componentes d
              INNER JOIN ordenes_servicio o ON d.id_orden = o.id
-             INNER JOIN equipos e ON o.id_equipo = e.id_equipo
-             INNER JOIN clientes c ON e.id_cliente = c.id
+             INNER JOIN clientes c ON o.cliente_id = c.id
              WHERE d.serie_retirada LIKE ? OR d.serie_instalada LIKE ?
              ORDER BY d.creado_en DESC",
             ["%$serie%", "%$serie%"]
@@ -30,13 +29,17 @@ class DetalleComponente extends Model {
     }
 
     public function auditoria($busqueda = null) {
-        $sql = "SELECT * FROM vw_auditoria_trazabilidad";
+        $sql = "SELECT d.*, o.codigo_orden, o.estado as estado_orden, o.fecha_recepcion,
+                       c.id as id_cliente, c.nombres_razon_social as cliente_nombre, CONCAT(o.marca, ' ', o.modelo) as equipo
+                FROM detalle_componentes d
+                INNER JOIN ordenes_servicio o ON d.id_orden = o.id
+                INNER JOIN clientes c ON o.cliente_id = c.id";
         $params = [];
         if ($busqueda) {
-            $sql .= " WHERE codigo_orden LIKE ? OR cliente_nombre LIKE ? OR serie_retirada LIKE ? OR serie_instalada LIKE ? OR tipo_componente LIKE ?";
+            $sql .= " WHERE o.codigo_orden LIKE ? OR c.nombres_razon_social LIKE ? OR d.serie_retirada LIKE ? OR d.serie_instalada LIKE ? OR d.tipo_componente LIKE ?";
             $params = ["%$busqueda%", "%$busqueda%", "%$busqueda%", "%$busqueda%", "%$busqueda%"];
         }
-        $sql .= " ORDER BY fecha_recepcion DESC";
+        $sql .= " ORDER BY o.fecha_recepcion DESC";
         return $this->query($sql, $params);
     }
 

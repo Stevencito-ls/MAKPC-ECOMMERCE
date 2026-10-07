@@ -256,13 +256,13 @@ if ($flash): ?>
                 <td><?= e($ord['cliente_nombre']) ?></td>
                 <td><?= e($ord['equipo']) ?></td>
                 <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                  <?= e($ord['falla_reportada']) ?>
+                  <?= e($ord['motivo_ingreso'] ?? '') ?>
                 </td>
                 <td>
                   <span class="badge <?= $estadoClass ?>"><?= e($ord['estado']) ?></span>
                 </td>
                 <td>
-                  <a href="<?= url('orden/ver/' . $ord['id_orden']) ?>" class="btn btn-sm btn-primary">
+                  <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="btn btn-sm btn-primary">
                     Ver
                   </a>
                 </td>

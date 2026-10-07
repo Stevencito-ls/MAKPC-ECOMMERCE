@@ -127,7 +127,7 @@ if ($flash): ?>
                   <span class="badge <?= $estadoClass ?>"><?= e($ord['estado']) ?></span>
                 </td>
                 <td>
-                  <a href="<?= url('orden/ver/' . $ord['id_orden']) ?>" class="btn btn-sm btn-primary">
+                  <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="btn btn-sm btn-primary">
                     Ver
                   </a>
                 </td>

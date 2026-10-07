@@ -16,6 +16,16 @@ class Usuario extends Model {
     }
 
     /**
+     * Buscar usuario por email o nombre de usuario
+     * @param string $identificador
+     * @return array|false
+     */
+    public function findByEmailOrUsuario($identificador) {
+        $sql = "SELECT * FROM {$this->table} WHERE email = :email OR usuario = :usuario LIMIT 1";
+        return $this->queryOne($sql, [':email' => $identificador, ':usuario' => $identificador]);
+    }
+
+    /**
      * Verificar si la contraseña coincide con el hash
      * @param string $password
      * @param string $hash

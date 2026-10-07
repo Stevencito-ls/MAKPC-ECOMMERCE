@@ -37,7 +37,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         <span>Seguir Comprando</span>
       </a>
-      <a href="<?= url('tienda/crear-pc') ?>" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:var(--cb-navy);font-weight:800;text-decoration:none;border:1px solid var(--cb-gold);padding:0.5rem 1rem;border-radius:var(--cb-radius-sm);background:rgba(252,200,39,0.15);">
+      <a href="<?= url('crear-pc') ?>" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:var(--cb-navy);font-weight:800;text-decoration:none;border:1px solid var(--cb-gold);padding:0.5rem 1rem;border-radius:var(--cb-radius-sm);background:rgba(252,200,39,0.15);">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         <span>Crea tu PC a Medida</span>
       </a>
@@ -62,7 +62,7 @@
         <a href="<?= url('tienda') ?>" class="cb-btn-hero-primary" style="padding:0.75rem 1.75rem;font-size:0.92rem;">
           <span>Explorar Catálogo de Productos</span> &rarr;
         </a>
-        <a href="<?= url('tienda/crear-pc') ?>" class="cb-btn-hero-outline" style="padding:0.75rem 1.75rem;font-size:0.92rem;color:var(--cb-navy);border-color:var(--cb-navy);">
+        <a href="<?= url('crear-pc') ?>" class="cb-btn-hero-outline" style="padding:0.75rem 1.75rem;font-size:0.92rem;color:var(--cb-navy);border-color:var(--cb-navy);">
           <span>Configurar Mi Computadora</span>
         </a>
       </div>
@@ -547,3 +547,4 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('cartUpdated', renderFullCart);
 });
 </script>
+
