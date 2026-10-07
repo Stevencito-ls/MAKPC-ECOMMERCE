@@ -75,7 +75,7 @@ class UsuarioController extends Controller {
      * Alternar estado activo / inactivo
      * @param int|string $id
      */
-    public function toggle($id) {
+    public function toggle(string|int $id) {
         $id = (int)$id;
         $user = $this->usuarioModel->find($id);
 
@@ -126,6 +126,38 @@ class UsuarioController extends Controller {
             setFlash('success', "Contraseña de '{$user['usuario']}' actualizada correctamente.");
         }
 
+        $this->redirect('usuario');
+    }
+
+    /**
+     * Eliminar usuario de forma permanente
+     */
+    public function eliminar(string|int $id) {
+        if (!$this->isPost()) {
+            $this->redirect('usuario');
+        }
+
+        if (!verify_csrf($this->input('csrf_token'))) {
+            setFlash('danger', 'Token de seguridad inválido.');
+            $this->redirect('usuario');
+        }
+
+        $id = (int)$id;
+        $user = $this->usuarioModel->find($id);
+
+        if (!$user) {
+            setFlash('danger', 'Usuario no encontrado.');
+            $this->redirect('usuario');
+        }
+
+        // No permitir eliminarse a sí mismo
+        if ($id === (int)auth('id')) {
+            setFlash('danger', 'No puedes eliminar tu propia cuenta.');
+            $this->redirect('usuario');
+        }
+
+        $this->usuarioModel->delete($id);
+        setFlash('success', "Usuario '{$user['nombre_completo']}' eliminado exitosamente.");
         $this->redirect('usuario');
     }
 }
