@@ -26,12 +26,12 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
   <div>
     <h1>
       Orden #<?= e($orden['codigo_orden']) ?>
-      <span class="badge <?= $stBadge ?>" style="font-size:0.85rem;margin-left:8px;"><?= e($orden['estado']) ?></span>
-      <?php if ($orden['es_inmediato']): ?>
+      <span class="badge <?= $stBadge ?>" style="font-size:0.85rem;margin-left:8px;"><?= e($orden['estado'] ?? 'Pendiente') ?></span>
+      <?php if (!empty($orden['es_inmediato'])): ?>
         <span class="badge-urgent-pill" style="font-size:0.75rem;vertical-align:middle;margin-left:6px;">URGENTE</span>
       <?php endif; ?>
     </h1>
-    <p>Ingresado el <?= date('d/m/Y \a \l\a\s H:i', strtotime($orden['fecha_recepcion'])) ?> — Técnico: <strong><?= e($orden['tecnico_responsable']) ?></strong></p>
+    <p>Ingresado el <?= date('d/m/Y \a \l\a\s H:i', strtotime($orden['fecha_recepcion'] ?? 'now')) ?> — Técnico: <strong><?= e($orden['tecnico_responsable'] ?? 'No asignado') ?></strong></p>
   </div>
   <div class="page-header-actions">
     <a href="https://wa.me/51<?= preg_replace('/[^0-9]/', '', $orden['telefono']) ?>?text=<?= urlencode($msgWhatsApp) ?>" target="_blank" class="btn btn-yellow" style="background:#25D366;color:#fff;">
