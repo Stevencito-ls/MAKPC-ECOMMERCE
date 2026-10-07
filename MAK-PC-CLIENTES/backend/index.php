@@ -44,8 +44,6 @@ use Controllers\ClienteController;
 use Controllers\OrdenController;
 use Controllers\ReciboController;
 use Controllers\DashboardController;
-use Controllers\AuthController;
-
 // 3. Normalizar URI y Método HTTP
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -142,11 +140,6 @@ try {
         $vencimiento = $_GET['vencimiento'] ?? date('Y-m-d');
         $eval = \Utils\GarantiaHelper::validarEstadoGarantia($vencimiento);
         Response::ok($eval);
-    }
-
-    // ---- AUTENTICACIÓN ----
-    elseif ($uri === '/api/login' && $method === 'POST') {
-        (new \Controllers\AuthController())->login();
     }
 
     // ---- ESTADO DE LA API / SALUD ----

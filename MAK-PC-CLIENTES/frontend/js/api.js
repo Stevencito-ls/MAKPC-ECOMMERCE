@@ -143,12 +143,6 @@ const API = (() => {
     // ---- SALUD Y ESTADO ----
     checkHealth: () => request('/api/health'),
 
-    // ---- AUTENTICACIÓN ----
-    login: (credentials) => request('/api/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    }),
-
     // ---- DASHBOARD ----
     getDashboardMetrics: () => request('/api/dashboard/resumen'),
 

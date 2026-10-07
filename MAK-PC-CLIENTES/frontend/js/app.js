@@ -78,13 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * Inicialización del sistema
    */
   const init = async () => {
-    // 1. Verificación de Autenticación
-    const userStr = localStorage.getItem('usuario_makpc');
-    if (!userStr) {
-      window.location.href = 'login.html';
-      return;
-    }
-    const currentUser = JSON.parse(userStr);
+    // 1. Usuario Genérico por Defecto (Taller)
+    const currentUser = { id: 1, nombre_completo: 'Taller Local', rol: 'ADMIN' };
 
     // 2. Actualizar UI con datos del usuario
     const badge = document.getElementById('current-user-badge');
@@ -93,19 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = badge.querySelector('.user-name');
       const role = badge.querySelector('.user-role');
       
-      const initials = currentUser.nombre_completo.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-      avatar.textContent = initials;
-      name.textContent = currentUser.nombre_completo;
-      role.textContent = currentUser.rol === 'ADMIN' ? 'Administrador' : (currentUser.rol === 'TECNICO' ? 'Técnico' : 'Recepción');
-
-      badge.style.cursor = 'pointer';
-      badge.title = 'Cerrar Sesión';
-      badge.addEventListener('click', () => {
-        if(confirm('¿Deseas cerrar sesión?')) {
-          localStorage.removeItem('usuario_makpc');
-          window.location.href = 'login.html';
-        }
-      });
+      if (avatar) avatar.textContent = 'TL';
+      if (name) name.textContent = 'Taller';
+      if (role) role.textContent = 'Operador Local';
     }
 
     // 3. Variables Globales (para usar en otras funciones)
@@ -340,10 +325,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (ord.estado === 'REPARADO') {
           // Equipo reparado -> Listo para cobrar y emitir recibo A5
+          const btnWhatsApp = ord.cliente_telefono ? `
+            <button class="btn btn-sm" style="background-color: #25D366; color: white; width: 100%; margin-top: 5px; box-shadow: 0 2px 8px rgba(37, 211, 102, 0.35); border: none;" onclick="App.notificarWhatsApp(${ord.id})">
+              <i class="ph-bold ph-whatsapp-logo"></i> Notificar Cliente
+            </button>
+          ` : '';
+
           botonAccion = `
             <button class="btn btn-success btn-sm" style="box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35); width: 100%;" onclick="App.cobrarYEntregar(${ord.id})">
               <i class="ph-bold ph-receipt"></i> Cobrar y Recibo
             </button>
+            ${btnWhatsApp}
           `;
         } else if (ord.estado === 'ENTREGADO') {
           // Equipo entregado -> Ver o reimprimir comprobante A5
@@ -709,12 +701,45 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  /**
+   * Acción 4: Notificar al cliente vía WhatsApp
+   */
+  const notificarWhatsApp = (ordenId) => {
+    try {
+      const ord = state.ordenes.find(o => o.id === ordenId);
+      if (!ord || !ord.cliente_telefono) {
+        Utils.showToast('WhatsApp', 'No se encontró el número de teléfono del cliente.', 'warning');
+        return;
+      }
+
+      const estimadoTotal = parseFloat(ord.costo_estimado) || 0;
+      const adelanto = parseFloat(ord.monto_adelanto) || 0;
+      const saldo = Math.max(0, estimadoTotal - adelanto);
+      
+      const mensaje = `Hola ${ord.cliente_nombre}, te saludamos de MAK-PC Enterprises. Tu equipo ${ord.tipo_equipo} ${ord.marca} ${ord.modelo} ya se encuentra REPARADO y listo para recojo. Tu saldo pendiente es de S/. ${saldo.toFixed(2)}. ¡Te esperamos!`;
+      
+      let telefono = ord.cliente_telefono.replace(/\D/g, '');
+      // Si el teléfono es de Perú y tiene 9 dígitos, agregar el prefijo +51
+      if (telefono.length === 9 && !telefono.startsWith('51')) {
+          telefono = '51' + telefono;
+      }
+
+      const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+      
+      Utils.showToast('WhatsApp', 'Abriendo chat con el cliente...', 'success');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Exponer métodos al objeto global App
   window.App = {
     abrirNuevoIngreso,
     atenderOrden,
     cobrarYEntregar,
-    verReciboA5
+    verReciboA5,
+    notificarWhatsApp
   };
 
   // Iniciar
