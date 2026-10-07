@@ -138,13 +138,17 @@ switch ($action) {
     case 'equipo':
     case 'componente':
     case 'usuario':
+    case 'caja':
+    case 'inventario':
         $controllersMap = [
             'pedido' => 'PedidoController',
             'orden' => 'OrdenController',
             'cliente' => 'ClienteController',
             'equipo' => 'EquipoController',
             'componente' => 'ComponenteController',
-            'usuario' => 'UsuarioController'
+            'usuario' => 'UsuarioController',
+            'caja' => 'CajaController',
+            'inventario' => 'InventarioController'
         ];
         $controllerName = $controllersMap[$action];
         require_once __DIR__ . '/controllers/' . $controllerName . '.php';
