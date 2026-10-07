@@ -175,19 +175,19 @@ $msgWhatsApp = "Hola " . $orden['cliente_nombre'] . ", le saludamos de MAKPC. Le
       <div class="card-body" style="display:flex;flex-direction:column;gap:0.75rem;">
         <div style="display:flex;justify-content:space-between;">
           <span>Mano de Obra:</span>
-          <strong><?= formatPrecio($orden['costo_mano_obra']) ?></strong>
+          <strong><?= formatPrecio($orden['costo_mano_obra'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;">
           <span>Repuestos / Piezas:</span>
-          <strong><?= formatPrecio($orden['costo_repuestos']) ?></strong>
+          <strong><?= formatPrecio($orden['costo_repuestos'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-top:1px solid #edf0f5;padding-top:0.5rem;font-size:1.05rem;">
           <strong>Total Estimado:</strong>
-          <strong style="color:var(--color-blue);"><?= formatPrecio($orden['costo_total']) ?></strong>
+          <strong style="color:var(--color-blue);"><?= formatPrecio($orden['costo_total'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;color:var(--color-success);">
           <span>Adelanto Abonado:</span>
-          <strong>- <?= formatPrecio($orden['adelanto']) ?></strong>
+          <strong>- <?= formatPrecio($orden['adelanto'] ?? 0) ?></strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-top:2px solid var(--color-lavender);padding-top:0.6rem;font-size:1.15rem;">
           <strong style="color:var(--color-danger);">Saldo por Cobrar:</strong>
