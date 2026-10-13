@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Abrir Modal de Recepción Express
    */
   const abrirNuevoIngreso = () => {
-    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'vendedor') {
+    if (window.currentUser && String(window.currentUser.rol).toLowerCase() !== 'admin' && String(window.currentUser.rol).toLowerCase() !== 'vendedor') {
       alert("Acceso Denegado: Solo los Administradores o Vendedores pueden recepcionar nuevos equipos.");
       return;
     }
@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Acción 1: Atender Orden / Diagnóstico Técnico
    */
   const atenderOrden = async (ordenId) => {
-    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'tecnico') {
+    if (window.currentUser && String(window.currentUser.rol).toLowerCase() !== 'admin' && String(window.currentUser.rol).toLowerCase() !== 'tecnico') {
       alert("Acceso Denegado: Solo los Administradores o Técnicos pueden atender y diagnosticar equipos.");
       return;
     }
@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
       estado: dom.modalTecEstado.value,
       diagnostico_tecnico: dom.modalTecDiagnostico.value.trim(),
       solucion_tecnica: dom.modalTecSolucion.value.trim(),
-      tecnico_id: 2
+      tecnico_id: window.currentUser ? window.currentUser.id : null
     };
 
     try {
@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Acción 2: Cobrar y Emitir Recibo A5 (Paso Único Integrado)
    */
   const cobrarYEntregar = async (ordenId) => {
-    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'vendedor') {
+    if (window.currentUser && String(window.currentUser.rol).toLowerCase() !== 'admin' && String(window.currentUser.rol).toLowerCase() !== 'vendedor') {
       alert("Acceso Denegado: Solo los Administradores o Vendedores/Caja pueden realizar cobros y entregas.");
       return;
     }
@@ -628,17 +628,25 @@ document.addEventListener('DOMContentLoaded', () => {
       if (reciboExistenteId) {
         // Liquidar saldo de recibo existente
         const saldoAbonar = Math.max(0, total - aCuenta);
-        const resLiq = await API.liquidarSaldo(parseInt(reciboExistenteId), {
-          monto_abonado: saldoAbonar > 0 ? saldoAbonar : total,
-          metodo_pago: metodoPago,
-          marcar_entregado: marcarEntregado
-        });
-        reciboFinalId = resLiq.data.recibo_id;
+        if (saldoAbonar > 0) {
+          const resLiq = await API.liquidarSaldo(parseInt(reciboExistenteId), {
+            monto_abonado: saldoAbonar,
+            metodo_pago: metodoPago,
+            marcar_entregado: marcarEntregado
+          });
+          reciboFinalId = resLiq.data.recibo_id;
+        } else {
+          // El recibo ya está cancelado, solo actualizamos el estado de la orden si se requiere
+          if (marcarEntregado) {
+            await API.actualizarEstadoOrden(ordenId, { estado: 'ENTREGADO' });
+          }
+          reciboFinalId = reciboExistenteId;
+        }
       } else {
         // Emitir nuevo recibo oficial
         const resEmit = await API.emitirRecibo({
           orden_servicio_id: ordenId,
-          usuario_emisor_id: 3, // Ana Recepción
+          usuario_emisor_id: window.currentUser ? window.currentUser.id : null, // Fix hardcoded ID
           concepto: dom.cobroConcepto.value.trim(),
           monto_total: total,
           monto_a_cuenta: total, // Al entregar se cancela el total

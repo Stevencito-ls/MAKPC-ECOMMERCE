@@ -1,9 +1,24 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    session_set_cookie_params([
+        'lifetime' => 7200,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    session_start();
+}
 require_once __DIR__ . '/../../ecommerce/config/app.php';
 
 // Verificar sesión compartida
 if (!isLoggedIn()) {
-    header("Location: ../../ecommerce/login");
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $ecommercePath = preg_replace('#/MAK-PC-CLIENTES/frontend(/.*)?$#i', '', $scriptName) . '/ecommerce/login';
+    header("Location: " . $ecommercePath);
     exit;
 }
 
@@ -316,7 +331,12 @@ if (isset($words[1])) {
             </div>
 
             <div class="col-6 form-group">
-              <label for="equipo-observaciones">Estado Físico / Detalles Estéticos</label>
+              <label for="equipo-observaciones" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Estado Físico / Detalles Estéticos</span>
+                <label style="font-size: 0.8rem; font-weight: normal; margin:0; cursor:pointer; color:var(--primary); display:flex; align-items:center; gap: 4px;">
+                  <input type="checkbox" id="check-sin-novedad" onchange="if(this.checked){ document.getElementById('equipo-observaciones').value = 'Ingresa sin novedades físicas o estéticas aparentes.'; } else { document.getElementById('equipo-observaciones').value = ''; }"> Sin novedad
+                </label>
+              </label>
               <textarea id="equipo-observaciones" class="form-control" rows="2" placeholder="Rayones en tapa, bisagra floja, golpes preexistentes..." style="min-height: 70px;"></textarea>
             </div>
 
@@ -522,6 +542,6 @@ if (isset($words[1])) {
   <script src="js/api.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/currency.js?v=1.1"></script>
-  <script src="js/app.js?v=2.6"></script>
+  <script src="js/app.js?v=2.9"></script>
 </body>
 </html>

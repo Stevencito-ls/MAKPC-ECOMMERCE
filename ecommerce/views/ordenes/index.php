@@ -17,7 +17,7 @@ if ($flash): ?>
     <p>Recepción, diagnóstico, ejecución de trabajos y trazabilidad de garantías</p>
   </div>
   <div class="page-header-actions">
-    <a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/frontend/" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
+    <a href="<?= BASE_URL ?>../MAK-PC-CLIENTES/frontend/" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
       Nueva Orden de Servicio
     </a>
