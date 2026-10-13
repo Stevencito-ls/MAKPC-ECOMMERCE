@@ -24,7 +24,7 @@ class Database {
                 header('Location: ' . BASE_URL . 'install.php');
                 exit;
             }
-            die('Error de conexión: ' . $e->getMessage());
+            die('Error crítico: No se pudo conectar a la base de datos.');
         }
     }
 

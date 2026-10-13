@@ -185,6 +185,27 @@ document.addEventListener('DOMContentLoaded', function () {
       const message = el.getAttribute('data-confirm') || '¿Está seguro de realizar esta acción?';
       if (!confirm(message)) {
         e.preventDefault();
+      } else {
+        // Si es un enlace de eliminación, convertir la petición GET a POST por seguridad (CWE-352)
+        if (el.tagName.toLowerCase() === 'a' && el.href && el.href.includes('/eliminar/')) {
+          e.preventDefault();
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = el.href;
+          
+          // Buscar si hay un csrf_token en el DOM y añadirlo
+          const csrf = document.querySelector('input[name="csrf_token"]');
+          if (csrf) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrf.value;
+            form.appendChild(csrfInput);
+          }
+          
+          document.body.appendChild(form);
+          form.submit();
+        }
       }
     });
   });
@@ -386,6 +407,12 @@ document.addEventListener('DOMContentLoaded', function () {
     return 'S/ ' + Number(amount).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  function escapeHtml(str) {
+    return String(str || '').replace(/[&<>'"]/g, function(match) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match];
+    });
+  }
+
   function saveCart() {
     localStorage.setItem('makpc_cart', JSON.stringify(cartItems));
     renderCart();
@@ -451,7 +478,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const isImgUrl = item.icon && (item.icon.includes('/') || item.icon.includes('.'));
       const thumbContent = isImgUrl 
-        ? `<img src="${item.icon}" alt="${item.name.replace(/"/g, '&quot;')}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" onerror="this.onerror=null;this.parentElement.innerHTML='<svg width=\\'20\\' height=\\'20\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'2\\'><rect width=\\'20\\' height=\\'14\\' x=\\'2\\' y=\\'3\\' rx=\\'2\\'/><line x1=\\'8\\' x2=\\'16\\' y1=\\'21\\' y2=\\'21\\'/><line x1=\\'12\\' x2=\\'12\\' y1=\\'17\\' y2=\\'21\\'/></svg>';"/>`
+        ? `<img src="${escapeHtml(item.icon)}" alt="${escapeHtml(item.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" onerror="this.onerror=null;this.parentElement.innerHTML='<svg width=\\'20\\' height=\\'20\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'2\\'><rect width=\\'20\\' height=\\'14\\' x=\\'2\\' y=\\'3\\' rx=\\'2\\'/><line x1=\\'8\\' x2=\\'16\\' y1=\\'21\\' y2=\\'21\\'/><line x1=\\'12\\' x2=\\'12\\' y1=\\'17\\' y2=\\'21\\'/></svg>';"/>`
         : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--cb-cyan)" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`;
 
       const row = document.createElement('div');
@@ -461,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
           ${thumbContent}
         </div>
         <div class="cart-item-info">
-          <div class="cart-item-name" title="${item.name}">${item.name}</div>
+          <div class="cart-item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
           <div class="cart-item-price">${formatMoney(price)}</div>
           <div class="cart-item-controls">
             <button type="button" class="btn-qty" data-cart-minus="${index}">-</button>

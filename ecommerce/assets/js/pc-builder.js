@@ -231,7 +231,7 @@
     const currentCpu = state.selectedComponents.procesador;
     const currentPlaca = state.selectedComponents.placa;
 
-    titleEl.innerHTML = `${categoryIcons[catKey] || ''} Seleccionar ${capitalize(catKey)}`;
+    titleEl.innerHTML = `${categoryIcons[catKey] || ''} Seleccionar ${escapeHtml(capitalize(catKey))}`;
 
     // Manejo de compatibilidad de sockets y memorias
     let requiredSocket = null;
@@ -291,12 +291,12 @@
         itemEl.className = `cb-picker-item ${isIncompatible ? 'incompatible' : ''}`;
         
         let pills = '';
-        if (item.socket) pills += `<span class="cb-slot-spec-pill">Socket ${item.socket}</span>`;
-        if (item.ram_type) pills += `<span class="cb-slot-spec-pill">${item.ram_type}</span>`;
-        if (item.tdp) pills += `<span class="cb-slot-spec-pill">${item.tdp}W TDP</span>`;
-        if (item.watts) pills += `<span class="cb-slot-spec-pill">${item.watts}W</span>`;
-        if (item.vram) pills += `<span class="cb-slot-spec-pill">${item.vram}</span>`;
-        if (item.capacidad) pills += `<span class="cb-slot-spec-pill">${item.capacidad}</span>`;
+        if (item.socket) pills += `<span class="cb-slot-spec-pill">Socket ${escapeHtml(item.socket)}</span>`;
+        if (item.ram_type) pills += `<span class="cb-slot-spec-pill">${escapeHtml(item.ram_type)}</span>`;
+        if (item.tdp) pills += `<span class="cb-slot-spec-pill">${escapeHtml(item.tdp)}W TDP</span>`;
+        if (item.watts) pills += `<span class="cb-slot-spec-pill">${escapeHtml(item.watts)}W</span>`;
+        if (item.vram) pills += `<span class="cb-slot-spec-pill">${escapeHtml(item.vram)}</span>`;
+        if (item.capacidad) pills += `<span class="cb-slot-spec-pill">${escapeHtml(item.capacidad)}</span>`;
 
         itemEl.innerHTML = `
           <div style="flex:1;">
@@ -428,7 +428,7 @@
           barFill.style.width = `${Math.max(20, 100 - pct * 1.8)}%`;
           barFill.style.background = '#EF4444';
           msgBox.className = 'cb-monitor-status-msg danger';
-          msgBox.innerHTML = `⚠️ <strong>Desbalance detectado (~${pct}%):</strong> Tu procesador limitará los FPS de tu tarjeta gráfica en juegos y render. Te recomendamos subir a un procesador de mayor potencia para que tu inversión en la GPU rinda al 100%.`;
+          msgBox.innerHTML = `⚠️ <strong>Desbalance detectado (~${escapeHtml(pct)}%):</strong> Tu procesador limitará los FPS de tu tarjeta gráfica en juegos y render. Te recomendamos subir a un procesador de mayor potencia para que tu inversión en la GPU rinda al 100%.`;
         } else if (diff < -30 && gpu.id !== 'gpu-integrada') {
           // CPU muy superior a una GPU modesta dedicada
           scoreBadge.className = 'cb-bottleneck-badge warning';
@@ -466,13 +466,13 @@
     if (wattAlertBox) {
       if (psu && psu.watts < totalWatts) {
         wattAlertBox.style.display = 'block';
-        wattAlertBox.innerHTML = `⚠️ <strong>Peligro:</strong> Tu fuente seleccionada (${psu.watts}W) es menor al consumo pico estimado (${totalWatts}W). El equipo podría apagarse. Se requiere mínimo ${minPsuWatts}W.`;
+        wattAlertBox.innerHTML = `⚠️ <strong>Peligro:</strong> Tu fuente seleccionada (${escapeHtml(psu.watts)}W) es menor al consumo pico estimado (${escapeHtml(totalWatts)}W). El equipo podría apagarse. Se requiere mínimo ${escapeHtml(minPsuWatts)}W.`;
       } else if (psu && psu.watts < minPsuWatts) {
         wattAlertBox.style.display = 'block';
         wattAlertBox.style.background = '#FFFBEB';
         wattAlertBox.style.borderColor = '#FDE68A';
         wattAlertBox.style.color = '#92400E';
-        wattAlertBox.innerHTML = `⚠️ <strong>Margen ajustado:</strong> Tu fuente (${psu.watts}W) cubre el consumo pero deja poco margen. Una fuente de ${minPsuWatts}W garantizará mayor vida útil.`;
+        wattAlertBox.innerHTML = `⚠️ <strong>Margen ajustado:</strong> Tu fuente (${escapeHtml(psu.watts)}W) cubre el consumo pero deja poco margen. Una fuente de ${escapeHtml(minPsuWatts)}W garantizará mayor vida útil.`;
       } else {
         wattAlertBox.style.display = 'none';
       }

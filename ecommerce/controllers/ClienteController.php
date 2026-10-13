@@ -106,7 +106,7 @@ class ClienteController extends Controller {
         if ($this->isPost()) {
             if (!verify_csrf($this->input('csrf_token'))) {
                 setFlash('danger', 'Token de seguridad inválido o sesión expirada.');
-                $this->redirect('cliente/editar/' . $id);
+                $this->redirect('cliente/editar/' . (int)$id);
             }
 
             $nombres = trim($this->input('nombres_razon_social'));
@@ -114,7 +114,7 @@ class ClienteController extends Controller {
 
             if (empty($nombres) || empty($telefono)) {
                 setFlash('danger', 'El nombre y el teléfono son campos obligatorios.');
-                $this->redirect('cliente/editar/' . $id);
+                $this->redirect('cliente/editar/' . (int)$id);
             }
 
             $clienteModel->update($id, [
@@ -128,7 +128,7 @@ class ClienteController extends Controller {
             ]);
 
             setFlash('success', 'Cliente actualizado exitosamente.');
-            $this->redirect('cliente/ver/' . $id);
+            $this->redirect('cliente/ver/' . (int)$id);
         }
 
         $this->view('clientes/editar', [
@@ -142,6 +142,10 @@ class ClienteController extends Controller {
      */
     public function eliminar($id) {
         $this->requireRole('admin');
+        if (!$this->isPost()) {
+            setFlash('danger', 'Método no permitido para esta acción.');
+            $this->redirect('cliente');
+        }
         $clienteModel = new Cliente();
         
         try {
@@ -156,7 +160,7 @@ class ClienteController extends Controller {
             
             if ($totalOrdenes > 0) {
                 setFlash('warning', "No es posible eliminar el cliente porque tiene {$totalOrdenes} orden(es) de servicio asociadas en el taller.");
-                $this->redirect('cliente/ver/' . $id);
+                $this->redirect('cliente/ver/' . (int)$id);
             }
 
             $clienteModel->delete($id);

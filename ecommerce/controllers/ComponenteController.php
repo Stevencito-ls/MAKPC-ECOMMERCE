@@ -24,7 +24,7 @@ class ComponenteController extends Controller {
             $idOrden = $this->input('id_orden');
             if (!verify_csrf($this->input('csrf_token'))) {
                 setFlash('danger', 'Token de seguridad inválido o sesión expirada.');
-                $this->redirect('orden/ver/' . $idOrden);
+                $this->redirect('orden/ver/' . (int)$idOrden);
             }
 
             $tipo = trim($this->input('tipo_componente'));
@@ -36,7 +36,7 @@ class ComponenteController extends Controller {
 
             if (empty($idOrden) || empty($tipo)) {
                 setFlash('danger', 'El tipo de componente y la orden son requeridos.');
-                $this->redirect('orden/ver/' . $idOrden);
+                $this->redirect('orden/ver/' . (int)$idOrden);
             }
 
             $detalleModel = new DetalleComponente();
@@ -65,7 +65,7 @@ class ComponenteController extends Controller {
             }
 
             setFlash('success', 'Componente registrado en la trazabilidad de la orden.');
-            $this->redirect('orden/ver/' . $idOrden);
+            $this->redirect('orden/ver/' . (int)$idOrden);
         }
     }
 
@@ -73,6 +73,10 @@ class ComponenteController extends Controller {
      * @param int|string $id
      */
     public function eliminar($id) {
+        if (!$this->isPost()) {
+            setFlash('danger', 'Método no permitido para esta acción.');
+            $this->redirect('componente');
+        }
         $detalleModel = new DetalleComponente();
         $comp = $detalleModel->find($id);
         $idOrden = $comp ? $comp['id_orden'] : null;
@@ -96,7 +100,7 @@ class ComponenteController extends Controller {
         }
 
         if ($idOrden) {
-            $this->redirect('orden/ver/' . $idOrden);
+            $this->redirect('orden/ver/' . (int)$idOrden);
         } else {
             $this->redirect('componente');
         }

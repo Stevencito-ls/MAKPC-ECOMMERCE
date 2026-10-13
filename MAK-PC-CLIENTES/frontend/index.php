@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../ecommerce/config/app.php';
 
 // Verificar sesión compartida
 if (!isLoggedIn()) {
-    header("Location: ../../ecommerce/login");
+    header("Location: " . BASE_URL . "login");
     exit;
 }
 

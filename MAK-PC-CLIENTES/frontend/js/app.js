@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
       estado: dom.modalTecEstado.value,
       diagnostico_tecnico: dom.modalTecDiagnostico.value.trim(),
       solucion_tecnica: dom.modalTecSolucion.value.trim(),
-      tecnico_id: 2
+      tecnico_id: window.currentUser ? window.currentUser.id : null
     };
 
     try {
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Emitir nuevo recibo oficial
         const resEmit = await API.emitirRecibo({
           orden_servicio_id: ordenId,
-          usuario_emisor_id: 3, // Ana Recepción
+          usuario_emisor_id: window.currentUser ? window.currentUser.id : null, // ID dinámico del usuario autenticado
           concepto: dom.cobroConcepto.value.trim(),
           monto_total: total,
           monto_a_cuenta: total, // Al entregar se cancela el total

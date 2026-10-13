@@ -37,7 +37,7 @@ class Controller {
         // Si la vista es de autenticación, renderizarla de forma autónoma
         if (strpos($view, 'auth/') === 0) {
             require $viewPath;
-        } elseif (strpos($view, 'tienda/') === 0 || !isLoggedIn()) {
+        } elseif (strpos($view, 'tienda/') === 0 || $view === 'home/404' || $view === '404' || !isLoggedIn()) {
             // Vistas públicas de tienda o usuarios no autenticados (incluyendo 404 público)
             require __DIR__ . '/../layouts/header.php';
             require $viewPath;
