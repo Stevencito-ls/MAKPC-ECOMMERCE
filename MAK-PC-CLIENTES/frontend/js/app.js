@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const abrirNuevoIngreso = () => {
     const rolActual = (window.currentUser && window.currentUser.rol ? String(window.currentUser.rol).toLowerCase() : '');
     if (rolActual && rolActual !== 'admin' && rolActual !== 'vendedor') {
+    if (window.currentUser && String(window.currentUser.rol).toLowerCase() !== 'admin' && String(window.currentUser.rol).toLowerCase() !== 'vendedor') {
       alert("Acceso Denegado: Solo los Administradores o Vendedores pueden recepcionar nuevos equipos.");
       return;
     }
@@ -1042,6 +1043,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const atenderOrden = async (ordenId) => {
     const rolActual = (window.currentUser && window.currentUser.rol ? String(window.currentUser.rol).toLowerCase() : '');
     if (rolActual && rolActual !== 'admin' && rolActual !== 'tecnico') {
+    if (window.currentUser && String(window.currentUser.rol).toLowerCase() !== 'admin' && String(window.currentUser.rol).toLowerCase() !== 'tecnico') {
       alert("Acceso Denegado: Solo los Administradores o Técnicos pueden atender y diagnosticar equipos.");
       return;
     }
@@ -1097,6 +1099,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cobrarYEntregar = async (ordenId) => {
     const rolActual = (window.currentUser && window.currentUser.rol ? String(window.currentUser.rol).toLowerCase() : '');
     if (rolActual && rolActual !== 'admin' && rolActual !== 'vendedor') {
+    if (window.currentUser && String(window.currentUser.rol).toLowerCase() !== 'admin' && String(window.currentUser.rol).toLowerCase() !== 'vendedor') {
       alert("Acceso Denegado: Solo los Administradores o Vendedores/Caja pueden realizar cobros y entregas.");
       return;
     }
@@ -1172,17 +1175,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (reciboExistenteId) {
         // Liquidar saldo de recibo existente
         const saldoAbonar = Math.max(0, total - aCuenta);
-        const resLiq = await API.liquidarSaldo(parseInt(reciboExistenteId), {
-          monto_abonado: saldoAbonar > 0 ? saldoAbonar : total,
-          metodo_pago: metodoPago,
-          marcar_entregado: marcarEntregado
-        });
-        reciboFinalId = resLiq.data.recibo_id;
+        if (saldoAbonar > 0) {
+          const resLiq = await API.liquidarSaldo(parseInt(reciboExistenteId), {
+            monto_abonado: saldoAbonar,
+            metodo_pago: metodoPago,
+            marcar_entregado: marcarEntregado
+          });
+          reciboFinalId = resLiq.data.recibo_id;
+        } else {
+          // El recibo ya está cancelado, solo actualizamos el estado de la orden si se requiere
+          if (marcarEntregado) {
+            await API.actualizarEstadoOrden(ordenId, { estado: 'ENTREGADO' });
+          }
+          reciboFinalId = reciboExistenteId;
+        }
       } else {
         // Emitir nuevo recibo oficial
         const resEmit = await API.emitirRecibo({
           orden_servicio_id: ordenId,
           usuario_emisor_id: window.currentUser ? window.currentUser.id : null, // ID dinámico del usuario autenticado
+          usuario_emisor_id: window.currentUser ? window.currentUser.id : null, // Fix hardcoded ID
           concepto: dom.cobroConcepto.value.trim(),
           monto_total: total,
           monto_a_cuenta: total, // Al entregar se cancela el total

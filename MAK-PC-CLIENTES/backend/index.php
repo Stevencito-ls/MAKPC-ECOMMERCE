@@ -26,6 +26,20 @@ if ($method === 'OPTIONS') {
 }
 
 // 1.5. Cargar configuración de autenticación compartida
+// 1.5. Verificar sesión de MAKPC-ECOMMERCE
+if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    session_set_cookie_params([
+        'lifetime' => 7200,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    session_start();
+}
 require_once __DIR__ . '/../../ecommerce/config/app.php';
 
 

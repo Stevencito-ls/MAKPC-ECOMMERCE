@@ -3,6 +3,9 @@ if (session_status() === PHP_SESSION_NONE && php_sapi_name() !== 'cli') {
     $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 
+if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
     session_set_cookie_params([
         'lifetime' => 7200,
         'path'     => '/',
@@ -12,6 +15,7 @@ if (session_status() === PHP_SESSION_NONE && php_sapi_name() !== 'cli') {
         'samesite' => 'Lax'
     ]);
     @session_start();
+    session_start();
 }
 require_once __DIR__ . '/../../ecommerce/config/app.php';
 
@@ -19,6 +23,9 @@ require_once __DIR__ . '/../../ecommerce/config/app.php';
 if (!isLoggedIn()) {
     $_SESSION['intended_url'] = ROOT_URL . 'taller';
     header("Location: " . ROOT_URL . "login?redirect=" . urlencode(ROOT_URL . 'taller'));
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $ecommercePath = preg_replace('#/MAK-PC-CLIENTES/frontend(/.*)?$#i', '', $scriptName) . '/ecommerce/login';
+    header("Location: " . $ecommercePath);
     exit;
 }
 
@@ -1191,6 +1198,15 @@ if (isset($words[1])) {
                     </label>
                     <input type="number" step="0.50" min="0" max="99999.99" id="orden-costo-estimado" class="form-control font-mono" placeholder="S/. 0.00" style="font-weight: 700; font-size: 1.05rem;">
                   </div>
+            <div class="col-6 form-group">
+              <label for="equipo-observaciones" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Estado Físico / Detalles Estéticos</span>
+                <label style="font-size: 0.8rem; font-weight: normal; margin:0; cursor:pointer; color:var(--primary); display:flex; align-items:center; gap: 4px;">
+                  <input type="checkbox" id="check-sin-novedad" onchange="if(this.checked){ document.getElementById('equipo-observaciones').value = 'Ingresa sin novedades físicas o estéticas aparentes.'; } else { document.getElementById('equipo-observaciones').value = ''; }"> Sin novedad
+                </label>
+              </label>
+              <textarea id="equipo-observaciones" class="form-control" rows="2" placeholder="Rayones en tapa, bisagra floja, golpes preexistentes..." style="min-height: 70px;"></textarea>
+            </div>
 
                   <div class="finance-calc-card">
                     <label for="orden-monto-adelanto">
@@ -1411,5 +1427,6 @@ if (isset($words[1])) {
   <script src="js/utils.js"></script>
   <script src="js/currency.js?v=1.1"></script>
   <script src="js/app.js?v=<?= file_exists(__DIR__ . '/js/app.js') ? filemtime(__DIR__ . '/js/app.js') : '2.7' ?>"></script>
+  <script src="js/app.js?v=2.9"></script>
 </body>
 </html>

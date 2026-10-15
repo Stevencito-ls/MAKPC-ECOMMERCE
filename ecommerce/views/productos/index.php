@@ -30,14 +30,25 @@ if ($flash): ?>
     </div>
     <p style="margin-top:0.35rem;">Gestione el catálogo comercial, modifique precios, actualice existencias y suba nuevos productos para la tienda.</p>
   </div>
-  <div class="page-header-actions">
+  <div class="page-header-actions" style="display:flex;gap:0.5rem;align-items:center;">
+    <form action="<?= url('producto/importarCSV') ?>" method="POST" enctype="multipart/form-data" style="display:inline-flex; gap:0.5rem;">
+      <?= csrf_field() ?>
+      <a href="<?= url('producto/exportarPlantilla') ?>" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.6rem;" title="Descargar Plantilla Excel">
+        <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        <span>Plantilla</span>
+      </a>
+      <label class="btn btn-outline" style="cursor:pointer; margin:0; display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.6rem;" title="Subir Plantilla Excel">
+        <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+        <span>Importar</span>
+        <input type="file" name="archivo_csv" accept=".csv" style="display:none;" onchange="this.form.submit()">
+      </label>
+    </form>
     <a href="<?= url('producto/crear') ?>" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:0.4rem;">
       <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-      <span>Subir Nuevo Producto</span>
+      <span>Subir Nuevo</span>
     </a>
     <a href="<?= url('tienda') ?>" class="btn btn-outline" style="display:inline-flex;align-items:center;gap:0.4rem;">
       <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-      <span>Ver en Tienda</span>
     </a>
   </div>
 </div>

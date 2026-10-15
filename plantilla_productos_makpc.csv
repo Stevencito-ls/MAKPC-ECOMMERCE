@@ -1,0 +1,11 @@
+nombre,id_categoria,marca,descripcion,precio,precio_anterior,stock,dias_garantia,imagen_preset,etiqueta,destacado,activo
+"Laptop Gamer Asus ROG Strix G15",1,"ASUS","Laptop gamer con procesador AMD Ryzen 7, 16GB RAM, 512GB SSD y RTX 3060. Ideal para juegos AAA.",4200.00,4500.00,10,365,prod_1.jpg,OFERTA,1,1
+"Procesador AMD Ryzen 5 5600G",2,"AMD","Procesador de 6 núcleos y 12 hilos con gráficos integrados Radeon. Socket AM4.",650.00,720.00,15,365,prod_2.jpg,NUEVO,1,1
+"Memoria RAM Corsair Vengeance LPX 16GB",2,"CORSAIR","Memoria RAM DDR4 3200MHz (2x8GB) color negro. Alto rendimiento.",210.00,,30,365,prod_3.jpg,,0,1
+"Disco Sólido SSD Kingston NV2 1TB M.2",4,"KINGSTON","SSD NVMe PCIe 4.0 con velocidades de lectura de hasta 3500 MB/s.",240.00,280.00,25,365,prod_4.jpg,,1,1
+"Tarjeta de Video NVIDIA GeForce RTX 4060",2,"MSI","Tarjeta gráfica MSI Ventus 2X Black 8G OC GDDR6. Perfecta para 1080p Ultra.",1450.00,,8,365,prod_5.jpg,HOT,1,1
+"Monitor Gamer LG UltraGear 24'' 144Hz",3,"LG","Monitor IPS Full HD 1ms 144Hz con AMD FreeSync Premium.",750.00,800.00,12,365,prod_6.jpg,OFERTA,1,1
+"Placa Madre Gigabyte B550M DS3H",2,"GIGABYTE","Placa base Micro-ATX para procesadores AMD Ryzen serie 5000 y 3000.",420.00,,10,365,prod_7.jpg,,0,1
+"Fuente de Poder EVGA 600W 80 Plus White",2,"EVGA","Fuente de alimentación certificada 80 PLUS, ventilador silencioso de 120mm.",220.00,250.00,20,365,prod_8.jpg,,0,1
+"Mouse Gamer Logitech G203 Lightsync",3,"LOGITECH","Mouse óptico gamer con iluminación RGB y 8000 DPI ajustables.",110.00,,40,180,prod_9.jpg,POPULAR,1,1
+"Teclado Mecánico Redragon Kumara K552",3,"REDRAGON","Teclado mecánico TKL con switches Outemu Blue e iluminación RGB.",160.00,180.00,18,180,prod_10.jpg,,0,1

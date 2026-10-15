@@ -40,6 +40,12 @@
       <span class="cb-topbar-divider"></span>
       <a href="<?= TALLER_URL ?>" class="cb-topbar-link" title="Seguimiento de reparaciones en Taller">
         <svg class="cb-topbar-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <a href="https://wa.me/51975513327?text=Hola%20Ecommerce%20MAKPC,%20deseo%20asesoria%20tecnica" target="_blank" class="cb-topbar-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        <span>Asesoría WhatsApp: +51 975 513 327</span>
+      </a>
+      <a href="<?= BASE_URL ?>../MAK-PC-CLIENTES/" class="cb-topbar-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <span>Rastrear Orden</span>
       </a>
       <span class="cb-topbar-divider"></span>
@@ -118,6 +124,12 @@
         <span class="cb-action-text">
           <small class="cb-action-label">Servicio</small>
           <strong class="cb-action-val">Taller</strong>
+      <!-- Rastrear Orden / Soporte -->
+      <a href="<?= BASE_URL ?>../MAK-PC-CLIENTES/" class="cb-action-btn" title="Consultar avance de reparación">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+        <span style="display:inline-block;line-height:1.2;">
+          <small style="display:block;font-size:0.68rem;opacity:0.75;text-transform:uppercase;">Servicio</small>
+          Taller
         </span>
       </a>
 
@@ -291,6 +303,8 @@
     
     <li><a href="<?= TALLER_URL ?>">Servicio Técnico y Taller</a></li>
     <li><a href="<?= LANDING_URL ?>" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
+    <li><a href="<?= BASE_URL ?>../MAK-PC-CLIENTES/">Servicio Técnico y Taller</a></li>
+    <li><a href="<?= url('../landing/') ?>" style="color:var(--cb-cyan);font-weight:700;">Conócenos (Portal Institucional) &rarr;</a></li>
   </ul>
 
   <div class="mobile-drawer-actions">
@@ -309,6 +323,7 @@
         Iniciar Sesión / Personal
       </a>
       <a href="<?= TALLER_URL ?>" class="btn-drawer-outline">
+      <a href="<?= BASE_URL ?>../MAK-PC-CLIENTES/" class="btn-drawer-outline">
         Rastrear Orden de Taller
       </a>
     <?php endif; ?>
