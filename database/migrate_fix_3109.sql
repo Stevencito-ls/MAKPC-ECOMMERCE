@@ -4,7 +4,7 @@
 -- Este script aplica exclusivamente los cambios para solucionar el error de MySQL
 -- donde una columna virtual no puede referenciar a un AUTO_INCREMENT.
 
-USE mkpc_enterprises;
+USE makpc_enterprises_db;
 
 -- 1. Agregar notas_cliente (requerido por E-Commerce) si no existe
 -- (En MySQL < 8.0 no hay ADD COLUMN IF NOT EXISTS de forma nativa, 

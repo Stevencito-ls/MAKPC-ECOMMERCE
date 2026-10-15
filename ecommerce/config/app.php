@@ -30,6 +30,7 @@ define('APP_NAME', getenv('APP_NAME') ?: 'Ecommerce MAKPC');
 define('APP_SLOGAN', 'Tienda Oficial & Soluciones Informáticas');
 define('APP_VERSION', '1.2.0');
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
+define('APISPERU_TOKEN', getenv('APISPERU_TOKEN') ?: '');
 
 // Configuración de Errores según entorno
 if (APP_ENV === 'production') {
@@ -39,6 +40,22 @@ if (APP_ENV === 'production') {
 } else {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
+}
+
+// Sesión Compartida Segura en todo el ecosistema MAK-PC (Ecommerce, Admin, API REST y Taller POS)
+if (session_status() === PHP_SESSION_NONE && php_sapi_name() !== 'cli') {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
+    session_set_cookie_params([
+        'lifetime' => 7200,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    @session_start();
 }
 
 // Detección Inteligente de BASE_URL (Compatible con Nginx, Cloudflare, AWS, Apache)
@@ -62,8 +79,30 @@ if (!defined('BASE_URL')) {
 }
 
 if (!defined('ASSETS_URL')) {
-    define('ASSETS_URL', BASE_URL . 'assets/');
+    $assetsSub = str_ends_with(rtrim(BASE_URL, '/'), 'ecommerce') ? 'assets/' : 'ecommerce/assets/';
+    define('ASSETS_URL', BASE_URL . $assetsSub);
 }
+
+if (!defined('ROOT_URL')) {
+    $cleanBase = rtrim(BASE_URL, '/');
+    $submodules = ['MAK-PC-CLIENTES/frontend', 'MAK-PC-CLIENTES/backend', 'MAK-PC-CLIENTES', 'ecommerce', 'landing'];
+    $root = $cleanBase;
+    foreach ($submodules as $sub) {
+        if (str_ends_with($root, $sub)) {
+            $root = substr($root, 0, -strlen($sub));
+            $root = rtrim($root, '/');
+            break;
+        }
+    }
+    define('ROOT_URL', ($root === '' || $root === '/' || $root === '.') ? '/' : $root . '/');
+}
+if (!defined('TALLER_URL')) {
+    define('TALLER_URL', ROOT_URL . 'taller');
+}
+if (!defined('LANDING_URL')) {
+    define('LANDING_URL', ROOT_URL);
+}
+
 
 // Colores corporativos
 define('COLOR_YELLOW', '#FCC827');
@@ -205,6 +244,7 @@ function e($string)
 function auth($field = null)
 {
     if (!isset($_SESSION['usuario_id'])) return null;
+    if ($field === 'id') return $_SESSION['usuario_id'];
     if ($field) return $_SESSION[$field] ?? null;
     return [
         'id' => $_SESSION['usuario_id'],

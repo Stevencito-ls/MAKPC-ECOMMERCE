@@ -31,7 +31,8 @@ class Cliente extends Model {
              FROM clientes c 
              LEFT JOIN ordenes_servicio o ON c.id = o.cliente_id
              GROUP BY c.id
-             ORDER BY c.creado_en DESC"
+             ORDER BY c.id DESC"
         );
+
     }
 }

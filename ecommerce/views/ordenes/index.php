@@ -17,9 +17,9 @@ if ($flash): ?>
     <p>Recepción, diagnóstico, ejecución de trabajos y trazabilidad de garantías</p>
   </div>
   <div class="page-header-actions">
-    <a href="/MAKPC-ECOMMERCE/MAK-PC-CLIENTES/frontend/" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
+    <a href="<?= ROOT_URL ?>taller" class="btn btn-yellow" style="display:inline-flex;align-items:center;gap:6px;">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-      Nueva Orden de Servicio
+      Nueva Recepción en Taller POS
     </a>
   </div>
 </div>
@@ -44,17 +44,17 @@ if ($flash): ?>
 </div>
 
 <div class="card">
-  <div class="card-header">
-    <div style="flex:1;max-width:400px;">
+  <div class="card-header" style="flex-wrap:wrap;gap:0.75rem;">
+    <div style="flex:1 1 260px;max-width:400px;">
       <form action="<?= url('orden') ?>" method="GET" style="display:flex;gap:0.5rem;">
-        <input type="text" name="q" class="form-control" placeholder="Buscar por código, cliente o serie..." value="<?= e($busqueda ?? '') ?>">
+        <input type="text" name="q" class="form-control" placeholder="Buscar por código, cliente o serie..." value="<?= e($busqueda ?? '') ?>" style="min-width:0;">
         <?php if (!empty($filtroEstado)): ?>
           <input type="hidden" name="estado" value="<?= e($filtroEstado) ?>">
         <?php endif; ?>
-        <button type="submit" class="btn btn-primary">Buscar</button>
+        <button type="submit" class="btn btn-primary" style="flex-shrink:0;">Buscar</button>
       </form>
     </div>
-    <span style="font-size:0.85rem;color:var(--color-shadow);">
+    <span style="font-size:0.85rem;color:var(--color-shadow);margin-left:auto;">
       Total: <strong><?= count($ordenes) ?></strong> órdenes
     </span>
   </div>

@@ -18,19 +18,16 @@ header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+if ($method === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// 1.5. Verificar sesión de MAKPC-ECOMMERCE
+// 1.5. Cargar configuración de autenticación compartida
 require_once __DIR__ . '/../../ecommerce/config/app.php';
-if (!isLoggedIn()) {
-    header('Content-Type: application/json');
-    http_response_code(401);
-    echo json_encode(['error' => true, 'message' => 'No autorizado. Sesión expirada o inválida.']);
-    exit;
-}
+
 
 
 // 2. Autoloader PSR-4 para clases internas
@@ -61,7 +58,8 @@ use Controllers\OrdenController;
 use Controllers\ReciboController;
 use Controllers\DashboardController;
 // 3. Normalizar URI y Método HTTP
-$method = $_SERVER['REQUEST_METHOD'];
+$method = $_SERVER['REQUEST_METHOD'] ?? $method ?? 'GET';
+
 
 // Detección robusta de la ruta del endpoint
 if (!empty($_SERVER['PATH_INFO'])) {
@@ -91,6 +89,18 @@ if (empty($uri) || $uri === '/') {
     $uri = '/api/health';
 }
 
+// 4. Verificación de Seguridad y Sesión (Excluye endpoints públicos de health check y consulta de documentos)
+$isPublicEndpoint = in_array($uri, ['/api/health', '/api', '/', '/api/consulta-documento'], true)
+    || str_starts_with($uri, '/api/clientes/documento/');
+
+if (!$isPublicEndpoint && !isLoggedIn()) {
+    header('Content-Type: application/json');
+    http_response_code(401);
+    echo json_encode(['error' => true, 'message' => 'No autorizado. Sesión expirada o inválida.']);
+    exit;
+}
+
+
 // Router Manual Eficiente
 try {
     // ---- ENDPOINTS DE DASHBOARD ----
@@ -110,6 +120,9 @@ try {
     }
     elseif (preg_match('#^/api/clientes/documento/([a-zA-Z0-9_-]+)$#', $uri, $matches) && $method === 'GET') {
         (new ClienteController())->getByDocumento($matches[1]);
+    }
+    elseif ($uri === '/api/consulta-documento' && $method === 'GET') {
+        (new ClienteController())->consultarDocumento();
     }
 
     // ---- ENDPOINTS DE ÓRDENES DE SERVICIO ----

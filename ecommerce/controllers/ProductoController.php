@@ -217,6 +217,14 @@ class ProductoController extends Controller {
      */
     public function eliminar($id = null) {
         $this->requireRole('admin');
+        if (!$this->isPost()) {
+            setFlash('danger', 'Método no permitido para esta acción.');
+            $this->redirect('producto');
+        }
+        if (!verify_csrf($this->input('csrf_token'))) {
+            setFlash('danger', 'Token de seguridad inválido o expirado.');
+            $this->redirect('producto');
+        }
         $id = (int)$id;
         if ($id > 0) {
             $this->productoModel->delete($id);
@@ -224,6 +232,7 @@ class ProductoController extends Controller {
         }
         $this->redirect('producto');
     }
+
 
     /**
      * Procesador seguro de subida de imágenes

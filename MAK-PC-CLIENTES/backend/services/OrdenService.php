@@ -144,11 +144,78 @@ class OrdenService {
         if (empty($data['recepcionista_id'])) {
             throw new Exception("El ID de recepcionista es requerido.");
         }
-        if (empty($data['tipo_equipo']) || empty($data['marca']) || empty($data['modelo'])) {
-            throw new Exception("Tipo de equipo, marca y modelo son obligatorios.");
+
+        // Tipo de equipo: ENUM('LAPTOP','PC_ESCRITORIO','ALL_IN_ONE','IMPRESORA','MONITOR','SERVIDOR','OTRO')
+        $tiposPermitidos = ['LAPTOP','PC_ESCRITORIO','ALL_IN_ONE','IMPRESORA','MONITOR','SERVIDOR','OTRO'];
+        $tipoEquipo = strtoupper(trim((string)($data['tipo_equipo'] ?? 'LAPTOP')));
+        if (!in_array($tipoEquipo, $tiposPermitidos, true)) {
+            $tipoEquipo = 'OTRO';
         }
-        if (empty($data['motivo_ingreso'])) {
+
+        // Marca: VARCHAR(60) NOT NULL
+        $marca = trim((string)($data['marca'] ?? ''));
+        if (empty($marca)) {
+            throw new Exception("La marca del equipo es obligatoria.");
+        }
+        if (mb_strlen($marca) > 60) {
+            $marca = mb_substr($marca, 0, 60);
+        }
+
+        // Modelo: VARCHAR(80) NOT NULL
+        $modelo = trim((string)($data['modelo'] ?? ''));
+        if (empty($modelo)) {
+            throw new Exception("El modelo del equipo es obligatorio.");
+        }
+        if (mb_strlen($modelo) > 80) {
+            $modelo = mb_substr($modelo, 0, 80);
+        }
+
+        // Número de Serie: VARCHAR(80) NULL
+        $serie = !empty($data['numero_serie']) ? strtoupper(trim((string)$data['numero_serie'])) : null;
+        if ($serie !== null && strlen($serie) > 80) {
+            $serie = substr($serie, 0, 80);
+        }
+
+        // Password: VARCHAR(100) NULL
+        $password = !empty($data['password_equipo']) ? trim((string)$data['password_equipo']) : null;
+        if ($password !== null && mb_strlen($password) > 100) {
+            $password = mb_substr($password, 0, 100);
+        }
+
+        // Accesorios: TEXT NULL
+        $accesorios = !empty($data['accesorios_dejados']) ? trim((string)$data['accesorios_dejados']) : null;
+        if ($accesorios !== null && mb_strlen($accesorios) > 500) {
+            $accesorios = mb_substr($accesorios, 0, 500);
+        }
+
+        // Motivo de Ingreso: TEXT NOT NULL
+        $motivo = trim((string)($data['motivo_ingreso'] ?? ''));
+        if (empty($motivo)) {
             throw new Exception("Debe especificar el motivo de ingreso o falla reportada.");
+        }
+        if (mb_strlen($motivo) > 1000) {
+            $motivo = mb_substr($motivo, 0, 1000);
+        }
+
+        // Observaciones Estéticas: TEXT NULL
+        $observaciones = !empty($data['observaciones_esteticas']) ? trim((string)$data['observaciones_esteticas']) : null;
+        if ($observaciones !== null && mb_strlen($observaciones) > 1000) {
+            $observaciones = mb_substr($observaciones, 0, 1000);
+        }
+
+        // Costo Estimado & Adelanto: DECIMAL(10,2)
+        $costoEstimado = !empty($data['costo_estimado']) ? max(0.00, round((float)$data['costo_estimado'], 2)) : 0.00;
+        $montoAdelanto = !empty($data['monto_adelanto']) ? max(0.00, round((float)$data['monto_adelanto'], 2)) : 0.00;
+
+        if ($costoEstimado > 0 && $montoAdelanto > $costoEstimado) {
+            throw new Exception("El monto de adelanto (S/. {$montoAdelanto}) no puede ser mayor al costo estimado (S/. {$costoEstimado}).");
+        }
+
+        // Prioridad: ENUM('BAJA','MEDIA','ALTA','URGENTE')
+        $prioridades = ['BAJA','MEDIA','ALTA','URGENTE'];
+        $prioridad = strtoupper(trim((string)($data['prioridad'] ?? 'MEDIA')));
+        if (!in_array($prioridad, $prioridades, true)) {
+            $prioridad = 'MEDIA';
         }
 
         $codigo = $this->generarCodigoOrden();
@@ -171,18 +238,18 @@ class OrdenService {
             ':cliente_id'            => (int)$data['cliente_id'],
             ':recepcionista_id'      => (int)$data['recepcionista_id'],
             ':tecnico_id'            => !empty($data['tecnico_id']) ? (int)$data['tecnico_id'] : null,
-            ':tipo_equipo'           => $data['tipo_equipo'],
-            ':marca'                 => trim($data['marca']),
-            ':modelo'                => trim($data['modelo']),
-            ':numero_serie'          => !empty($data['numero_serie']) ? trim($data['numero_serie']) : null,
-            ':accesorios_dejados'    => !empty($data['accesorios_dejados']) ? trim($data['accesorios_dejados']) : null,
-            ':password_equipo'       => !empty($data['password_equipo']) ? trim($data['password_equipo']) : null,
-            ':motivo_ingreso'        => trim($data['motivo_ingreso']),
-            ':observaciones_esteticas' => !empty($data['observaciones_esteticas']) ? trim($data['observaciones_esteticas']) : null,
-            ':costo_estimado'        => !empty($data['costo_estimado']) ? (float)$data['costo_estimado'] : 0.00,
-            ':monto_adelanto'        => !empty($data['monto_adelanto']) ? (float)$data['monto_adelanto'] : 0.00,
+            ':tipo_equipo'           => $tipoEquipo,
+            ':marca'                 => $marca,
+            ':modelo'                => $modelo,
+            ':numero_serie'          => $serie,
+            ':accesorios_dejados'    => $accesorios,
+            ':password_equipo'       => $password,
+            ':motivo_ingreso'        => $motivo,
+            ':observaciones_esteticas' => $observaciones,
+            ':costo_estimado'        => $costoEstimado,
+            ':monto_adelanto'        => $montoAdelanto,
             ':estado'                => $data['estado'] ?? 'RECEPCIONADO',
-            ':prioridad'             => $data['prioridad'] ?? 'MEDIA'
+            ':prioridad'             => $prioridad
         ]);
 
         $ordenId = (int)$this->db->lastInsertId();

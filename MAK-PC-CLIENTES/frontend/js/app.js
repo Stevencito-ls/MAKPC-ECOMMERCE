@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * Abrir Modal de Recepción Express
    */
   const abrirNuevoIngreso = () => {
-    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'vendedor') {
+    const rolActual = (window.currentUser && window.currentUser.rol ? String(window.currentUser.rol).toLowerCase() : '');
+    if (rolActual && rolActual !== 'admin' && rolActual !== 'vendedor') {
       alert("Acceso Denegado: Solo los Administradores o Vendedores pueden recepcionar nuevos equipos.");
       return;
     }
@@ -98,12 +99,666 @@ document.addEventListener('DOMContentLoaded', () => {
       dom.formRecepcion.reset();
     }
     if (window.toggleOtroDispositivo) window.toggleOtroDispositivo();
+
+    // Asegurar que las tarjetas de acordeón estén abiertas
+    document.querySelectorAll('.accordion-step-card').forEach(c => c.classList.add('open'));
+    if (window.irAPaso) window.irAPaso(1);
+
+    // Reset de status badge de lookup
+    const feedbackEl = document.getElementById('doc-lookup-status');
+    if (feedbackEl) {
+      feedbackEl.className = 'doc-feedback-badge';
+      feedbackEl.innerHTML = '<i class="ph-bold ph-lightning"></i> <span>Escriba 8 dígitos (DNI) u 11 (RUC) para autocompletar</span>';
+    }
+
     Utils.openModal(dom.modalNuevoIngreso);
     if (window.updateUSDEquivalents) window.updateUSDEquivalents();
+    if (window.updateModalPasoBadges) window.updateModalPasoBadges();
+
     setTimeout(() => {
       const inputDoc = document.getElementById('cliente-doc');
       if (inputDoc) inputDoc.focus();
     }, 150);
+  };
+
+  /**
+   * Navegación asistida entre pasos del modal de ingreso
+   */
+  const irAPaso = (stepNumber) => {
+    const cardId = `acc-card-${stepNumber}`;
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.classList.add('open');
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
+
+    // Actualizar tabs superiores
+    document.querySelectorAll('.step-nav-btn').forEach(btn => {
+      const step = parseInt(btn.getAttribute('data-step'), 10);
+      if (step === stepNumber) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  };
+  window.irAPaso = irAPaso;
+
+  /**
+   * Actualización en tiempo real de badges de completado y resumen en el pie del modal
+   */
+  const updateModalPasoBadges = () => {
+    const doc = (dom.inputDni?.value || '').replace(/\D/g, '').trim();
+    const nombre = (dom.inputNombre?.value || '').trim();
+    const telefono = (dom.inputTelefono?.value || '').trim();
+
+    const marca = (document.getElementById('equipo-marca')?.value || '').trim();
+    const modelo = (document.getElementById('equipo-modelo')?.value || '').trim();
+    const tipoSelect = document.getElementById('equipo-tipo');
+    const tipo = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Equipo' : 'Equipo';
+
+    const motivo = (document.getElementById('orden-motivo')?.value || '').trim();
+
+    // 1. Validación Paso 1 (Cliente)
+    const paso1Ok = doc.length >= 8 && nombre.length >= 3 && telefono.length === 9;
+    const badgeCliente = document.getElementById('step-badge-cliente');
+    const badgeNav1 = document.getElementById('badge-nav-1');
+    const tab1 = document.getElementById('btn-step-tab-1');
+
+    if (badgeCliente) {
+      badgeCliente.className = `step-pill ${paso1Ok ? 'completed' : ''}`;
+      badgeCliente.innerHTML = paso1Ok
+        ? `<span style="color:#059669;font-weight:700;">✓</span> Listo`
+        : `<span class="step-pill-dot"></span> Incompleto`;
+    }
+    if (badgeNav1) {
+      badgeNav1.className = `step-pill ${paso1Ok ? 'completed' : ''}`;
+      badgeNav1.innerHTML = paso1Ok ? `<span style="color:#059669;font-weight:700;">✓</span> Listo` : `<span class="step-pill-dot"></span> Pendiente`;
+    }
+    if (tab1) {
+      if (paso1Ok) tab1.classList.add('completed');
+      else tab1.classList.remove('completed');
+    }
+
+    // 2. Validación Paso 2 (Equipo)
+    const paso2Ok = marca.length >= 2 && modelo.length >= 2;
+    const badgeEquipo = document.getElementById('step-badge-equipo');
+    const badgeNav2 = document.getElementById('badge-nav-2');
+    const tab2 = document.getElementById('btn-step-tab-2');
+
+    if (badgeEquipo) {
+      badgeEquipo.className = `step-pill ${paso2Ok ? 'completed' : ''}`;
+      badgeEquipo.innerHTML = paso2Ok
+        ? `<span style="color:#059669;font-weight:700;">✓</span> Listo`
+        : `<span class="step-pill-dot"></span> Incompleto`;
+    }
+    if (badgeNav2) {
+      badgeNav2.className = `step-pill ${paso2Ok ? 'completed' : ''}`;
+      badgeNav2.innerHTML = paso2Ok ? `<span style="color:#059669;font-weight:700;">✓</span> Listo` : `<span class="step-pill-dot"></span> Pendiente`;
+    }
+    if (tab2) {
+      if (paso2Ok) tab2.classList.add('completed');
+      else tab2.classList.remove('completed');
+    }
+
+    // 3. Validación Paso 3 (Diagnóstico)
+    const paso3Ok = motivo.length >= 4;
+    const badgeDiag = document.getElementById('step-badge-diagnostico');
+    const badgeNav3 = document.getElementById('badge-nav-3');
+    const tab3 = document.getElementById('btn-step-tab-3');
+
+    if (badgeDiag) {
+      badgeDiag.className = `step-pill ${paso3Ok ? 'completed' : ''}`;
+      badgeDiag.innerHTML = paso3Ok
+        ? `<span style="color:#059669;font-weight:700;">✓</span> Listo`
+        : `<span class="step-pill-dot"></span> Incompleto`;
+    }
+    if (badgeNav3) {
+      badgeNav3.className = `step-pill ${paso3Ok ? 'completed' : ''}`;
+      badgeNav3.innerHTML = paso3Ok ? `<span style="color:#059669;font-weight:700;">✓</span> Listo` : `<span class="step-pill-dot"></span> Pendiente`;
+    }
+    if (tab3) {
+      if (paso3Ok) tab3.classList.add('completed');
+      else tab3.classList.remove('completed');
+    }
+
+    // Resumen dinámico en el footer del modal
+    const summaryName = document.getElementById('summary-preview-name');
+    const summaryDevice = document.getElementById('summary-preview-device');
+    if (summaryName) {
+      summaryName.textContent = nombre ? (nombre.length > 25 ? nombre.substring(0, 25) + '...' : nombre) : 'Sin asignar';
+    }
+    if (summaryDevice) {
+      summaryDevice.textContent = marca ? `${tipo}: ${marca} ${modelo}` : tipo;
+    }
+  };
+  window.updateModalPasoBadges = updateModalPasoBadges;
+
+  /**
+   * Búsqueda ágil y automática de cliente por DNI/RUC con apisperu.com
+   */
+  const handleBuscarCliente = async () => {
+    const rawDoc = (dom.inputDni?.value || '').replace(/\D/g, '').trim();
+    if (!rawDoc) {
+      Utils.showToast('Atención', 'Ingrese un número de documento para consultar.', 'warning');
+      return;
+    }
+
+    if (rawDoc.length === 11 && dom.tipoDocSelect) {
+      dom.tipoDocSelect.value = 'RUC';
+    } else if (rawDoc.length === 8 && dom.tipoDocSelect) {
+      dom.tipoDocSelect.value = 'DNI';
+    }
+
+    const feedbackEl = document.getElementById('doc-lookup-status');
+    if (feedbackEl) {
+      feedbackEl.className = 'doc-feedback-badge loading';
+      feedbackEl.innerHTML = `<span>⏳</span> <span>Consultando en <strong>apisperu.com</strong>...</span>`;
+    }
+
+    if (dom.btnBuscarDni) {
+      dom.btnBuscarDni.disabled = true;
+      dom.btnBuscarDni.innerHTML = `<span>⏳</span>`;
+    }
+
+    try {
+      const res = await API.getClienteByDocumento(rawDoc);
+      if (res && res.data) {
+        const c = res.data;
+        const nombreRes = c.nombres_razon_social || c.nombre_completo || '';
+        dom.inputNombre.value = nombreRes;
+        if (c.direccion) dom.inputDireccion.value = c.direccion;
+        if (c.telefono) dom.inputTelefono.value = c.telefono;
+        if (c.email) dom.inputEmail.value = c.email;
+        if (c.tipo_documento || c.tipo) {
+          dom.tipoDocSelect.value = (c.tipo_documento || c.tipo).toUpperCase();
+        }
+
+        // Desencadenar eventos para actualizar contadores de caracteres
+        ['cliente-nombre', 'cliente-direccion', 'cliente-telefono', 'cliente-email'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+
+        const origen = c.origen || 'apisperu.com (Oficial)';
+        if (feedbackEl) {
+          feedbackEl.className = 'doc-feedback-badge success';
+          feedbackEl.innerHTML = `<span style="color:#059669;font-weight:700;">✓</span> <span><strong>${origen}:</strong> ${nombreRes}</span>`;
+        }
+
+        Utils.showToast(c.encontrado_local ? 'Cliente Registrado' : 'Autocompletado con Éxito', `${nombreRes} (${origen})`, 'success');
+
+        if (!dom.inputTelefono.value.trim()) {
+          setTimeout(() => dom.inputTelefono.focus(), 150);
+        }
+      } else {
+        throw new Error('No se encontró registro');
+      }
+    } catch (error) {
+      if (feedbackEl) {
+        feedbackEl.className = 'doc-feedback-badge not-found';
+        feedbackEl.innerHTML = `<span>ℹ️</span> <span>Cliente nuevo. Complete los datos manualmente.</span>`;
+      }
+      Utils.showToast('Cliente Nuevo', 'No se encontró registro en RENIEC/SUNAT. Complete los datos manualmente.', 'info');
+      dom.inputNombre.focus();
+    } finally {
+      if (dom.btnBuscarDni) {
+        dom.btnBuscarDni.disabled = false;
+        dom.btnBuscarDni.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> <span>Buscar</span>`;
+      }
+      updateModalPasoBadges();
+    }
+  };
+
+  /**
+   * Validaciones estrictas en tiempo real acorde al esquema MySQL y normativas
+   */
+  const setupStrictInputValidations = () => {
+    const inputDoc = dom.inputDni;
+    const selectTipoDoc = dom.tipoDocSelect;
+    const docCounter = document.getElementById('cliente-doc-counter');
+    const inputTelefono = dom.inputTelefono;
+    const telCounter = document.getElementById('cliente-telefono-counter');
+    const telHint = document.getElementById('cliente-telefono-hint');
+
+    // 1. Configuración dinámica según Tipo de Documento
+    const aplicarReglasTipoDoc = () => {
+      if (!selectTipoDoc || !inputDoc) return;
+      const tipo = selectTipoDoc.value;
+
+      if (tipo === 'DNI') {
+        inputDoc.maxLength = 8;
+        inputDoc.inputMode = 'numeric';
+        inputDoc.placeholder = '8 dígitos (ej: 77534805)';
+        inputDoc.value = inputDoc.value.replace(/\D/g, '').slice(0, 8);
+        if (docCounter) docCounter.textContent = `${inputDoc.value.length} / 8`;
+      } else if (tipo === 'RUC') {
+        inputDoc.maxLength = 11;
+        inputDoc.inputMode = 'numeric';
+        inputDoc.placeholder = '11 dígitos (ej: 20409456520)';
+        inputDoc.value = inputDoc.value.replace(/\D/g, '').slice(0, 11);
+        if (docCounter) docCounter.textContent = `${inputDoc.value.length} / 11`;
+      } else if (tipo === 'CE') {
+        inputDoc.maxLength = 12;
+        inputDoc.inputMode = 'text';
+        inputDoc.placeholder = '9 a 12 caracteres (Carnet Extranjería)';
+        inputDoc.value = inputDoc.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase();
+        if (docCounter) docCounter.textContent = `${inputDoc.value.length} / 12`;
+      } else if (tipo === 'PASAPORTE') {
+        inputDoc.maxLength = 12;
+        inputDoc.inputMode = 'text';
+        inputDoc.placeholder = '6 a 12 caracteres alfanuméricos';
+        inputDoc.value = inputDoc.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase();
+        if (docCounter) docCounter.textContent = `${inputDoc.value.length} / 12`;
+      }
+    };
+
+    if (selectTipoDoc) {
+      selectTipoDoc.addEventListener('change', () => {
+        aplicarReglasTipoDoc();
+        updateModalPasoBadges();
+      });
+      aplicarReglasTipoDoc();
+    }
+
+    // 2. Control estricto de teclas en Número de Documento (BLOQUEAR LETRAS EN TIEMPO REAL)
+    if (inputDoc) {
+      inputDoc.addEventListener('keydown', (e) => {
+        const tipo = selectTipoDoc?.value || 'DNI';
+        const controlKeys = ['Backspace', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Delete', 'Home', 'End'];
+        if (controlKeys.includes(e.key)) return;
+        if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x', 'z'].includes(e.key.toLowerCase())) return;
+
+        if (tipo === 'DNI' || tipo === 'RUC') {
+          // Bloquear terminantemente cualquier carácter no numérico
+          if (!/^[0-9]$/.test(e.key)) {
+            e.preventDefault();
+            return false;
+          }
+        } else {
+          // CE o Pasaporte: solo alfanumérico
+          if (!/^[a-zA-Z0-9]$/.test(e.key)) {
+            e.preventDefault();
+            return false;
+          }
+        }
+      });
+
+      // Interceptar pegado (Paste) para sanitizar inmediatamente
+      inputDoc.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const tipo = selectTipoDoc?.value || 'DNI';
+        const pastedText = (e.clipboardData || window.clipboardData).getData('text') || '';
+        let cleanText = '';
+        if (tipo === 'DNI') {
+          cleanText = pastedText.replace(/\D/g, '').slice(0, 8);
+        } else if (tipo === 'RUC') {
+          cleanText = pastedText.replace(/\D/g, '').slice(0, 11);
+        } else {
+          cleanText = pastedText.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase();
+        }
+        document.execCommand('insertText', false, cleanText);
+      });
+
+      let debounceTimer = null;
+      let ultimoDocConsultado = '';
+
+      inputDoc.addEventListener('input', () => {
+        const tipo = selectTipoDoc?.value || 'DNI';
+        let val = inputDoc.value;
+
+        if (tipo === 'DNI') {
+          val = val.replace(/\D/g, '').slice(0, 8);
+        } else if (tipo === 'RUC') {
+          val = val.replace(/\D/g, '').slice(0, 11);
+        } else {
+          val = val.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase();
+        }
+        inputDoc.value = val;
+
+        // Auto-cambio si el usuario pega 11 dígitos y está en DNI
+        if (val.length === 11 && tipo === 'DNI' && selectTipoDoc) {
+          selectTipoDoc.value = 'RUC';
+          aplicarReglasTipoDoc();
+        }
+
+        const maxLen = inputDoc.maxLength || 8;
+        if (docCounter) {
+          docCounter.textContent = `${val.length} / ${maxLen}`;
+          if (val.length === maxLen) {
+            docCounter.classList.add('valid');
+          } else {
+            docCounter.classList.remove('valid');
+          }
+        }
+
+        // Auto-búsqueda con apisperu.com al completar dígitos exactos
+        if ((tipo === 'DNI' && val.length === 8) || (tipo === 'RUC' && val.length === 11)) {
+          if (val !== ultimoDocConsultado) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              ultimoDocConsultado = val;
+              handleBuscarCliente();
+            }, 250);
+          }
+        }
+
+        updateModalPasoBadges();
+      });
+
+      inputDoc.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleBuscarCliente();
+        }
+      });
+    }
+
+    // 3. Control estricto de Teléfono / WhatsApp (Bloquear letras, solo 9 dígitos numéricos)
+    if (inputTelefono) {
+      inputTelefono.maxLength = 9;
+      inputTelefono.inputMode = 'numeric';
+
+      inputTelefono.addEventListener('keydown', (e) => {
+        const controlKeys = ['Backspace', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'Delete', 'Home', 'End'];
+        if (controlKeys.includes(e.key)) return;
+        if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x', 'z'].includes(e.key.toLowerCase())) return;
+
+        // Bloquear letras
+        if (!/^[0-9]$/.test(e.key)) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
+      inputTelefono.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+        const clean = text.replace(/\D/g, '').slice(0, 9);
+        document.execCommand('insertText', false, clean);
+      });
+
+      inputTelefono.addEventListener('input', () => {
+        inputTelefono.value = inputTelefono.value.replace(/\D/g, '').slice(0, 9);
+        const len = inputTelefono.value.length;
+        if (telCounter) telCounter.textContent = `${len} / 9`;
+
+        if (telHint) {
+          if (len === 9 && inputTelefono.value.startsWith('9')) {
+            telHint.textContent = '✓ Celular válido WhatsApp';
+            telHint.className = 'field-hint valid';
+          } else if (len > 0 && !inputTelefono.value.startsWith('9')) {
+            telHint.textContent = '⚠️ Los celulares de Perú inician con 9';
+            telHint.className = 'field-hint';
+          } else {
+            telHint.textContent = '9 dígitos (móvil de Perú)';
+            telHint.className = 'field-hint';
+          }
+        }
+        updateModalPasoBadges();
+      });
+    }
+
+    // 4. Contadores de caracteres para todos los campos según límites de la base de datos
+    const camposConLimite = [
+      { id: 'cliente-nombre', max: 180, counterId: 'cliente-nombre-counter' },
+      { id: 'cliente-direccion', max: 255, counterId: 'cliente-direccion-counter' },
+      { id: 'cliente-email', max: 100, counterId: 'cliente-email-counter' },
+      { id: 'equipo-marca', max: 60, counterId: 'equipo-marca-counter' },
+      { id: 'equipo-modelo', max: 80, counterId: 'equipo-modelo-counter' },
+      { id: 'equipo-serie', max: 80, counterId: 'equipo-serie-counter', uppercase: true },
+      { id: 'orden-motivo', max: 500, counterId: 'motivo-counter' },
+      { id: 'equipo-observaciones', max: 500, counterId: 'observaciones-counter' }
+    ];
+
+    camposConLimite.forEach(c => {
+      const el = document.getElementById(c.id);
+      const counterEl = document.getElementById(c.counterId);
+      if (el) {
+        el.maxLength = c.max;
+        const updateCount = () => {
+          if (c.uppercase) el.value = el.value.toUpperCase();
+          if (counterEl) {
+            counterEl.textContent = `${el.value.length} / ${c.max}`;
+            if (el.value.length >= c.max) {
+              counterEl.classList.add('limit');
+            } else {
+              counterEl.classList.remove('limit');
+            }
+          }
+        };
+        el.addEventListener('input', updateCount);
+        el.addEventListener('change', updateCount);
+        updateCount();
+      }
+    });
+
+    // 5. Control financiero: Adelanto no puede superar Costo Estimado
+    const inputCosto = document.getElementById('orden-costo-estimado');
+    const inputAdelanto = document.getElementById('orden-monto-adelanto');
+
+    const validarFinanzas = () => {
+      let costo = parseFloat(inputCosto?.value) || 0;
+      let adelanto = parseFloat(inputAdelanto?.value) || 0;
+
+      if (costo < 0) { costo = 0; if (inputCosto) inputCosto.value = '0.00'; }
+      if (adelanto < 0) { adelanto = 0; if (inputAdelanto) inputAdelanto.value = '0.00'; }
+
+      if (costo > 0 && adelanto > costo) {
+        if (inputAdelanto) inputAdelanto.value = costo.toFixed(2);
+        adelanto = costo;
+        Utils.showToast('Validación', 'El adelanto inicial no puede ser mayor al costo estimado.', 'warning');
+      }
+
+      const saldo = Math.max(0, costo - adelanto);
+      const tc = window.tipoCambioUSD || 3.75;
+
+      const saldoEl = document.getElementById('orden-saldo-calc');
+      const saldoUsdEl = document.getElementById('orden-saldo-usd');
+      const costoUsdEl = document.getElementById('orden-costo-usd');
+      const adelantoUsdEl = document.getElementById('orden-adelanto-usd');
+
+      if (saldoEl) saldoEl.textContent = `S/. ${saldo.toFixed(2)}`;
+      if (saldoUsdEl) saldoUsdEl.textContent = `$ ${(saldo / tc).toFixed(2)}`;
+      if (costoUsdEl) costoUsdEl.textContent = `$ ${(costo / tc).toFixed(2)}`;
+      if (adelantoUsdEl) adelantoUsdEl.textContent = `$ ${(adelanto / tc).toFixed(2)}`;
+    };
+
+    if (inputCosto) inputCosto.addEventListener('input', validarFinanzas);
+    if (inputAdelanto) inputAdelanto.addEventListener('input', validarFinanzas);
+  };
+
+  /**
+   * Configuración de acordeones, botones de pasos y chips rápidos
+   */
+  const setupModalIngresoAssist = () => {
+    // 1. Toggles de cabeceras de acordeón
+    document.querySelectorAll('.accordion-step-header[data-toggle]').forEach(header => {
+      header.addEventListener('click', () => {
+        const targetId = header.getAttribute('data-toggle');
+        const card = document.getElementById(targetId);
+        if (card) {
+          card.classList.toggle('open');
+        }
+      });
+    });
+
+    // 2. Botón Expandir / Contraer Todo
+    const btnToggleAll = document.getElementById('btn-toggle-all-accordions');
+    if (btnToggleAll) {
+      btnToggleAll.addEventListener('click', () => {
+        const cards = document.querySelectorAll('.accordion-step-card');
+        const allOpen = Array.from(cards).every(c => c.classList.contains('open'));
+        cards.forEach(c => {
+          if (allOpen) {
+            c.classList.remove('open');
+          } else {
+            c.classList.add('open');
+          }
+        });
+        const span = btnToggleAll.querySelector('span');
+        if (allOpen) {
+          if (span) span.textContent = 'Expandir Todo';
+        } else {
+          if (span) span.textContent = 'Contraer Todo';
+        }
+      });
+    }
+
+    // 3. Pestañas de pasos superior (Paso 1, Paso 2, Paso 3)
+    document.querySelectorAll('.step-nav-btn[data-step]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = parseInt(btn.getAttribute('data-step'), 10);
+        irAPaso(step);
+      });
+    });
+
+    // 4. Botones internos "Continuar a..."
+    document.querySelectorAll('.btn-step-next[data-goto]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const nextStep = parseInt(btn.getAttribute('data-goto'), 10);
+        irAPaso(nextStep);
+      });
+    });
+
+    // 5. Chips rápidos de texto para técnicos (Accesorios, fallas y estado estético)
+    document.querySelectorAll('.quick-chip[data-append-target]').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = chip.getAttribute('data-append-target');
+        const text = chip.getAttribute('data-text');
+        const input = document.getElementById(targetId);
+        if (input && text) {
+          const currentVal = input.value.trim();
+          if (!currentVal) {
+            input.value = text;
+          } else if (!currentVal.toLowerCase().includes(text.toLowerCase())) {
+            input.value = currentVal + ', ' + text;
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.focus();
+          updateModalPasoBadges();
+        }
+      });
+    });
+
+    // 6. Escuchar inputs clave para actualizar badges y preview
+    const inputsToWatch = [
+      dom.inputDni, dom.inputNombre, dom.inputTelefono,
+      document.getElementById('equipo-marca'),
+      document.getElementById('equipo-modelo'),
+      document.getElementById('equipo-tipo'),
+      document.getElementById('orden-motivo')
+    ];
+    inputsToWatch.forEach(inp => {
+      if (inp) {
+        inp.addEventListener('input', updateModalPasoBadges);
+        inp.addEventListener('change', updateModalPasoBadges);
+      }
+    });
+  };
+
+  /**
+   * Registrar Orden y Cliente (Express)
+   */
+  const handleRegistrarOrden = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const btnSubmit = dom.formRecepcion?.querySelector('button[type="submit"]');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<span class="loading-spinner"></span> Registrando...`;
+    }
+
+    try {
+      const tipoDoc = dom.tipoDocSelect ? dom.tipoDocSelect.value : 'DNI';
+      const numDoc = (dom.inputDni?.value || '').trim();
+      const nombreCliente = (dom.inputNombre?.value || '').trim();
+      const telefonoCliente = (dom.inputTelefono?.value || '').replace(/\D/g, '').trim();
+
+      if (!numDoc) {
+        throw new Error('El número de documento es obligatorio.');
+      }
+      if (tipoDoc === 'DNI' && numDoc.length !== 8) {
+        throw new Error('El DNI debe tener exactamente 8 dígitos.');
+      }
+      if (tipoDoc === 'RUC' && numDoc.length !== 11) {
+        throw new Error('El RUC debe tener exactamente 11 dígitos.');
+      }
+      if (!nombreCliente) {
+        throw new Error('El nombre o razón social del cliente es obligatorio.');
+      }
+      if (!telefonoCliente || telefonoCliente.length < 9) {
+        throw new Error('El teléfono/WhatsApp del cliente es obligatorio y debe tener 9 dígitos.');
+      }
+
+      const clientePayload = {
+        tipo_documento: tipoDoc,
+        numero_documento: numDoc,
+        nombres_razon_social: nombreCliente,
+        telefono: telefonoCliente,
+        direccion: (dom.inputDireccion?.value || '').trim(),
+        email: (dom.inputEmail?.value || '').trim()
+      };
+
+      const clienteRes = await API.guardarCliente(clientePayload);
+      const clienteId = clienteRes.data ? clienteRes.data.id : null;
+
+      if (!clienteId) {
+        throw new Error('No se pudo identificar o registrar al cliente.');
+      }
+
+      // Validar equipo
+      const tipoEquipo = document.getElementById('equipo-tipo')?.value || 'Laptop';
+      const marcaEquipo = (document.getElementById('equipo-marca')?.value || '').trim();
+      const modeloEquipo = (document.getElementById('equipo-modelo')?.value || '').trim();
+      const motivoIngreso = (document.getElementById('orden-motivo')?.value || '').trim();
+
+      if (!marcaEquipo) throw new Error('La marca del equipo es obligatoria.');
+      if (!modeloEquipo) throw new Error('El modelo del equipo es obligatorio.');
+      if (!motivoIngreso) throw new Error('La falla reportada o motivo de ingreso es obligatorio.');
+
+      const costoEstimado = parseFloat(document.getElementById('orden-costo-estimado')?.value) || 0;
+      let montoAdelanto = parseFloat(document.getElementById('orden-monto-adelanto')?.value) || 0;
+
+      if (montoAdelanto > costoEstimado) {
+        montoAdelanto = costoEstimado;
+      }
+
+      const ordenPayload = {
+        cliente_id: clienteId,
+        tipo_equipo: tipoEquipo,
+        marca: marcaEquipo,
+        modelo: modeloEquipo,
+        numero_serie: (document.getElementById('equipo-serie')?.value || '').trim(),
+        password_equipo: (document.getElementById('equipo-password')?.value || '').trim(),
+        accesorios_dejados: (document.getElementById('equipo-accesorios')?.value || '').trim(),
+        motivo_ingreso: motivoIngreso,
+        observaciones_esteticas: (document.getElementById('orden-observaciones')?.value || '').trim(),
+        costo_estimado: costoEstimado,
+        monto_adelanto: montoAdelanto,
+        prioridad: document.getElementById('orden-prioridad')?.value || 'NORMAL',
+        estado: 'RECEPCIONADO'
+      };
+
+      const ordenRes = await API.crearOrden(ordenPayload);
+      Utils.showToast('¡Ingreso Registrado!', `Orden generada: ${ordenRes.data.codigo_orden}`, 'success');
+
+      Utils.closeModal(dom.modalNuevoIngreso);
+      if (dom.formRecepcion) dom.formRecepcion.reset();
+
+      await loadOrdenes();
+      await loadDashboard();
+    } catch (error) {
+      Utils.showToast('Error', error.message, 'error');
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<i class="ph-bold ph-floppy-disk"></i> Registrar y Generar Orden`;
+      }
+    }
   };
 
   /**
@@ -119,19 +774,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dom.btnBuscarDni) {
       dom.btnBuscarDni.addEventListener('click', handleBuscarCliente);
     }
-    if (dom.inputDni) {
-      dom.inputDni.addEventListener('blur', () => {
-        if (dom.inputDni.value.trim().length >= 8 && !dom.inputNombre.value.trim()) {
-          handleBuscarCliente();
-        }
-      });
-      dom.inputDni.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleBuscarCliente();
-        }
-      });
-    }
+
+    // Validaciones estrictas de límites y bloqueo de letras en tiempo real
+    setupStrictInputValidations();
+
+    // Asistente por pasos y acordeones interactivos
+    setupModalIngresoAssist();
 
     // Envío del Formulario de Recepción
     if (dom.formRecepcion) {
@@ -389,116 +1037,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /**
-   * Búsqueda ágil de cliente por DNI/RUC
-   */
-  const handleBuscarCliente = async () => {
-    const doc = dom.inputDni.value.trim();
-    if (!doc) {
-      Utils.showToast('Atención', 'Ingrese un documento para consultar.', 'warning');
-      return;
-    }
-
-    dom.btnBuscarDni.disabled = true;
-    dom.btnBuscarDni.innerHTML = `<i class="ph-bold ph-spinner" style="animation: spin 1s infinite linear;"></i>`;
-
-    try {
-      const res = await API.getClienteByDocumento(doc);
-      if (res.data) {
-        const c = res.data;
-        dom.inputNombre.value = c.nombres_razon_social || '';
-        dom.inputTelefono.value = c.telefono || '';
-        dom.inputDireccion.value = c.direccion || '';
-        dom.inputEmail.value = c.email || '';
-        dom.tipoDocSelect.value = c.tipo_documento || 'DNI';
-        Utils.showToast('Cliente Encontrado', `${c.nombres_razon_social}`, 'success');
-      }
-    } catch (error) {
-      Utils.showToast('Cliente Nuevo', 'No se encontró registro previo. Complete los datos para crearlo automáticamente.', 'info');
-      dom.inputNombre.focus();
-    } finally {
-      dom.btnBuscarDni.disabled = false;
-      dom.btnBuscarDni.innerHTML = `<i class="ph-bold ph-magnifying-glass"></i>`;
-    }
-  };
-
-  /**
-   * Registro Express de Equipo y Nueva Orden
-   */
-  const handleRegistrarOrden = async (e) => {
-    e.preventDefault();
-
-    const doc = dom.inputDni.value.trim();
-    const nombres = dom.inputNombre.value.trim();
-    const telefono = dom.inputTelefono.value.trim();
-
-    if (!doc || !nombres || !telefono) {
-      Utils.showToast('Validación', 'Documento, Nombre y Teléfono son obligatorios.', 'error');
-      return;
-    }
-
-    const btnSubmit = dom.formRecepcion.querySelector('button[type="submit"]');
-    btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="ph-bold ph-spinner" style="animation: spin 1s infinite linear;"></i> Registrando...`;
-
-    try {
-      // 1. Guardar o recuperar cliente
-      const clienteRes = await API.guardarCliente({
-        tipo_documento: dom.tipoDocSelect.value,
-        numero_documento: doc,
-        nombres_razon_social: nombres,
-        telefono: telefono,
-        direccion: dom.inputDireccion.value.trim(),
-        email: dom.inputEmail.value.trim()
-      });
-
-      // 2. Crear Orden de Servicio
-      const tipoEquipo = document.getElementById('equipo-tipo').value;
-      const tipoOtro = document.getElementById('equipo-tipo-otro')?.value.trim();
-      let modeloFinal = document.getElementById('equipo-modelo').value.trim();
-      
-      if (tipoEquipo === 'OTRO' && tipoOtro) {
-          modeloFinal = `${tipoOtro} - ${modeloFinal}`;
-      }
-
-      const ordenPayload = {
-        cliente_id: clienteRes.data.id,
-        recepcionista_id: window.currentUser.id,
-        tecnico_id: document.getElementById('orden-tecnico-asignado').value || window.currentUser.id,
-        tipo_equipo: tipoEquipo,
-        marca: document.getElementById('equipo-marca').value.trim(),
-        modelo: modeloFinal,
-        numero_serie: document.getElementById('equipo-serie').value.trim(),
-        accesorios_dejados: document.getElementById('equipo-accesorios').value.trim(),
-        password_equipo: document.getElementById('equipo-password').value.trim(),
-        motivo_ingreso: document.getElementById('orden-motivo').value.trim(),
-        observaciones_esteticas: document.getElementById('equipo-observaciones').value.trim(),
-        costo_estimado: parseFloat(document.getElementById('orden-costo-estimado')?.value) || 0,
-        monto_adelanto: parseFloat(document.getElementById('orden-monto-adelanto')?.value) || 0,
-        prioridad: document.getElementById('orden-prioridad').value,
-        estado: 'RECEPCIONADO'
-      };
-
-      const ordenRes = await API.crearOrden(ordenPayload);
-      Utils.showToast('¡Ingreso Registrado!', `Orden generada: ${ordenRes.data.codigo_orden}`, 'success');
-
-      Utils.closeModal(dom.modalNuevoIngreso);
-      dom.formRecepcion.reset();
-
-      await loadOrdenes();
-      await loadDashboard();
-    } catch (error) {
-      Utils.showToast('Error', error.message, 'error');
-    } finally {
-      btnSubmit.disabled = false;
-      btnSubmit.innerHTML = `<i class="ph-bold ph-floppy-disk"></i> Registrar y Generar Orden`;
-    }
-  };
-
-  /**
    * Acción 1: Atender Orden / Diagnóstico Técnico
    */
   const atenderOrden = async (ordenId) => {
-    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'tecnico') {
+    const rolActual = (window.currentUser && window.currentUser.rol ? String(window.currentUser.rol).toLowerCase() : '');
+    if (rolActual && rolActual !== 'admin' && rolActual !== 'tecnico') {
       alert("Acceso Denegado: Solo los Administradores o Técnicos pueden atender y diagnosticar equipos.");
       return;
     }
@@ -552,7 +1095,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * Acción 2: Cobrar y Emitir Recibo A5 (Paso Único Integrado)
    */
   const cobrarYEntregar = async (ordenId) => {
-    if (window.currentUser && window.currentUser.rol !== 'admin' && window.currentUser.rol !== 'vendedor') {
+    const rolActual = (window.currentUser && window.currentUser.rol ? String(window.currentUser.rol).toLowerCase() : '');
+    if (rolActual && rolActual !== 'admin' && rolActual !== 'vendedor') {
       alert("Acceso Denegado: Solo los Administradores o Vendedores/Caja pueden realizar cobros y entregas.");
       return;
     }

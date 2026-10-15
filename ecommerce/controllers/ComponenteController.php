@@ -77,7 +77,12 @@ class ComponenteController extends Controller {
             setFlash('danger', 'Método no permitido para esta acción.');
             $this->redirect('componente');
         }
+        if (!verify_csrf($this->input('csrf_token'))) {
+            setFlash('danger', 'Token de seguridad inválido o expirado.');
+            $this->redirect('componente');
+        }
         $detalleModel = new DetalleComponente();
+
         $comp = $detalleModel->find($id);
         $idOrden = $comp ? $comp['id_orden'] : null;
 

@@ -10,6 +10,10 @@ const API = (() => {
    * Detección inteligente de la ruta base del Backend
    */
   const detectarBaseUrl = () => {
+    if (window.MAKPC_API_BASE) {
+      return window.MAKPC_API_BASE;
+    }
+
     const origin = window.location.origin;       // Ej: http://localhost o http://localhost:8000
     const pathname = window.location.pathname;   // Ej: /index.html o /MAK-PC/frontend/index.html
 
@@ -19,22 +23,18 @@ const API = (() => {
     }
 
     // 2. Extraer dinámicamente la ruta base hasta la carpeta del proyecto
-    // Asumimos que el HTML se sirve desde la raíz o desde frontend/
     const pathParts = pathname.split('/').filter(p => p !== '');
-    
-    // Si estamos en un entorno con subcarpetas (ej: /MAKPC-ECOMMERCE/MAK-PC-CLIENTES/)
     if (pathParts.length > 0) {
-        // Encontramos la carpeta del proyecto o usamos la ruta actual sin "frontend" o "index.html"
         let basePath = pathname;
         if (basePath.endsWith('index.html')) basePath = basePath.replace(/index\.html$/, '');
         if (basePath.endsWith('login.html')) basePath = basePath.replace(/login\.html$/, '');
         if (basePath.endsWith('frontend/')) basePath = basePath.replace(/frontend\/$/, '');
+        basePath = basePath.replace(/\/+$/, '');
         
-        return `${origin}${basePath}api.php`;
+        return `${origin}${basePath}/api`;
     }
 
-    // 3. Si DocumentRoot de Laragon está configurado directamente en /frontend
-    return `${origin}/api.php`;
+    return `${origin}/api`;
   };
 
   let baseUrl = detectarBaseUrl();
@@ -60,7 +60,13 @@ const API = (() => {
       return `${base}${separator}r=${encodeURIComponent(cleanRoute)}${queryPart ? '&' + queryPart : ''}`;
     }
 
-    return `${base}${cleanRoute}${queryPart ? '?' + queryPart : ''}`;
+    let normalizedBase = base.replace(/\/+$/, '');
+    let finalRoute = cleanRoute;
+    if (normalizedBase.endsWith('/api') && cleanRoute.startsWith('/api')) {
+      finalRoute = cleanRoute.substring(4);
+    }
+
+    return `${normalizedBase}${finalRoute}${queryPart ? '?' + queryPart : ''}`;
   };
 
   /**
@@ -84,12 +90,13 @@ const API = (() => {
     // Lista de rutas candidatas para auto-recuperación si la primaria falla
     const candidateBases = [
       baseUrl,
-      'api.php',
-      `${window.location.origin}/api.php`,
-      `${window.location.origin}/MAK-PC/frontend/api.php`,
-      `${window.location.origin}/MAK-PC/backend/index.php`,
+      window.MAKPC_API_BASE || '',
+      `${window.location.origin}/api`,
+      '../backend/index.php',
+      `${window.location.origin}/MAK-PC-CLIENTES/backend/index.php`,
       `${window.location.origin}/backend/index.php`
-    ];
+    ].filter(Boolean);
+
     // Eliminar duplicados
     const uniqueCandidates = [...new Set(candidateBases)];
 

@@ -6,7 +6,11 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AppLogger' => $baseDir . '/core/Logger.php',
     'AuthController' => $baseDir . '/controllers/AuthController.php',
+    'Caja' => $baseDir . '/models/Caja.php',
+    'CajaController' => $baseDir . '/controllers/CajaController.php',
+    'CajaMovimiento' => $baseDir . '/models/CajaMovimiento.php',
     'Categoria' => $baseDir . '/models/Categoria.php',
     'Cliente' => $baseDir . '/models/Cliente.php',
     'ClienteController' => $baseDir . '/controllers/ClienteController.php',
@@ -21,6 +25,8 @@ return array(
     'Equipo' => $baseDir . '/models/Equipo.php',
     'EquipoController' => $baseDir . '/controllers/EquipoController.php',
     'HomeController' => $baseDir . '/controllers/HomeController.php',
+    'InventarioController' => $baseDir . '/controllers/InventarioController.php',
+    'Kardex' => $baseDir . '/models/Kardex.php',
     'Model' => $baseDir . '/core/Model.php',
     'OrdenController' => $baseDir . '/controllers/OrdenController.php',
     'OrdenServicio' => $baseDir . '/models/OrdenServicio.php',
@@ -29,9 +35,10 @@ return array(
     'PedidoTienda' => $baseDir . '/models/PedidoTienda.php',
     'Producto' => $baseDir . '/models/Producto.php',
     'ProductoController' => $baseDir . '/controllers/ProductoController.php',
-    'Router' => $baseDir . '/core/Router.php',
+    'ProductoSerie' => $baseDir . '/models/ProductoSerie.php',
     'TicketSoporte' => $baseDir . '/models/TicketSoporte.php',
     'TiendaController' => $baseDir . '/controllers/TiendaController.php',
     'Usuario' => $baseDir . '/models/Usuario.php',
     'UsuarioController' => $baseDir . '/controllers/UsuarioController.php',
+    'Validator' => $baseDir . '/core/Validator.php',
 );

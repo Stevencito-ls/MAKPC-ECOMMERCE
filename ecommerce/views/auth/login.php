@@ -357,6 +357,9 @@ $flash = getFlash();
 
     <form action="<?= url('login') ?>" method="POST" id="loginForm">
       <?= csrf_field() ?>
+      <?php if (!empty($_GET['redirect'])): ?>
+        <input type="hidden" name="redirect" value="<?= e($_GET['redirect']) ?>">
+      <?php endif; ?>
 
       <div class="auth-form-group">
         <label for="usuario">Usuario del Sistema</label>

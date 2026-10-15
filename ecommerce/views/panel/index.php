@@ -213,90 +213,115 @@ if ($flash): ?>
      CUERPO PRINCIPAL DEL DASHBOARD
      ======================================================== -->
 <div class="dashboard-main-grid">
-  <!-- TABLA DE ÓRDENES RECIENTES -->
-  <div class="card">
-    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-      <h2 style="margin:0;font-size:1.15rem;display:flex;align-items:center;gap:0.5rem;">
-        <svg style="width:20px;height:20px;fill:var(--color-blue);" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-        <span>Órdenes de Servicio en Taller</span>
-      </h2>
-      <a href="<?= url('orden') ?>" class="btn btn-sm btn-outline">Ver Todas</a>
+  <!-- TABLA DE ÓRDENES RECIENTES (ACORDEÓN DESPLEGABLE) -->
+  <div class="card card-collapsible" id="cardOrdenesTaller">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <div class="card-collapsible-trigger" title="Haga clic para colapsar o expandir órdenes">
+        <h2 style="margin:0;font-size:1.15rem;display:flex;align-items:center;gap:0.5rem;">
+          <svg style="width:20px;height:20px;fill:var(--color-blue);" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          <span>Órdenes de Servicio en Taller</span>
+        </h2>
+        <span class="card-header-badge"><?= count($recientes) ?> registradas</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <a href="<?= url('orden') ?>" class="btn btn-sm btn-outline">Ver Todas</a>
+        <button type="button" class="card-collapse-toggle" aria-expanded="true" title="Colapsar / Expandir órdenes">
+          <svg class="card-collapse-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
     </div>
-    <div class="table-responsive">
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Cliente</th>
-            <th>Equipo</th>
-            <th>Falla Reportada</th>
-            <th>Estado</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php if (empty($recientes)): ?>
-            <tr>
-              <td colspan="6" style="text-align:center;padding:2.5rem;color:var(--color-shadow);">
-                No hay órdenes de servicio registradas aún.
-              </td>
-            </tr>
-          <?php else: ?>
-            <?php foreach ($recientes as $ord): 
-              $estadoClass = match($ord['estado']) {
-                'Pendiente' => 'badge-pendiente',
-                'En Reparacion' => 'badge-reparacion',
-                'Terminado' => 'badge-listo',
-                'Entregado' => 'badge-entregado',
-                default => 'badge-revision'
-              };
-            ?>
+    <div class="card-collapsible-body">
+      <div class="card-collapsible-inner">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
               <tr>
-                <td><strong><?= e($ord['codigo_orden']) ?></strong></td>
-                <td><?= e($ord['cliente_nombre']) ?></td>
-                <td><?= e($ord['equipo']) ?></td>
-                <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                  <?= e($ord['motivo_ingreso'] ?? '') ?>
-                </td>
-                <td>
-                  <span class="badge <?= $estadoClass ?>"><?= e($ord['estado']) ?></span>
-                </td>
-                <td>
-                  <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="btn btn-sm btn-primary">
-                    Ver
-                  </a>
-                </td>
+                <th>Código</th>
+                <th>Cliente</th>
+                <th>Equipo</th>
+                <th>Falla Reportada</th>
+                <th>Estado</th>
+                <th>Acción</th>
               </tr>
-            <?php endforeach; ?>
-          <?php endif; ?>
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              <?php if (empty($recientes)): ?>
+                <tr>
+                  <td colspan="6" style="text-align:center;padding:2.5rem;color:var(--color-shadow);">
+                    No hay órdenes de servicio registradas aún.
+                  </td>
+                </tr>
+              <?php else: ?>
+                <?php foreach ($recientes as $ord): 
+                  $estadoClass = match($ord['estado']) {
+                    'Pendiente' => 'badge-pendiente',
+                    'En Reparacion' => 'badge-reparacion',
+                    'Terminado' => 'badge-listo',
+                    'Entregado' => 'badge-entregado',
+                    default => 'badge-revision'
+                  };
+                ?>
+                  <tr>
+                    <td><strong><?= e($ord['codigo_orden']) ?></strong></td>
+                    <td><?= e($ord['cliente_nombre']) ?></td>
+                    <td><?= e($ord['equipo']) ?></td>
+                    <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      <?= e($ord['motivo_ingreso'] ?? '') ?>
+                    </td>
+                    <td>
+                      <span class="badge <?= $estadoClass ?>"><?= e($ord['estado']) ?></span>
+                    </td>
+                    <td>
+                      <a href="<?= url('orden/ver/' . $ord['id']) ?>" class="btn btn-sm btn-primary">
+                        Ver
+                      </a>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- TARJETA LATERAL SEGÚN ROL -->
+  <!-- TARJETA LATERAL SEGÚN ROL (ACORDEÓN DESPLEGABLE) -->
   <div>
     <?php if ($rol === 'vendedor'): ?>
-      <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <h3 style="margin:0;font-size:1.05rem;">Módulo Comercial</h3>
+      <div class="card card-collapsible" id="cardResumenLateral" style="margin-bottom:1.5rem;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="card-collapsible-trigger" title="Haga clic para colapsar o expandir">
+            <h3 style="margin:0;font-size:1.05rem;">Módulo Comercial</h3>
+          </div>
+          <button type="button" class="card-collapse-toggle" aria-expanded="true" title="Colapsar / Expandir resumen">
+            <svg class="card-collapse-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
         </div>
-        <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Total en Catálogo:</span>
-            <strong><?= (int)$totalProductos ?> productos</strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Stock Bajo (&le; 5):</span>
-            <strong style="color:#d97706;"><?= (int)$stockBajo ?> productos</strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Agotados (0 stock):</span>
-            <strong style="color:#dc2626;"><?= (int)$agotados ?> productos</strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span>Clientes Registrados:</span>
-            <strong><?= (int)$totalClientes ?></strong>
+        <div class="card-collapsible-body">
+          <div class="card-collapsible-inner">
+            <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Total en Catálogo:</span>
+                <strong><?= (int)$totalProductos ?> productos</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Stock Bajo (&le; 5):</span>
+                <strong style="color:#d97706;"><?= (int)$stockBajo ?> productos</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Agotados (0 stock):</span>
+                <strong style="color:#dc2626;"><?= (int)$agotados ?> productos</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Clientes Registrados:</span>
+                <strong><?= (int)$totalClientes ?></strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -314,26 +339,37 @@ if ($flash): ?>
       </div>
 
     <?php elseif ($rol === 'tecnico'): ?>
-      <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <h3 style="margin:0;font-size:1.05rem;">Estado de Operaciones Taller</h3>
+      <div class="card card-collapsible" id="cardResumenLateral" style="margin-bottom:1.5rem;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="card-collapsible-trigger" title="Haga clic para colapsar o expandir">
+            <h3 style="margin:0;font-size:1.05rem;">Estado de Operaciones Taller</h3>
+          </div>
+          <button type="button" class="card-collapse-toggle" aria-expanded="true" title="Colapsar / Expandir resumen">
+            <svg class="card-collapse-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
         </div>
-        <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Pendientes de Revisión:</span>
-            <strong style="color:#d97706;"><?= (int)($stats['pendientes'] ?? 0) ?></strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>En Reparación Activa:</span>
-            <strong style="color:var(--color-celeste);"><?= (int)($stats['en_reparacion'] ?? 0) ?></strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Terminados Listos:</span>
-            <strong style="color:var(--color-success);"><?= (int)($stats['terminados'] ?? 0) ?></strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span>Total Entregados:</span>
-            <strong><?= (int)($stats['entregados'] ?? 0) ?></strong>
+        <div class="card-collapsible-body">
+          <div class="card-collapsible-inner">
+            <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Pendientes de Revisión:</span>
+                <strong style="color:#d97706;"><?= (int)($stats['pendientes'] ?? 0) ?></strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>En Reparación Activa:</span>
+                <strong style="color:var(--color-celeste);"><?= (int)($stats['en_reparacion'] ?? 0) ?></strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Terminados Listos:</span>
+                <strong style="color:var(--color-success);"><?= (int)($stats['terminados'] ?? 0) ?></strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Total Entregados:</span>
+                <strong><?= (int)($stats['entregados'] ?? 0) ?></strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -351,31 +387,42 @@ if ($flash): ?>
       </div>
 
     <?php else: ?>
-      <!-- ADMIN: RESUMEN INTEGRAL -->
-      <div class="card" style="margin-bottom:1.5rem;">
-        <div class="card-header">
-          <h3 style="margin:0;font-size:1.05rem;">Resumen Integral del Sistema</h3>
+      <!-- ADMIN: RESUMEN INTEGRAL (ACORDEÓN) -->
+      <div class="card card-collapsible" id="cardResumenLateral" style="margin-bottom:1.5rem;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="card-collapsible-trigger" title="Haga clic para colapsar o expandir">
+            <h3 style="margin:0;font-size:1.05rem;">Resumen Integral del Sistema</h3>
+          </div>
+          <button type="button" class="card-collapse-toggle" aria-expanded="true" title="Colapsar / Expandir resumen">
+            <svg class="card-collapse-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
         </div>
-        <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Clientes Registrados:</span>
-            <strong><?= (int)$totalClientes ?></strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Equipos en Registro:</span>
-            <strong><?= (int)$totalEquipos ?></strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Productos en Tienda:</span>
-            <strong><?= (int)$totalProductos ?> (<?= (int)$stockBajo ?> stock bajo)</strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
-            <span>Usuarios y Roles:</span>
-            <strong><?= (int)$totalUsuarios ?> colaboradores</strong>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span>Ingresos Totales:</span>
-            <strong style="color:var(--color-success);"><?= formatPrecio($stats['ingresos_total'] ?? 0) ?></strong>
+        <div class="card-collapsible-body">
+          <div class="card-collapsible-inner">
+            <div class="card-body" style="display:flex;flex-direction:column;gap:1rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Clientes Registrados:</span>
+                <strong><?= (int)$totalClientes ?></strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Equipos en Registro:</span>
+                <strong><?= (int)$totalEquipos ?></strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Productos en Tienda:</span>
+                <strong><?= (int)$totalProductos ?> (<?= (int)$stockBajo ?> stock bajo)</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:0.75rem;border-bottom:1px solid #edf0f5;">
+                <span>Usuarios y Roles:</span>
+                <strong><?= (int)$totalUsuarios ?> colaboradores</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Ingresos Totales:</span>
+                <strong style="color:var(--color-success);"><?= formatPrecio($stats['ingresos_total'] ?? 0) ?></strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -397,106 +444,120 @@ if ($flash): ?>
 
 <?php if (hasRole(['admin', 'vendedor'])): ?>
   <!-- ========================================================
-       TABLA DE VENTAS E-COMMERCE & COMPROBANTES SUNAT RECIENTES
+       TABLA DE VENTAS E-COMMERCE & COMPROBANTES SUNAT RECIENTES (ACORDEÓN)
        ======================================================== -->
-  <div class="card" style="margin-top:2rem;">
-    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-      <h2 style="margin:0;font-size:1.15rem;display:flex;align-items:center;gap:0.5rem;">
-        <svg style="width:20px;height:20px;fill:var(--color-blue);" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-        <span>Últimas Ventas E-commerce &amp; Facturación SUNAT (Culqi Online &bull; Tumbes)</span>
-      </h2>
-      <a href="<?= url('pedido') ?>" class="btn btn-sm btn-outline">Ver Todas las Ventas</a>
+  <div class="card card-collapsible" id="cardVentasEcommerce" style="margin-top:2rem;">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <div class="card-collapsible-trigger" title="Haga clic para colapsar o expandir ventas">
+        <h2 style="margin:0;font-size:1.15rem;display:flex;align-items:center;gap:0.5rem;">
+          <svg style="width:20px;height:20px;fill:var(--color-blue);" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          <span>Últimas Ventas E-commerce &amp; Facturación SUNAT (Culqi Online &bull; Tumbes)</span>
+        </h2>
+        <span class="card-header-badge"><?= count($pedidosRecientes) ?> pedidos</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <a href="<?= url('pedido') ?>" class="btn btn-sm btn-outline">Ver Todas las Ventas</a>
+        <button type="button" class="card-collapse-toggle" aria-expanded="true" title="Colapsar / Expandir ventas">
+          <svg class="card-collapse-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
     </div>
-    <div class="table-responsive">
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>Código Pedido</th>
-            <th>Fecha</th>
-            <th>Cliente</th>
-            <th>Destino (Tumbes)</th>
-            <th>Comprobante SUNAT</th>
-            <th>Medio de Pago</th>
-            <th>Estado Pago</th>
-            <th>Despacho</th>
-            <th style="text-align:right;">Total (S/)</th>
-            <th style="text-align:center;">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php if (empty($pedidosRecientes)): ?>
-            <tr>
-              <td colspan="10" style="text-align:center;padding:2rem;color:var(--color-shadow);">
-                No hay ventas e-commerce registradas aún.
-              </td>
-            </tr>
-          <?php else: ?>
-            <?php foreach ($pedidosRecientes as $ped): ?>
+    <div class="card-collapsible-body">
+      <div class="card-collapsible-inner">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
               <tr>
-                <td>
-                  <a href="<?= url("pedido/ver/{$ped['codigo_pedido']}") ?>" style="font-weight:700;color:var(--color-blue);text-decoration:none;">
-                    <?= e($ped['codigo_pedido']) ?>
-                  </a>
-                </td>
-                <td style="font-size:0.8rem;color:var(--color-gray-600);">
-                  <?= date('d/m/Y H:i', strtotime($ped['creado_en'])) ?>
-                </td>
-                <td>
-                  <strong><?= e($ped['cliente_nombre']) ?></strong>
-                  <div style="font-size:0.75rem;color:var(--color-gray-500);"><?= e($ped['tipo_documento']) ?>: <?= e($ped['numero_documento']) ?></div>
-                </td>
-                <td style="font-size:0.8rem;">
-                  <?= e($ped['direccion_distrito'] ?: 'Tumbes') ?>
-                </td>
-                <td>
-                  <?php if (!empty($ped['comprobante_numero'])): ?>
-                    <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" 
-                       class="badge <?= str_starts_with($ped['comprobante_numero'], 'F') ? 'badge-primary' : 'badge-celeste' ?>" 
-                       style="text-decoration:none;font-weight:800;" title="Ver Comprobante Electrónico SUNAT">
-                      <?= e($ped['comprobante_numero']) ?>
-                    </a>
-                  <?php else: ?>
-                    <span style="font-size:0.75rem;color:var(--color-gray-500);">-</span>
-                  <?php endif; ?>
-                </td>
-                <td style="font-size:0.8rem;">
-                  <?= e($ped['culqi_brand'] ?: $ped['metodo_pago']) ?>
-                </td>
-                <td>
-                  <span class="badge <?= $ped['estado_pago'] === 'Pagado' ? 'badge-success' : 'badge-warning' ?>" style="font-size:0.75rem;">
-                    <?= e($ped['estado_pago']) ?>
-                  </span>
-                </td>
-                <td>
-                  <?php
-                  $cls = 'badge-warning';
-                  if ($ped['estado_despacho'] === 'Entregado') $cls = 'badge-success';
-                  elseif ($ped['estado_despacho'] === 'Enviado') $cls = 'badge-primary';
-                  ?>
-                  <span class="badge <?= $cls ?>" style="font-size:0.75rem;">
-                    <?= e($ped['estado_despacho']) ?>
-                  </span>
-                </td>
-                <td style="text-align:right;font-weight:800;color:var(--color-navy);">
-                  S/ <?= number_format((float)$ped['total'], 2) ?>
-                </td>
-                <td style="text-align:center;">
-                  <div style="display:inline-flex;gap:0.35rem;">
-                    <a href="<?= url("pedido/ver/{$ped['codigo_pedido']}") ?>" class="btn btn-sm btn-outline" style="padding:0.25rem 0.5rem;font-size:0.75rem;">
-                      Ver
-                    </a>
-                    <?php if (!empty($ped['comprobante_numero'])): ?>
-                      <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" class="btn btn-sm btn-primary" style="padding:0.25rem 0.5rem;font-size:0.75rem;">
-                        SUNAT
-                      </a>
-                    <?php endif; ?>
-                  </div>
-                </td>
+                <th>Código Pedido</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Destino (Tumbes)</th>
+                <th>Comprobante SUNAT</th>
+                <th>Medio de Pago</th>
+                <th>Estado Pago</th>
+                <th>Despacho</th>
+                <th style="text-align:right;">Total (S/)</th>
+                <th style="text-align:center;">Acciones</th>
               </tr>
-            <?php endforeach; ?>
-          <?php endif; ?>
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              <?php if (empty($pedidosRecientes)): ?>
+                <tr>
+                  <td colspan="10" style="text-align:center;padding:2rem;color:var(--color-shadow);">
+                    No hay ventas e-commerce registradas aún.
+                  </td>
+                </tr>
+              <?php else: ?>
+                <?php foreach ($pedidosRecientes as $ped): ?>
+                  <tr>
+                    <td>
+                      <a href="<?= url("pedido/ver/{$ped['codigo_pedido']}") ?>" style="font-weight:700;color:var(--color-blue);text-decoration:none;">
+                        <?= e($ped['codigo_pedido']) ?>
+                      </a>
+                    </td>
+                    <td style="font-size:0.8rem;color:var(--color-gray-600);">
+                      <?= date('d/m/Y H:i', strtotime($ped['creado_en'])) ?>
+                    </td>
+                    <td>
+                      <strong><?= e($ped['cliente_nombre']) ?></strong>
+                      <div style="font-size:0.75rem;color:var(--color-gray-500);"><?= e($ped['tipo_documento']) ?>: <?= e($ped['numero_documento']) ?></div>
+                    </td>
+                    <td style="font-size:0.8rem;">
+                      <?= e($ped['direccion_distrito'] ?: 'Tumbes') ?>
+                    </td>
+                    <td>
+                      <?php if (!empty($ped['comprobante_numero'])): ?>
+                        <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" 
+                           class="badge <?= str_starts_with($ped['comprobante_numero'], 'F') ? 'badge-primary' : 'badge-celeste' ?>" 
+                           style="text-decoration:none;font-weight:800;" title="Ver Comprobante Electrónico SUNAT">
+                          <?= e($ped['comprobante_numero']) ?>
+                        </a>
+                      <?php else: ?>
+                        <span style="font-size:0.75rem;color:var(--color-gray-500);">-</span>
+                      <?php endif; ?>
+                    </td>
+                    <td style="font-size:0.8rem;">
+                      <?= e($ped['culqi_brand'] ?: $ped['metodo_pago']) ?>
+                    </td>
+                    <td>
+                      <span class="badge <?= $ped['estado_pago'] === 'Pagado' ? 'badge-success' : 'badge-warning' ?>" style="font-size:0.75rem;">
+                        <?= e($ped['estado_pago']) ?>
+                      </span>
+                    </td>
+                    <td>
+                      <?php
+                      $cls = 'badge-warning';
+                      if ($ped['estado_despacho'] === 'Entregado') $cls = 'badge-success';
+                      elseif ($ped['estado_despacho'] === 'Enviado') $cls = 'badge-primary';
+                      ?>
+                      <span class="badge <?= $cls ?>" style="font-size:0.75rem;">
+                        <?= e($ped['estado_despacho']) ?>
+                      </span>
+                    </td>
+                    <td style="text-align:right;font-weight:800;color:var(--color-navy);">
+                      S/ <?= number_format((float)$ped['total'], 2) ?>
+                    </td>
+                    <td style="text-align:center;">
+                      <div style="display:inline-flex;gap:0.35rem;">
+                        <a href="<?= url("pedido/ver/{$ped['codigo_pedido']}") ?>" class="btn btn-sm btn-outline" style="padding:0.25rem 0.5rem;font-size:0.75rem;">
+                          Ver
+                        </a>
+                        <?php if (!empty($ped['comprobante_numero'])): ?>
+                          <a href="<?= url("tienda/comprobante/{$ped['codigo_pedido']}") ?>" class="btn btn-sm btn-primary" style="padding:0.25rem 0.5rem;font-size:0.75rem;">
+                            SUNAT
+                          </a>
+                        <?php endif; ?>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 <?php endif; ?>

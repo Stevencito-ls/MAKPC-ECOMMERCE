@@ -44,17 +44,32 @@ class ClienteController {
 
     /**
      * GET /api/clientes/documento/{doc}
+     * Consulta inteligente: busca en base local primero, y si no existe,
+     * consulta automáticamente en apisperu.com (RENIEC / SUNAT).
      */
     public function getByDocumento(string $documento): void {
         try {
-            $cliente = $this->service->getByDocumento($documento);
-            if (!$cliente) {
-                Response::notFound("No se encontró cliente con el documento {$documento}.");
+            $lookup = new \Services\DocumentoLookupService();
+            $tipo = $_GET['tipo'] ?? 'auto';
+            $resultado = $lookup->buscar($documento, $tipo);
+
+            if (!$resultado || empty($resultado['success'])) {
+                Response::notFound("No se encontró información para el documento {$documento} en RENIEC/SUNAT.");
             }
-            Response::ok($cliente);
+
+            Response::ok($resultado, $resultado['origen'] ?? 'Consulta exitosa');
         } catch (Exception $e) {
-            Response::serverError("Error al buscar cliente por documento: " . $e->getMessage());
+            Response::serverError("Error al consultar documento: " . $e->getMessage());
         }
+    }
+
+    /**
+     * GET /api/consulta-documento?numero=...&tipo=...
+     */
+    public function consultarDocumento(): void {
+        $doc = $_GET['numero'] ?? ($_GET['doc'] ?? '');
+        $tipo = $_GET['tipo'] ?? 'auto';
+        $this->getByDocumento($doc);
     }
 
     /**

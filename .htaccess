@@ -18,9 +18,16 @@ RewriteEngine On
 # Bloquear listado de directorios
 Options -Indexes
 
-# Si el archivo o directorio existe físicamente, servir directamente
+# 1. Si el archivo o directorio existe físicamente, servir directamente
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 2. Mapeo directo para recursos estáticos de Landing (css, imagenes, Iconos, js)
+RewriteRule ^(css|imagenes|Iconos|js)/(.*)$ landing/$1/$2 [L]
+
+# 3. Redirigir todas las demás peticiones al Front Controller
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# Redirigir todas las demás peticiones al Front Controller
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+

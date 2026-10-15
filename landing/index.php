@@ -7,20 +7,25 @@
  * Secciones: landing/sections/ (hero, tienda, conocenos, servicios, convenios, datos)
  */
 
-// Detección de URL base dinámica hacia el e-commerce y centro de servicios
-$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-$appDir = preg_replace('#/landing(/[^/]*)*$#i', '', dirname($scriptName));
-if ($appDir === '.' || $appDir === '/') {
-    $appBase = '/';
+// Detección de URL base dinámica hacia el e-commerce y centro de servicios (Windows & Apache Safe)
+if (defined('MAKPC_BASE_PATH')) {
+    $appBase = MAKPC_BASE_PATH;
 } else {
-    $appBase = rtrim($appDir, '/') . '/';
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $rawDir     = str_replace('\\', '/', dirname($scriptName));
+    $appDir     = preg_replace('#/landing(/[^/]*)*$#i', '', $rawDir);
+    $appDir     = trim($appDir, '/');
+    $appBase    = empty($appDir) ? '/' : '/' . $appDir . '/';
 }
 
-$ecommerceUrl = $appBase . 'ecommerce/';
-$cartUrl      = $appBase . 'ecommerce/?action=carrito';
-$builderUrl   = $appBase . 'ecommerce/?action=crear-pc';
-$soporteUrl   = $appBase . 'ecommerce/?action=soporte';
-$loginUrl     = $appBase . 'ecommerce/?action=login';
+$landingAssetBase = $appBase . 'landing/';
+$ecommerceUrl     = $appBase . 'tienda';
+$cartUrl          = $appBase . 'carrito';
+$builderUrl       = $appBase . 'crear-pc';
+$soporteUrl       = $appBase . 'soporte';
+$loginUrl         = $appBase . 'login';
+$tallerUrl        = $appBase . 'taller';
+
 
 // 1. Cabecera HTML y Recursos Globales
 require_once __DIR__ . '/layouts/head.php';

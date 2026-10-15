@@ -33,6 +33,14 @@ class EquipoController extends Controller {
      */
     public function eliminar($id) {
         $this->requireRole('admin');
+        if (!$this->isPost()) {
+            setFlash('danger', 'Método no permitido para esta acción.');
+            $this->redirect('equipo');
+        }
+        if (!verify_csrf($this->input('csrf_token'))) {
+            setFlash('danger', 'Token de seguridad inválido o expirado.');
+            $this->redirect('equipo');
+        }
         $equipoModel = new Equipo();
         $equipo = $equipoModel->find($id);
         $clienteId = $equipo ? $equipo['id_cliente'] : null;
@@ -41,6 +49,7 @@ class EquipoController extends Controller {
             setFlash('danger', 'Equipo no encontrado.');
             $this->redirect('equipo');
         }
+
 
         try {
             // Verificar si el equipo tiene órdenes de servicio asociadas

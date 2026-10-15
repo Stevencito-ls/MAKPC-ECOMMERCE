@@ -105,10 +105,65 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sidebarBackdrop) {
       sidebarBackdrop.addEventListener('click', closeAdminSidebar);
     }
+
+    // Cerrar sidebar en móvil al hacer click en enlaces
+    appSidebar.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', function () {
+        if (window.innerWidth <= 992) {
+          closeAdminSidebar();
+        }
+      });
+    });
   }
 
   // ========================================================
-  // 3. CATALOG MOBILE FILTER TOGGLE & DRAWER
+  // 2.1 SIDEBAR ACCORDIONS (HERMOSOS Y FLUIDOS)
+  // ========================================================
+  const sidebarAccordionHeaders = document.querySelectorAll('.sidebar-accordion-header');
+  sidebarAccordionHeaders.forEach(header => {
+    header.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const section = this.closest('.sidebar-section');
+      if (!section) return;
+
+      const isCurrentlyOpen = section.classList.contains('is-open');
+      if (isCurrentlyOpen) {
+        section.classList.remove('is-open');
+        this.setAttribute('aria-expanded', 'false');
+      } else {
+        section.classList.add('is-open');
+        this.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // ========================================================
+  // 2.2 DASHBOARD CARD COLLAPSIBLES (ACORDEONES DE TARJETAS)
+  // ========================================================
+  function toggleCardCollapse(card) {
+    if (!card) return;
+    const isCollapsed = card.classList.toggle('is-collapsed');
+    const toggleBtn = card.querySelector('.card-collapse-toggle');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+    }
+  }
+
+  document.querySelectorAll('.card-collapse-toggle').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleCardCollapse(this.closest('.card-collapsible'));
+    });
+  });
+
+  document.querySelectorAll('.card-collapsible-trigger').forEach(trigger => {
+    trigger.addEventListener('click', function (e) {
+      e.preventDefault();
+      toggleCardCollapse(this.closest('.card-collapsible'));
+    });
+  });
   // ========================================================
   const mobileFilterToggle = document.getElementById('mobileFilterToggle');
   const modernSidebar = document.getElementById('modernSidebar') || document.querySelector('.modern-sidebar');
@@ -187,25 +242,29 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
       } else {
         // Si es un enlace de eliminación, convertir la petición GET a POST por seguridad (CWE-352)
-        if (el.tagName.toLowerCase() === 'a' && el.href && el.href.includes('/eliminar/')) {
+        if (el.tagName.toLowerCase() === 'a' && el.href && (el.href.includes('/eliminar/') || el.href.includes('eliminar'))) {
           e.preventDefault();
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = el.href;
           
-          // Buscar si hay un csrf_token en el DOM y añadirlo
-          const csrf = document.querySelector('input[name="csrf_token"]');
-          if (csrf) {
+          // Buscar si hay un csrf_token en el DOM o en meta tag y añadirlo
+          const csrfInputEl = document.querySelector('input[name="csrf_token"]');
+          const csrfMetaEl = document.querySelector('meta[name="csrf-token"]');
+          const tokenValue = csrfInputEl ? csrfInputEl.value : (csrfMetaEl ? csrfMetaEl.getAttribute('content') : '');
+
+          if (tokenValue) {
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
             csrfInput.name = 'csrf_token';
-            csrfInput.value = csrf.value;
+            csrfInput.value = tokenValue;
             form.appendChild(csrfInput);
           }
           
           document.body.appendChild(form);
           form.submit();
         }
+
       }
     });
   });

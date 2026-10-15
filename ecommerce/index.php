@@ -118,24 +118,40 @@ switch ($action) {
         }
         break;
 
-    // Controladores Administrativos
+    // Controladores Administrativos (soporta singular y plural)
     case 'pedido':
+    case 'pedidos':
     case 'orden':
+    case 'ordenes':
     case 'cliente':
+    case 'clientes':
     case 'equipo':
+    case 'equipos':
     case 'componente':
+    case 'componentes':
     case 'usuario':
+    case 'usuarios':
     case 'caja':
+    case 'cajas':
     case 'inventario':
+    case 'inventarios':
         $controllersMap = [
             'pedido' => 'PedidoController',
+            'pedidos' => 'PedidoController',
             'orden' => 'OrdenController',
+            'ordenes' => 'OrdenController',
             'cliente' => 'ClienteController',
+            'clientes' => 'ClienteController',
             'equipo' => 'EquipoController',
+            'equipos' => 'EquipoController',
             'componente' => 'ComponenteController',
+            'componentes' => 'ComponenteController',
             'usuario' => 'UsuarioController',
+            'usuarios' => 'UsuarioController',
             'caja' => 'CajaController',
-            'inventario' => 'InventarioController'
+            'cajas' => 'CajaController',
+            'inventario' => 'InventarioController',
+            'inventarios' => 'InventarioController'
         ];
         $controllerName = $controllersMap[$action];
         $controller = new $controllerName();

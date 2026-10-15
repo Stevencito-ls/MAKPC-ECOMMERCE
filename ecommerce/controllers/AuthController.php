@@ -20,8 +20,18 @@ class AuthController extends Controller {
      * Mostrar vista y procesar autenticación de usuario
      */
     public function login() {
-        // Si ya está autenticado, redirigir al panel principal
+        // Si ya está autenticado, redirigir al panel principal o a la URL solicitada
         if (isLoggedIn()) {
+            $redirect = $_GET['redirect'] ?? $_SESSION['intended_url'] ?? 'panel';
+            unset($_SESSION['intended_url']);
+            if ($redirect !== 'panel' && strpos($redirect, 'login') === false) {
+                if (strpos($redirect, 'http') === 0 || strpos($redirect, '/') === 0) {
+                    header('Location: ' . $redirect);
+                } else {
+                    header('Location: ' . url($redirect));
+                }
+                exit;
+            }
             $this->redirect('panel');
         }
 
@@ -83,11 +93,15 @@ class AuthController extends Controller {
                             setFlash('success', '¡Bienvenido(a) al sistema, ' . htmlspecialchars($user['nombre_completo']) . '!');
 
                             // Redirección inteligente
-                            $intended = $_SESSION['intended_url'] ?? '';
+                            $intended = $_POST['redirect'] ?? $_GET['redirect'] ?? $_SESSION['intended_url'] ?? '';
                             unset($_SESSION['intended_url']);
 
                             if (!empty($intended) && strpos($intended, 'login') === false) {
-                                header('Location: ' . $intended);
+                                if (strpos($intended, 'http') === 0 || strpos($intended, '/') === 0) {
+                                    header('Location: ' . $intended);
+                                } else {
+                                    header('Location: ' . url($intended));
+                                }
                                 exit;
                             }
 

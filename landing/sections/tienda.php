@@ -19,6 +19,11 @@
                 </h3>
                 <p class="p-icono">Lunes a Sábado: 8:00a.m - 8:00p.m</p>
             </div>
+            <div style="margin-top:1.25rem;">
+                <a href="<?= $ecommerceUrl ?>" class="btn-visita-online" title="Explorar Catálogo en Ecommerce MAKPC">
+                    <i class="fa-solid fa-cart-shopping" style="margin-right:6px;"></i> Ver Catálogo y Comprar Online &rarr;
+                </a>
+            </div>
         </div>
         <div class="columna-derecha">
             <img src="imagenes/imagenExteriorMakPc.jpg" alt="Fachada Exterior Tienda Física MAK-PC" />

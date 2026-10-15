@@ -7,5 +7,9 @@
             "models/",
             "controllers/"
         ]
+    },
+    "require": {
+        "monolog/monolog": "^3.12",
+        "vlucas/valitron": "^1.4"
     }
 }

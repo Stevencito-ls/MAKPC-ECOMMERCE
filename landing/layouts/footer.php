@@ -23,7 +23,7 @@
             <div class="contact-info">
                 <div class="contact-item">
                     <i class="fa-solid fa-envelope" style="margin-right:8px;color:var(--cyan-color);"></i>
-                    <span>makpcenterprises75@gmail.com</span>
+                    <a href="mailto:makpcenterprises75@gmail.com" style="color:inherit;text-decoration:none;">makpcenterprises75@gmail.com</a>
                 </div>
                 <div class="contact-item">
                     <i class="fa-solid fa-phone" style="margin-right:8px;color:var(--cyan-color);"></i>

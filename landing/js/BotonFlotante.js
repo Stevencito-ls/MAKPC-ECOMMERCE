@@ -16,7 +16,7 @@
             this.socialButtons = document.getElementById('lateralSocialButtons');
 
             if (!this.mainBtn || !this.socialButtons) {
-                console.warn('MAK-PC Lateral Menu: Elementos no encontrados');
+                console.warn('MAñK-PC Lateral Menu: Elementos no encontrados');
                 return;
             }
 

@@ -44,16 +44,30 @@ class Database {
     public static function getConnection(): PDO {
         if (self::$instance === null) {
             $envPath = __DIR__ . '/../../../.env';
-            if (file_exists($envPath)) {
-                $env = parse_ini_file($envPath);
-                if ($env) {
-                    self::$host = $env['DB_HOST'] ?? self::$host;
-                    self::$port = isset($env['DB_PORT']) ? (int)$env['DB_PORT'] : self::$port;
-                    self::$dbName = $env['DB_NAME'] ?? self::$dbName;
-                    self::$user = $env['DB_USER'] ?? self::$user;
-                    self::$pass = isset($env['DB_PASS']) ? $env['DB_PASS'] : self::$pass;
+            if (file_exists($envPath) && is_readable($envPath)) {
+                $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                $env = [];
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    if ($line === '' || str_starts_with($line, '#') || str_starts_with($line, ';')) continue;
+                    if (strpos($line, '=') !== false) {
+                        list($k, $v) = explode('=', $line, 2);
+                        $env[trim($k)] = trim($v, " \t\n\r\0\x0B\"'");
+                    }
+                }
+                if (!empty($env)) {
+                    self::$host = $env['DB_HOST'] ?? getenv('DB_HOST') ?: (self::$host ?: 'localhost');
+                    self::$port = isset($env['DB_PORT']) ? (int)$env['DB_PORT'] : (getenv('DB_PORT') ? (int)getenv('DB_PORT') : self::$port);
+                    self::$dbName = $env['DB_NAME'] ?? getenv('DB_NAME') ?: (self::$dbName ?: 'makpc_enterprises_db');
+                    self::$user = $env['DB_USER'] ?? getenv('DB_USER') ?: (self::$user ?: 'root');
+                    self::$pass = isset($env['DB_PASS']) ? $env['DB_PASS'] : (getenv('DB_PASS') !== false ? getenv('DB_PASS') : self::$pass);
                 }
             }
+
+            if (empty(self::$host)) self::$host = getenv('DB_HOST') ?: 'localhost';
+            if (empty(self::$dbName)) self::$dbName = getenv('DB_NAME') ?: 'makpc_enterprises_db';
+            if (empty(self::$user)) self::$user = getenv('DB_USER') ?: 'root';
+
 
             $dsn = sprintf(
                 "mysql:host=%s;port=%d;dbname=%s;charset=%s",

@@ -88,11 +88,15 @@ cp .env.example .env
 cp .env.example ecommerce/.env
 ```
 
-### 5. Acceso al Sistema
-- **Página Principal / Landing Page:** `http://localhost/MAKPC/` o `http://localhost/MAKPC/landing/`
-- **Ecommerce MAKPC:** `http://localhost/MAKPC/ecommerce/`
-- **Panel Administrativo:** `http://localhost/MAKPC/ecommerce/?action=login`
+### 5. Acceso al Sistema Unificado
+- **Página Principal / Landing Page:** `http://localhost/MAKPC/` o `/landing/`
+- **Tienda Online / Ecommerce:** `http://localhost/MAKPC/tienda` o `/ecommerce/`
+- **Armador de PC ("Crea tu PC"):** `http://localhost/MAKPC/crear-pc`
+- **Taller & Mostrador POS:** `http://localhost/MAKPC/taller`
+- **Panel Administrativo (ERP):** `http://localhost/MAKPC/login` o `/panel`
   - **Usuario:** `admin` | **Contraseña:** `admin123`
+- **API REST Taller:** `http://localhost/MAKPC/api/health`
+
 
 ---
 

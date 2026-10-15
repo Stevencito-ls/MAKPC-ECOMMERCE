@@ -6,8 +6,42 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit657e0805b780101e94bc0ca8633e1748
 {
+    public static $prefixLengthsPsr4 = array (
+        'V' =>
+        array (
+            'Valitron\\' => 9,
+        ),
+        'P' =>
+        array (
+            'Psr\\Log\\' => 8,
+        ),
+        'M' =>
+        array (
+            'Monolog\\' => 8,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Valitron\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/vlucas/valitron/src/Valitron',
+        ),
+        'Psr\\Log\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/src',
+        ),
+        'Monolog\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+    );
+
     public static $classMap = array (
+        'AppLogger' => __DIR__ . '/../..' . '/core/Logger.php',
         'AuthController' => __DIR__ . '/../..' . '/controllers/AuthController.php',
+        'Caja' => __DIR__ . '/../..' . '/models/Caja.php',
+        'CajaController' => __DIR__ . '/../..' . '/controllers/CajaController.php',
+        'CajaMovimiento' => __DIR__ . '/../..' . '/models/CajaMovimiento.php',
         'Categoria' => __DIR__ . '/../..' . '/models/Categoria.php',
         'Cliente' => __DIR__ . '/../..' . '/models/Cliente.php',
         'ClienteController' => __DIR__ . '/../..' . '/controllers/ClienteController.php',
@@ -22,6 +56,8 @@ class ComposerStaticInit657e0805b780101e94bc0ca8633e1748
         'Equipo' => __DIR__ . '/../..' . '/models/Equipo.php',
         'EquipoController' => __DIR__ . '/../..' . '/controllers/EquipoController.php',
         'HomeController' => __DIR__ . '/../..' . '/controllers/HomeController.php',
+        'InventarioController' => __DIR__ . '/../..' . '/controllers/InventarioController.php',
+        'Kardex' => __DIR__ . '/../..' . '/models/Kardex.php',
         'Model' => __DIR__ . '/../..' . '/core/Model.php',
         'OrdenController' => __DIR__ . '/../..' . '/controllers/OrdenController.php',
         'OrdenServicio' => __DIR__ . '/../..' . '/models/OrdenServicio.php',
@@ -30,16 +66,19 @@ class ComposerStaticInit657e0805b780101e94bc0ca8633e1748
         'PedidoTienda' => __DIR__ . '/../..' . '/models/PedidoTienda.php',
         'Producto' => __DIR__ . '/../..' . '/models/Producto.php',
         'ProductoController' => __DIR__ . '/../..' . '/controllers/ProductoController.php',
-        'Router' => __DIR__ . '/../..' . '/core/Router.php',
+        'ProductoSerie' => __DIR__ . '/../..' . '/models/ProductoSerie.php',
         'TicketSoporte' => __DIR__ . '/../..' . '/models/TicketSoporte.php',
         'TiendaController' => __DIR__ . '/../..' . '/controllers/TiendaController.php',
         'Usuario' => __DIR__ . '/../..' . '/models/Usuario.php',
         'UsuarioController' => __DIR__ . '/../..' . '/controllers/UsuarioController.php',
+        'Validator' => __DIR__ . '/../..' . '/core/Validator.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit657e0805b780101e94bc0ca8633e1748::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit657e0805b780101e94bc0ca8633e1748::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit657e0805b780101e94bc0ca8633e1748::$classMap;
 
         }, null, ClassLoader::class);
